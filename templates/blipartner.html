@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="sv">
+  <head>
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bli Partner - Kunskapslitteratur</title>
+
+    <!-- Favicon -->
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="{{ url_for('static', filename='bilder/favicon.ico') }}"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="{{ url_for('static', filename='bilder/favicon.ico') }}"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="{{ url_for('static', filename='bilder/favicon.ico') }}"
+    />
+    <style>
+      /* Enkla färgvariabler */
+      :root {
+        --primary-color: #29231d;
+        --accent-color: #e67e22;
+        --light-bg: #f8f9fa;
+      }
+      
+      /* Huvudinnehåll */
+      .main-content {
+        padding-top: 120px;
+        padding-bottom: 60px;
+      }
+      
+      /* Sektionsrubriker */
+      .section-title {
+        margin-bottom: 1.5rem;
+        color: var(--primary-color);
+        position: relative;
+        display: inline-block;
+      }
+      
+      .section-title:after {
+        content: '';
+        position: absolute;
+        width: 50px;
+        height: 3px;
+        background-color: var(--accent-color);
+        bottom: -10px;
+        left: 0;
+      }
+      
+      /* Enkla kort */
+      .feature-card {
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        margin-bottom: 20px;
+        border: none;
+      }
+      
+      .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+      }
+      
+      /* Ljus bakgrund för varannan sektion */
+      .bg-light-section {
+        background-color: var(--light-bg);
+        padding: 60px 0;
+      }
+      
+      /* Ikon för fördelar */
+      .feature-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background-color: rgba(230, 126, 34, 0.1);
+        border-radius: 50%;
+        margin-right: 15px;
+        color: var(--accent-color);
+      }
+      
+      /* Steg-kort */
+      .step-card {
+        border-left: 3px solid var(--accent-color);
+        border-radius: 0 8px 8px 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        padding: 20px;
+        margin-bottom: 20px;
+        background-color: white;
+        transition: transform 0.3s ease;
+      }
+      
+      .step-card:hover {
+        transform: translateX(5px);
+      }
+      
+      .step-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 50%;
+        margin-right: 15px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-white fixed-top shadow">
+      <div class="container">
+        <a class="navbar-brand" href="{{ url_for('home') }}">
+          <img
+            src="{{ url_for('static', filename='bilder/logo.png') }}"
+            alt="Kunskapslitteratur Logo"
+            style="height: 60px;"
+          />
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#mainNavbar"
+          aria-controls="mainNavbar"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNavbar">
+          <ul class="navbar-nav mx-auto gap-lg-5">
+            <li class="nav-item">
+              <a class="nav-link text-primary" href="{{ url_for('home') }}"
+                >Hem</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-primary" href="{{ url_for('omoss') }}"
+                >Om oss</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-primary" href="{{ url_for('hallbarhet') }}"
+                >Hållbarhet</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link text-primary"
+                href="{{ url_for('kontaktaoss') }}"
+                >Kontakta oss</a
+              >
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link text-primary" href="{{ url_for('loggain') }}">
+                <i class="bi bi-person me-2"></i>Logga in
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Huvudinnehåll -->
+    <main class="main-content">
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col-12">
+            <h1 class="mb-4">Bli Partner</h1>
+            <p class="lead">
+              Välkommen till Kunskapslitteraturs partnersida. Genom att bli partner
+              med oss får ni möjlighet att nå ut till fler studenter och
+              utbildningsinstitutioner, samtidigt som ni bidrar till en
+              hållbarare och mer tillgänglig kurslitteraturmarknad.
+            </p>
+          </div>
+        </div>
+
+        <!-- Fördelar med att vara partner -->
+        <div class="row mb-5">
+          <div class="col-12">
+            <h2 class="section-title mb-4">Fördelar med att vara partner</h2>
+            
+            <div class="row">
+              <div class="col-md-6 mb-4">
+                <div class="card feature-card h-100">
+                  <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                      <div class="feature-icon">
+                        <i class="bi bi-graph-up"></i>
+                      </div>
+                      <h5 class="card-title mb-0">Ökad räckvidd</h5>
+                    </div>
+                    <p class="card-text">
+                      Få tillgång till vår växande användarbas av studenter och
+                      utbildare. På så sätt kan ni öka era försäljningsmöjligheter
+                      och stärka ert varumärke.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6 mb-4">
+                <div class="card feature-card h-100">
+                  <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                      <div class="feature-icon">
+                        <i class="bi bi-sliders"></i>
+                      </div>
+                      <h5 class="card-title mb-0">Flexibla samarbeten</h5>
+                    </div>
+                    <p class="card-text">
+                      Vi erbjuder attraktiva avtal anpassade efter era behov, med en 90/10-fördelning där ni får minst 90% av försäljningspriset.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6 mb-4">
+                <div class="card feature-card h-100">
+                  <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                      <div class="feature-icon">
+                        <i class="bi bi-megaphone"></i>
+                      </div>
+                      <h5 class="card-title mb-0">Marknadsföringsstöd</h5>
+                    </div>
+                    <p class="card-text">
+                      Vårt team hjälper er att synas på plattformen genom
+                      kampanjer, rekommendationer och andra marknadsföringsinsatser
+                      som driver försäljning.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6 mb-4">
+                <div class="card feature-card h-100">
+                  <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                      <div class="feature-icon">
+                        <i class="bi bi-tree"></i>
+                      </div>
+                      <h5 class="card-title mb-0">Hållbarhetsfokus</h5>
+                    </div>
+                    <p class="card-text">
+                      Vi arbetar aktivt för att minska miljöpåverkan och uppmuntra
+                      digital distribution där det är möjligt, vilket även bidrar
+                      till er hållbarhetsprofil.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hur fungerar samarbetet -->
+        <div class="row mb-5 bg-light-section mx-0">
+          <div class="col-12 py-4">
+            <h2 class="section-title mb-4">Hur fungerar samarbetet?</h2>
+            <p>
+              Samarbetet bygger på ömsesidig transparens och enkelhet. Ni
+              tillhandahåller ert sortiment och uppgifter om böckerna, och vi
+              sköter försäljning, distribution och kundsupport. Vi erbjuder
+              dessutom rapporter och insikter om hur ert material presterar.
+            </p>
+            
+            <div class="card feature-card mt-4">
+              <div class="card-body">
+                <h5 class="card-title mb-3"><i class="bi bi-info-circle me-2"></i>Vad vi erbjuder</h5>
+                <div class="row">
+                  <div class="col-md-6">
+                    <ul class="list-unstyled">
+                      <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Enkel integration av ert material</li>
+                      <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Säker digital distribution</li>
+                      <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Kundtjänst och support</li>
+                    </ul>
+                  </div>
+                  <div class="col-md-6">
+                    <ul class="list-unstyled">
+                      <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Detaljerade försäljningsrapporter</li>
+                      <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Marknadsföringsinsatser</li>
+                      <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Transparent intäktsdelning</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kom igång -->
+        <div class="row">
+          <div class="col-12">
+            <h2 class="section-title mb-4">Kom igång</h2>
+            <p class="mb-4">Följ dessa enkla steg för att starta ett samarbete med oss:</p>
+            
+            <div class="step-card">
+              <div class="d-flex align-items-center mb-2">
+                <span class="step-number">1</span>
+                <h5 class="mb-0">Kontakta oss</h5>
+              </div>
+              <p class="mb-0">
+                Skicka ett mejl till
+                <a href="mailto:forlag@kunskapslitteratur.se">forlag@kunskapslitteratur.se</a>
+                för att inleda en dialog.
+              </p>
+            </div>
+            
+            <div class="step-card">
+              <div class="d-flex align-items-center mb-2">
+                <span class="step-number">2</span>
+                <h5 class="mb-0">Diskutera avtal</h5>
+              </div>
+              <p class="mb-0">
+                Tillsammans går vi igenom era behov och önskemål för att hitta
+                rätt avtalstyp. Vi är flexibla och kan skräddarsy samarbetet
+                efter era förutsättningar.
+              </p>
+            </div>
+            
+            <div class="step-card">
+              <div class="d-flex align-items-center mb-2">
+                <span class="step-number">3</span>
+                <h5 class="mb-0">Publicera ert sortiment</h5>
+              </div>
+              <p class="mb-0">
+                "När avtalet är på plats får ni inloggningsuppgifter till er unika adminpanel, där ni kan börja lägga in ert material på plattformen. Vi hjälper även till med distribution och marknadsföring.
+              </p>
+            </div>
+            
+            <div class="step-card">
+              <div class="d-flex align-items-center mb-2">
+                <span class="step-number">4</span>
+                <h5 class="mb-0">Börja sälja!</h5>
+              </div>
+              <p class="mb-0">
+                Efter att allt är konfigurerat är ni redo att nå nya läsare
+                och öka er försäljning genom Kunskapslitteratur.
+              </p>
+            </div>
+            
+            <div class="text-center mt-5">
+              <a href="{{ url_for('kontakt') }}#kontaktformular" class="btn btn-primary btn-custom-end px-4 py-2">
+                <i class="bi bi-envelope me-2"></i>Kontakta oss idag
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer py-5">
+      <div class="container">
+        <div class="row align-items-start text-center text-lg-start">
+          <!-- Left: Logo och Subheader -->
+          <div class="col-lg-5 text-center mb-4 mb-lg-0">
+            <a href="{{ url_for('home') }}">
+              <img
+                src="{{ url_for('static', filename='bilder/logo.png') }}"
+                alt="Kunskapslitteratur Logo"
+                class="img-fluid mb-3"
+                style="height: 123px;"
+              />
+            </a>
+            <p class="text-muted mb-0">
+              Din partner för prisvärd, digital och hållbar kurslitteratur.
+            </p>
+          </div>
+
+          <!-- Right: Länkar -->
+          <div class="col-lg-7">
+            <div class="row justify-content-center justify-content-lg-start">
+              <!-- Column 1 -->
+              <div class="col-12 col-sm-4 px-4 mb-4 mb-sm-0">
+                <h5 class="mb-3">Länkar</h5>
+                <ul class="list-unstyled">
+                  <li>
+                    <a href="{{ url_for('home') }}" class="footer-link">Hem</a>
+                  </li>
+                  <li>
+                    <a href="{{ url_for('omoss') }}" class="footer-link"
+                      >Om oss</a
+                    >
+                  </li>
+                  <li>
+                    <a href="{{ url_for('hallbarhet') }}" class="footer-link"
+                      >Hållbarhet</a
+                    >
+                  </li>
+                  <li>
+                    <a href="{{ url_for('kontaktaoss') }}" class="footer-link"
+                      >Kontakta oss</a
+                    >
+                  </li>
+                </ul>
+              </div>
+              <!-- Column 2 -->
+              <div class="col-12 col-sm-4 px-4 mb-4 mb-sm-0">
+                <h5 class="mb-3">Förlag</h5>
+                <ul class="list-unstyled">
+                  <li>
+                    <a href="{{ url_for('kontakt') }}" class="footer-link"
+                      >Kontakt</a
+                    >
+                  </li>
+                  <li>
+                    <a href="{{ url_for('support') }}" class="footer-link"
+                      >Support</a
+                    >
+                  </li>
+                  <li>
+                    <a href="{{ url_for('blipartner') }}" class="footer-link"
+                      >Bli Partner</a
+                    >
+                  </li>
+                  <li>
+                    <a href="{{ url_for('forlagsvilkor') }}" class="footer-link"
+                      >Förlagsvilkor</a
+                    >
+                  </li>
+                </ul>
+              </div>
+              <!-- Column 3 -->
+              <div class="col-12 col-sm-4 px-4">
+                <h5 class="mb-3">Hjälp & Info</h5>
+                <ul class="list-unstyled">
+                  <li>
+                    <a href="{{ url_for('faq') }}" class="footer-link"
+                      >Vanliga frågor</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="{{ url_for('anvandarvilkor') }}"
+                      class="footer-link"
+                      >Användarvillkor</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="{{ url_for('Integritetspolicy') }}"
+                      class="footer-link"
+                      >Integritetspolicy</a
+                    >
+                  </li>
+                  <li>
+                    <a href="{{ url_for('karriar') }}" class="footer-link"
+                      >Karriär</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Line och Copyright -->
+        <hr class="footer-line" />
+        <div class="text-center mt-3">
+          <p class="text-muted mb-0">
+            © 2025 Kunskapslitteratur. Alla rättigheter förbehållna.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    ></script>
+  <script src="{{ url_for('static', filename='cookie-consent.js') }}" defer></script>
+</body>
+</html>

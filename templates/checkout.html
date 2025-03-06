@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+  <title>Kassa - Kunskapslitteratur</title>
+  <!-- Bootstrap CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+  <!-- Font Awesome för ikoner -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Inkludera Stripe.js -->
+  <script src="https://js.stripe.com/v3/"></script>
+  
+  <!-- Lägg till fallback för Stripe-detektering -->
+  <script>
+    // Skapa en variabel för att hålla koll på om Stripe laddats korrekt
+    window.stripeLoaded = false;
+    
+    // Försök detektera om Stripe laddats korrekt
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        // Om Stripe finns och inte är blockerad
+        if (typeof Stripe === 'function') {
+          window.stripeLoaded = true;
+        } else {
+          // Visa meddelande om att Stripe är blockerat
+          showStripeBlockedMessage();
+        }
+      }, 1000);
+    });
+    
+    // Funktion för att visa meddelande om blockerad Stripe
+    function showStripeBlockedMessage() {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+      alertDiv.role = 'alert';
+      alertDiv.innerHTML = `
+        <div class="d-flex align-items-center">
+          <i class="fas fa-exclamation-circle fa-2x me-3"></i>
+          <div>
+            <h4 class="alert-heading">Betalningssystemet blockeras!</h4>
+            <p>Din webbläsare eller ett tillägg (som AdBlock) blockerar vårt betalningssystem. För att fortsätta:</p>
+            <ol>
+              <li>Stäng av din annonsblockerare för denna webbplats</li>
+              <li>Uppdatera sidan efter att ha stängt av blockeraren</li>
+              <li>Om problemet kvarstår, prova en annan webbläsare</li>
+            </ol>
+          </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Stäng"></button>
+      `;
+      
+      // Lägg till meddelandet överst på sidan
+      const container = document.querySelector('.container');
+      if (container) {
+        container.prepend(alertDiv);
+        
+        // Inaktivera köpknappen
+        const checkoutButton = document.getElementById('checkout-button');
+        if (checkoutButton) {
+          checkoutButton.disabled = true;
+          checkoutButton.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i> Betalning ej tillgänglig';
+          checkoutButton.classList.remove('btn-success');
+          checkoutButton.classList.add('btn-secondary');
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3f37c9;
+      --accent-color: #4cc9f0;
+      --success-color: #4CAF50;
+      --warning-color: #ff9800;
+      --danger-color: #f44336;
+      --light-color: #f8f9fa;
+      --dark-color: #212529;
+      --gray-color: #6c757d;
+    }
+    
+    body {
+      background-color: #f8f9fa; 
+      font-family: 'Roboto', sans-serif;
+      color: var(--dark-color);
+      line-height: 1.6;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    .navbar-brand {
+      font-weight: 700;
+    }
+    
+    .card {
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-header {
+      font-weight: 600;
+      font-size: 1.1rem;
+      border-radius: 10px 10px 0 0 !important;
+      padding: 1rem 1.5rem;
+    }
+    
+    .product-img {
+      width: 60px;
+      height: auto;
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .table th, .table td {
+      vertical-align: middle;
+      padding: 1rem;
+    }
+    
+    .table tbody tr {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .table tbody tr:last-child {
+      border-bottom: none;
+    }
+    
+    .checkout-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+    }
+    
+    .btn {
+      border-radius: 8px;
+      font-weight: 500;
+      padding: 0.6rem 1.2rem;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--secondary-color);
+      border-color: var(--secondary-color);
+    }
+    
+    .btn-success {
+      background-color: var(--success-color);
+      border-color: var(--success-color);
+    }
+    
+    .btn-success:hover {
+      filter: brightness(90%);
+    }
+    
+    .btn-outline-danger {
+      color: var(--danger-color);
+      border-color: var(--danger-color);
+    }
+    
+    .btn-outline-danger:hover {
+      background-color: var(--danger-color);
+      color: white;
+    }
+    
+    .alert {
+      border-radius: 10px;
+      border: none;
+      box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
+    }
+    
+    .alert-info {
+      background-color: rgba(76, 201, 240, 0.1);
+      border-left: 4px solid var(--accent-color);
+      color: #0c5460;
+    }
+    
+    .modal-content {
+      border-radius: 15px;
+      border: none;
+    }
+    
+    .modal-header {
+      border-radius: 15px 15px 0 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .modal-footer {
+      border-radius: 0 0 15px 15px;
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .back-button:hover {
+      color: var(--secondary-color);
+    }
+    
+    .summary-price {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--dark-color);
+    }
+    
+    .remove-item-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--danger-color);
+      color: var(--danger-color);
+      transition: all 0.3s ease;
+    }
+    
+    .remove-item-btn:hover {
+      background-color: var(--danger-color);
+      color: white;
+    }
+    
+    .cart-empty {
+      text-align: center;
+      padding: 3rem;
+      color: var(--gray-color);
+    }
+    
+    .cart-empty i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+    
+    .payment-methods {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    
+    .payment-method-icon {
+      opacity: 0.6;
+      filter: grayscale(100%);
+      transition: all 0.3s ease;
+    }
+    
+    .payment-method-icon:hover {
+      opacity: 1;
+      filter: grayscale(0%);
+    }
+    
+    @media (max-width: 768px) {
+      .card {
+        margin-bottom: 1.5rem;
+      }
+      
+      .checkout-title {
+        font-size: 1.8rem;
+      }
+      
+      .table th, .table td {
+        padding: 0.75rem;
+      }
+      
+      .product-img {
+        width: 50px;
+      }
+    }
+    
+    /* Stilar för blockerat Stripe-meddelande */
+    .alert-danger {
+      background-color: rgba(244, 67, 54, 0.1);
+      border-left: 4px solid var(--danger-color);
+      color: #721c24;
+    }
+    
+    /* Lista i alert */
+    .alert ol, .alert ul {
+      margin-bottom: 0;
+      padding-left: 1.5rem;
+    }
+    
+    /* Stil för inaktiverad köpknapp */
+    .btn-secondary.disabled, .btn-secondary:disabled {
+      background-color: #6c757d;
+      border-color: #6c757d;
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+  </style>
+  <script>
+    // Duplicera getCookie-funktionen
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+    const csrfToken = getCookie("csrf_token"); // Hämta från kakor istället!
+  </script>
+</head>
+<body>
+  <div class="container my-5">
+    <!-- Rubrik för sidan -->
+    <a href="{{ url_for('utforskabocker') }}" class="back-button mb-4">
+      <i class="fas fa-arrow-left"></i> Tillbaka till butiken
+    </a>
+    <h1 class="text-center checkout-title">Betalningsöversikt</h1>
+
+    <div class="alert alert-info d-flex align-items-start mb-4" role="alert">
+      <i class="fas fa-info-circle fa-2x me-3 mt-1"></i>
+      <div>
+        <h4 class="alert-heading">Viktigt att veta innan köp</h4>
+        <ul class="mb-0">
+          <li>
+            <strong>Medlemskap krävs</strong> för att köpa och använda vår kurslitteratur.
+            Om du saknar medlemskap omdirigeras du automatiskt för att teckna ett innan köpet slutförs.
+          </li>
+          <li>
+            <strong>Inaktivera AdBlock</strong> eller vitlista den här sidan. 
+            Annonsblockerare kan störa vår betalningsprocess (Stripe).
+          </li>
+          <li>
+            Genom att fortsätta godkänner du våra 
+            <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Användarvillkor</a> och 
+            <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Integritetspolicy</a>.
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- Vänsterspalt: Varukorg -->
+      <div class="col-lg-8">
+        <div class="card mb-4 shadow-sm">
+          <div class="card-header bg-primary text-white d-flex align-items-center">
+            <i class="fas fa-shopping-basket me-2"></i> Din varukorg
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-borderless align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>Bokomslag</th>
+                    <th>Titel</th>
+                    <th>Pris</th>
+                    <th class="text-center">Ta bort</th>
+                  </tr>
+                </thead>
+                <tbody id="cart-items">
+                  <!-- Varukorgsartiklar laddas här via JavaScript -->
+                  <!-- Tom varukorgsmeddelande -->
+                  <tr id="empty-cart-message" class="d-none">
+                    <td colspan="4" class="cart-empty">
+                      <i class="fas fa-shopping-cart mb-3"></i>
+                      <h4>Din varukorg är tom</h4>
+                      <p>Gå tillbaka och lägg till böcker för att fortsätta</p>
+                      <a href="{{ url_for('utforskabocker') }}" class="btn btn-outline-primary">
+                        Fortsätt handla
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Högerspalt: Sammanfattning & Slutför köp -->
+      <div class="col-lg-4">
+        <div class="card mb-4 shadow-sm">
+          <div class="card-header bg-secondary text-white d-flex align-items-center">
+            <i class="fas fa-file-invoice-dollar me-2"></i> Sammanfattning
+          </div>
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <span class="h5 mb-0">Totalt:</span>
+              <span id="cart-total" class="summary-price">0 kr</span>
+            </div>
+            
+            <button id="checkout-button" class="btn btn-success w-100 mb-3 d-flex align-items-center justify-content-center">
+              <i class="fas fa-lock me-2"></i> Slutför köp
+            </button>
+            
+            <small class="text-muted">
+              Genom att slutföra köpet godkänner du våra
+              <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">köpvillkor</a>.
+            </small>
+            
+            <hr class="my-3">
+            
+            <div class="secure-payment">
+              <div class="d-flex align-items-center mb-2">
+                <i class="fas fa-shield-alt text-success me-2"></i>
+                <span>Säker betalning</span>
+              </div>
+              <div class="payment-methods">
+                <img src="{{ url_for('static', filename='bilder/visa.svg') }}" alt="Visa" width="36" class="payment-method-icon">
+                <img src="{{ url_for('static', filename='bilder/mastercard.svg') }}" alt="Mastercard" width="36" class="payment-method-icon">
+                <img src="{{ url_for('static', filename='bilder/klarna.svg') }}" alt="Klarna" width="60" class="payment-method-icon">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <!-- Användarvillkor Modal -->
+  <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="termsModalLabel">Användarvillkor</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Stäng"></button>
+        </div>
+        <div class="modal-body">
+          <h4>Användarvillkor för Kunskapslitteratur</h4>
+          <p>Senast uppdaterad: Januari 2025</p>
+          
+          <h5>Vår tjänst</h5>
+          <p>
+            Kärnan i vår verksamhet är att erbjuda digital kurslitteratur på ett smidigt och lättillgängligt sätt. Detta inkluderar:
+          </p>
+          <ul>
+            <li>Tillgång till ett ständigt växande digitalt bibliotek av kurslitteratur från ledande förlag, anpassat för olika utbildningsprogram.</li>
+            <li>För närvarande erbjuder vi endast kortbetalning eller Klarna. Vi arbetar på att lägga till möjligheten till delbetalning mellan 3 och 6 månader.</li>
+            <li>Omedelbar digital leverans av kurslitteraturen direkt efter bekräftad betalning.</li>
+            <li>Automatiskt genererade kvitton skickas via e-post vid varje köp.</li>
+            <li>Endast auktoriserade användare med ett aktivt medlemskap får tillgång till kurslitteraturen.</li>
+            <li>En användarvänlig PDF-läsare som möjliggör enkel navigering och läsupplevelse.</li>
+            <li>Eftersom vi levererar digitalt innehåll avstår du från ångerrätten enligt lag om distansavtal.</li>
+          </ul>
+          
+          <h5>Användarkonto</h5>
+          <ul>
+            <li>Du ansvarar för att hålla ditt lösenord säkert och för all aktivitet som sker på ditt konto.</li>
+            <li>Flera personer kan dela ett konto, men endast en användare kan vara inloggad åt gången. Vi förbehåller oss rätten att begränsa antal samtidiga inloggningar om vi upptäcker missbruk.</li>
+            <li>Du förbinder dig att ge korrekta och aktuella uppgifter vid registrering.</li>
+            <li>Vi kan komma att begära verifiering av användarens identitet i enlighet med gällande bestämmelser mot penningtvätt och bedrägerier.</li>
+            <li>Vi förbehåller oss rätten att stänga av konton som visar tecken på missbruk, olaglig aktivitet eller brott mot dessa villkor.</li>
+          </ul>
+          
+          <h5>Abonnemang och betalning</h5>
+          <ul>
+            <li>Abonnemanget kostar 35 kr/månad och ger obegränsad tillgång till kurslitteraturen som du har tillgång till.</li>
+            <li>Det finns ingen bindningstid. Du kan när som helst avsluta din prenumeration via "Mitt konto".</li>
+            <li>Tillgång till tjänsterna fortsätter fram till slutet av din betalda period.</li>
+            <li>För att få tillgång till kurslitteraturen i PDF-läsaren krävs ett aktivt medlemskap.</li>
+            <li>Betalning sker automatiskt varje månad via ditt registrerade betalningsmedel.</li>
+            <li>Vid misslyckad betalning kommer vi att försöka genomföra transaktionen igen. Om betalningen fortsätter att misslyckas, kan ditt konto pausas tills betalningen genomförs.</li>
+            <li>Ingen ångerrätt eller återbetalning gäller efter genomfört köp eller abonnemangsbetalning.</li>
+          </ul>
+          
+          <h5>Immateriella rättigheter</h5>
+          <p>Allt innehåll på plattformen, inklusive kurslitteratur och vår PDF-läsare, tillhör Kunskapslitteratur eller dess licensgivare. Det är förbjudet att kopiera, sprida eller modifiera innehållet utan tillstånd.</p>
+          <ul>
+            <li>Du får enbart använda innehållet för personligt, icke-kommersiellt bruk.</li>
+            <li>Anteckningar och markeringar som du gör i böckerna är dina, men ger dig inte några rättigheter till det underliggande materialet.</li>
+            <li>Det är förbjudet att systematiskt ladda ned, skanna eller på annat sätt extrahera innehåll från plattformen.</li>
+            <li>Obehörig spridning av innehåll kan leda till rättsliga påföljder och avstängning från tjänsten.</li>
+          </ul>
+          
+          <h5>Kontaktinformation</h5>
+          <p>Om du har frågor om dessa villkor, kontakta oss på info@kunskapslitteratur.se</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Jag förstår</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Integritetspolicy Modal -->
+  <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="privacyModalLabel">Integritetspolicy</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Stäng"></button>
+        </div>
+        <div class="modal-body">
+          <h4>Integritetspolicy för Kunskapslitteratur</h4>
+          <p>Senast uppdaterad: Januari 2025</p>
+          
+          <h5>Introduktion</h5>
+          <p>På Kunskapslitteratur värnar vi om din integritet. Denna policy förklarar hur vi samlar in, använder och skyddar dina personuppgifter i enlighet med gällande dataskyddslagstiftning, inklusive GDPR.</p>
+          <p>Vi är personuppgiftsansvariga för behandlingen av dina personuppgifter och tar detta ansvar på största allvar. Denna policy uppdateras regelbundet för att återspegla förändringar i vår verksamhet eller lagstiftning.</p>
+          
+          <h5>Vilka uppgifter vi samlar in</h5>
+          <ul>
+            <li><strong>För användare:</strong> Vid registrering samlar vi in e-postadress, lösenord och användarnamn. Användare har även möjlighet att frivilligt ange ytterligare information under 'Mitt konto', såsom för- och efternamn, stad, land och postnummer.</li>
+            <li><strong>För förlag:</strong> Samlas namn, förlagsnamn, telefonnummer, organisationsnummer och e-postadress in för att hantera affärsrelationen och utbetalningar.</li>
+            <li><strong>Betalningsinformation:</strong> Vi lagrar inte fullständiga kreditkortsuppgifter, utan använder säkra tredjepartstjänster för betalningshantering.</li>
+            <li><strong>Användningsdata:</strong> Information om hur du använder vår plattform, inklusive besökta sidor, klickade länkar, lästa böcker, läshistorik och användningsmönster.</li>
+            <li><strong>Teknisk data:</strong> IP-adress, enhetstyp, webbläsarversion, operativsystem och skärmupplösning för att optimera användarupplevelsen.</li>
+          </ul>
+          
+          <h5>Hur vi använder dina uppgifter</h5>
+          <ul>
+            <li>För att tillhandahålla våra tjänster, inklusive åtkomst till kurslitteratur och den integrerade PDF-läsaren.</li>
+            <li>För att hantera betalningar och prenumerationer.</li>
+            <li>För att förbättra och utveckla vår plattform baserat på användarfeedback och analys.</li>
+            <li>För att anpassa innehållet efter dina preferenser och tidigare användning.</li>
+            <li>För att analysera användningsmönster och ta fram statistik i anonymiserad form.</li>
+            <li>För att upptäcka och förhindra bedrägerier eller missbruk av våra tjänster.</li>
+            <li>För att uppfylla våra rättsliga skyldigheter, inklusive bokföringslag och skatterätt.</li>
+            <li>För att skicka viktig information, såsom uppdateringar av användarvillkor eller nyheter om våra tjänster.</li>
+          </ul>
+          
+          <h5>Cookies och liknande tekniker</h5>
+          <p>Kunskapslitteratur använder cookies och liknande tekniker för att förbättra din upplevelse på vår webbplats. Cookies är små textfiler som lagras på din enhet när du besöker vår webbplats.</p>
+          
+          <p>Vi använder följande typer av cookies:</p>
+          <ul>
+            <li><strong>Nödvändiga cookies:</strong> Dessa är avgörande för att vår webbplats ska fungera korrekt. De möjliggör grundläggande funktioner som sidnavigering, säkra områden och inloggning.</li>
+            <li><strong>Sessionscookies:</strong> Vi använder sessionscookies för att hantera din inloggning och för att hålla dig inloggad medan du navigerar på vår webbplats.</li>
+            <li><strong>CSRF-skyddscookies:</strong> Dessa cookies skyddar mot Cross-Site Request Forgery-attacker och säkerställer att förfrågningar till vår server kommer från legitima användare.</li>
+          </ul>
+          
+          <p>När du först besöker vår webbplats kommer du att se ett meddelande som informerar dig om vår användning av cookies och ber om ditt samtycke. Du har följande alternativ:</p>
+          <ul>
+            <li><strong>Acceptera alla:</strong> Genom att klicka på "Acceptera alla" godkänner du vår användning av alla cookies enligt denna policy.</li>
+            <li><strong>Endast nödvändiga:</strong> Genom att klicka på "Endast nödvändiga" godkänner du endast användningen av cookies som är nödvändiga för webbplatsens funktion.</li>
+            <li><strong>Mer information:</strong> Genom att klicka på "Mer information" kommer du till denna integritetspolicy där du kan läsa mer om hur vi använder cookies.</li>
+          </ul>
+          
+          <h5>Dina rättigheter enligt GDPR</h5>
+          <ul>
+            <li><strong>Rätt till tillgång:</strong> Du har rätt att begära en kopia av de personuppgifter vi lagrar om dig.</li>
+            <li><strong>Rätt till rättelse:</strong> Du kan be oss rätta felaktiga eller ofullständiga uppgifter via ditt konto eller genom att kontakta oss.</li>
+            <li><strong>Rätt till radering:</strong> Du kan begära att vi raderar dina uppgifter, förutsatt att det inte strider mot juridiska krav.</li>
+            <li><strong>Rätt till begränsning av behandling:</strong> Du kan begära att vi begränsar behandlingen av dina personuppgifter under vissa omständigheter.</li>
+            <li><strong>Rätt att göra invändningar:</strong> Du har rätt att invända mot behandling av dina personuppgifter som baseras på vårt berättigade intresse.</li>
+          </ul>
+          
+          <h5>Kontaktinformation</h5>
+          <p>Om du har frågor om vår integritetspolicy, kontakta oss på info@kunskapslitteratur.se</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Jag förstår</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bootstrap Bundle med Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const cartItemsContainer = document.getElementById('cart-items');
+      const cartTotalElement = document.getElementById('cart-total');
+      const checkoutButton = document.getElementById('checkout-button');
+      const emptyCartMessage = document.getElementById('empty-cart-message');
+      
+      // Initiera Stripe med din Publishable Key
+      let stripe = null;
+      try {
+        if (typeof Stripe === 'function') {
+          stripe = Stripe('pk_test_51OtVuQAQlWNEJwj3XVQMLIYIDI33v3yJQO80NfU5PjxXyfazSBTL0D2mJh6LKhQ7ibuIvGHWRU0ViJ9vXS5FgSg100o03DP4Im');
+          window.stripeLoaded = true;
+        }
+      } catch (error) {
+        console.error('Fel vid initiering av Stripe:', error);
+        window.stripeLoaded = false;
+        showStripeBlockedMessage();
+      }
+      
+      let cart = JSON.parse(localStorage.getItem('cart')) || {};
+  
+      // Kolla membership
+      async function checkMembershipStatus() {
+        try {
+          const response = await fetch('/api/check-membership');
+          const data = await response.json();
+          return data.membership_active;
+        } catch (error) {
+          console.error('Fel vid kontroll av medlemskap:', error);
+          return false;
+        }
+      }
+  
+      // Rendera varukorg
+      async function renderCart() {
+        cartItemsContainer.innerHTML = '';
+        let total = 0;
+  
+        try {
+          const membershipActive = await checkMembershipStatus();
+    
+          // Om användaren inte har medlemskap aktivt, och vi inte redan lagt 'membership' i localStorage
+          if (!membershipActive && !cart['membership']) {
+            cart['membership'] = {
+              title: 'Medlemskap (35 kr/mån)',
+              price: 35,
+              cover_image: 'bilder/membership_icon.png',
+            };
+            localStorage.setItem('cart', JSON.stringify(cart));
+          }
+    
+          // Visa tomt varukorgsmeddelande om inga varor
+          if (Object.keys(cart).length === 0) {
+            emptyCartMessage.classList.remove('d-none');
+            checkoutButton.disabled = true;
+            return;
+          } else {
+            emptyCartMessage.classList.add('d-none');
+            checkoutButton.disabled = false;
+          }
+    
+          // Loopa över varorna
+          for (const [bookId, item] of Object.entries(cart)) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>
+                <img
+                  src="/static/${item.cover_image}"
+                  alt="Bokomslag"
+                  class="product-img"
+                >
+              </td>
+              <td>
+                <div class="fw-bold">${item.title}</div>
+                ${item.author ? `<small class="text-muted">${item.author}</small>` : ''}
+              </td>
+              <td class="fw-bold">${item.price.toFixed(2)} kr</td>
+              <td class="text-center">
+                <button class="btn btn-sm btn-danger remove-item" data-book-id="${bookId}">Ta bort</button>
+              </td>
+            `;
+            cartItemsContainer.appendChild(row);
+            total += item.price;
+          }
+    
+          cartTotalElement.textContent = `${total.toFixed(2)} kr`;
+        } catch (error) {
+          console.error('Fel vid rendering av varukorg:', error);
+          // Visa felmeddelande
+          cartItemsContainer.innerHTML = `
+            <tr>
+              <td colspan="4" class="text-center text-danger">
+                <i class="fas fa-exclamation-triangle"></i>
+                Ett fel uppstod. Försök igen senare.
+              </td>
+            </tr>
+          `;
+        }
+      }
+  
+      // Ta bort artikel
+      cartItemsContainer.addEventListener('click', function (event) {
+        const removeButton = event.target.closest('.remove-item');
+        if (removeButton) {
+          const bookId = removeButton.getAttribute('data-book-id');
+          
+          // Animera borttagning
+          const row = removeButton.closest('tr');
+          row.style.transition = 'opacity 0.3s, transform 0.3s';
+          row.style.opacity = '0';
+          row.style.transform = 'translateX(20px)';
+          
+          setTimeout(() => {
+            delete cart[bookId];
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCart();
+          }, 300);
+        }
+      });
+  
+      // Klick "Slutför köp"
+      checkoutButton.addEventListener('click', async function () {
+        try {
+          // Kontrollera om Stripe är tillgängligt först
+          if (!window.stripeLoaded || !stripe) {
+            showStripeBlockedMessage();
+            return;
+          }
+          
+          const membershipActive = await checkMembershipStatus();
+          const cartData = Object.values(JSON.parse(localStorage.getItem('cart')) || {});
+
+          if (cartData.length === 0) {
+            alert('Varukorgen är tom!');
+            return;
+          }
+
+          // Disable button and show loading animation
+          checkoutButton.disabled = true;
+          checkoutButton.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Behandlar...`;
+
+          // Choose the correct endpoint
+          let endpoint = membershipActive ? '/create-checkout-session-books' : '/create-checkout-session-membership';
+          let bodyData = membershipActive ? { books: cartData } : {};
+
+          const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+          
+          try {
+            const response = await fetch(endpoint, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+              },
+              body: JSON.stringify(bodyData),
+            });
+            
+            if (!response.ok) {
+              throw new Error(`Server svarade med status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            if (data.sessionId) {
+              // Spara session ID i localStorage (för den händelse att omdirigeringen blockeras)
+              localStorage.setItem('stripe_session_id', data.sessionId);
+              
+              const result = await stripe.redirectToCheckout({ sessionId: data.sessionId });
+              
+              if (result.error) {
+                throw new Error(result.error.message);
+              }
+            } else if (data.error) {
+              throw new Error(data.error);
+            }
+          } catch (fetchError) {
+            console.error('Nätverksfel:', fetchError);
+            alert(`Betalningsfel: ${fetchError.message || 'Kunde inte ansluta till betalningsservern.'}`);
+            
+            checkoutButton.disabled = false;
+            checkoutButton.innerHTML = '<i class="fas fa-lock me-2"></i> Slutför köp';
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          checkoutButton.disabled = false;
+          checkoutButton.innerHTML = '<i class="fas fa-lock me-2"></i> Slutför köp';
+          
+          // Visa användarvänligt felmeddelande
+          alert('Ett fel uppstod vid betalning. Vänligen försök igen senare.');
+        }
+      });
+
+      // Vid sidladdning
+      renderCart();
+      
+      // Ta bort tidigare kontroll och lägg till mer robust kontroll
+      // som kontrollerar faktisk funktion istället för bara variabeln
+      setTimeout(function() {
+        if (!window.stripeLoaded) {
+          showStripeBlockedMessage();
+        }
+      }, 1500);
+    });
+  </script>
+  
+<script src="{{ url_for('static', filename='cookie-consent.js') }}" defer></script>
+</body>
+</html>

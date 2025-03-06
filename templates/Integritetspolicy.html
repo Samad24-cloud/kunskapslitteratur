@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="sv">
+    <head>
+        <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Integritetspolicy - Kunskapslitteratur</title>
+    
+        <!-- Favicon -->
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    </head>
+<body>
+    <nav class="navbar navbar-expand-lg bg-white fixed-top shadow">
+        <div class="container">
+          <a class="navbar-brand" href="{{ url_for('home') }}">
+            <img src="{{ url_for('static', filename='bilder/logo.png') }}" alt="Kunskapslitteratur Logo" style="height: 60px;" />
+          </a>
+          <button 
+            class="navbar-toggler" 
+            type="button" 
+            data-bs-toggle="collapse" 
+            data-bs-target="#mainNavbar" 
+            aria-controls="mainNavbar" 
+            aria-expanded="false" 
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav mx-auto gap-lg-5">
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('home') }}">Hem</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('omoss') }}">Om oss</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('hallbarhet') }}">Hållbarhet</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('kontaktaoss') }}">Kontakta oss</a>
+              </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-primary" href="{{ url_for('loggain') }}">
+                      <i class="bi bi-person me-2"></i>
+                      Logga in
+                    </a>
+                  </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+    <section class="privacy-section py-5 mt-5">
+        <div class="container mt-5">
+            <style>
+                /* Färgvariabler */
+                :root {
+                    --primary-color: #29231d;
+                    --primary-light: rgba(41, 35, 29, 0.05);
+                    --primary-border: rgba(41, 35, 29, 0.2);
+                    --light-bg: #f8f9fa;
+                }
+                
+                /* Huvudinnehåll */
+                .privacy-section {
+                    padding-top: 60px;
+                    padding-bottom: 60px;
+                }
+                
+                /* Rubriker */
+                .privacy-header {
+                    text-align: center;
+                    margin-bottom: 3rem;
+                    position: relative;
+                }
+                
+                .privacy-header:after {
+                    content: '';
+                    position: absolute;
+                    width: 80px;
+                    height: 3px;
+                    background-color: var(--primary-color);
+                    bottom: -15px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                }
+                
+                /* Sektioner */
+                .privacy-card {
+                    background-color: white;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+                    padding: 2rem;
+                    margin-bottom: 2rem;
+                    border-left: 4px solid var(--primary-color);
+                }
+                
+                .privacy-card h3 {
+                    color: var(--primary-color);
+                    margin-bottom: 1rem;
+                    font-weight: 600;
+                    position: relative;
+                    display: inline-block;
+                }
+                
+                .privacy-card ul {
+                    padding-left: 1.5rem;
+                }
+                
+                .privacy-card ul li {
+                    margin-bottom: 0.5rem;
+                }
+                
+                .privacy-card strong {
+                    color: var(--primary-color);
+                }
+                
+                /* Länkar */
+                .privacy-link {
+                    color: var(--primary-color);
+                    font-weight: 600;
+                    text-decoration: none;
+                    transition: color 0.3s ease;
+                }
+                
+                .privacy-link:hover {
+                    text-decoration: underline;
+                }
+                
+                /* Uppdateringsdatum */
+                .update-date {
+                    display: inline-block;
+                    background-color: var(--primary-light);
+                    color: var(--primary-color);
+                    padding: 0.5rem 1rem;
+                    border-radius: 30px;
+                    font-size: 0.9rem;
+                    margin-bottom: 2rem;
+                }
+            </style>
+            
+            <div class="privacy-header">
+                <h1>Integritetspolicy</h1>
+                <p class="lead">Så här hanterar vi dina personuppgifter</p>
+                <span class="update-date">
+                    <i class="bi bi-calendar-check me-2"></i>Uppdaterad: Januari 2025
+                </span>
+            </div>
+
+            <div class="privacy-card">
+                <h3><i class="bi bi-info-circle me-2"></i>Introduktion</h3>
+                <p>På Kunskapslitteratur värnar vi om din integritet. Denna policy förklarar hur vi samlar in, använder och skyddar dina personuppgifter i enlighet med gällande dataskyddslagstiftning, inklusive GDPR.</p>
+                <p>Vi är personuppgiftsansvariga för behandlingen av dina personuppgifter och tar detta ansvar på största allvar. Denna policy uppdateras regelbundet för att återspegla förändringar i vår verksamhet eller lagstiftning.</p>
+            </div>
+
+            <div class="privacy-card">
+                <h3><i class="bi bi-database me-2"></i>Vilka uppgifter vi samlar in</h3>
+                <ul>
+                    <li><strong>För användare:</strong> Vid registrering samlar vi in e-postadress, lösenord och användarnamn. Användare har även möjlighet att frivilligt ange ytterligare information under 'Mitt konto', såsom för- och efternamn, stad, land och postnummer.</li>
+                    <li><strong>För förlag:</strong> Samlas namn, förlagsnamn, telefonnummer, organisationsnummer och e-postadress in för att hantera affärsrelationen och utbetalningar.</li>
+                    <li><strong>Betalningsinformation:</strong> Vi lagrar inte fullständiga kreditkortsuppgifter, utan använder säkra tredjepartstjänster för betalningshantering.</li>
+                    <li><strong>Användningsdata:</strong> Information om hur du använder vår plattform, inklusive besökta sidor, klickade länkar, lästa böcker, läshistorik och användningsmönster.</li>
+                    <li><strong>Teknisk data:</strong> IP-adress, enhetstyp, webbläsarversion, operativsystem och skärmupplösning för att optimera användarupplevelsen.</li>
+                </ul>
+            </div>
+
+            <div class="privacy-card">
+                <h3><i class="bi bi-gear me-2"></i>Hur vi använder dina uppgifter</h3>
+                <ul>
+                    <li>För att tillhandahålla våra tjänster, inklusive åtkomst till kurslitteratur och den integrerade PDF-läsaren.</li>
+                    <li>För att hantera betalningar och prenumerationer.</li>
+                    <li>För att förbättra och utveckla vår plattform baserat på användarfeedback och analys.</li>
+                    <li>För att anpassa innehållet efter dina preferenser och tidigare användning.</li>
+                    <li>För att analysera användningsmönster och ta fram statistik i anonymiserad form.</li>
+                    <li>För att upptäcka och förhindra bedrägerier eller missbruk av våra tjänster.</li>
+                    <li>För att uppfylla våra rättsliga skyldigheter, inklusive bokföringslag och skatterätt.</li>
+                    <li>För att skicka viktig information, såsom uppdateringar av användarvillkor eller nyheter om våra tjänster.</li>
+                </ul>
+                <p>Vi använder endast dina uppgifter för de ändamål de samlades in för, såvida inte ett nytt ändamål är förenligt med det ursprungliga eller vi har ditt samtycke.</p>
+            </div>
+
+            <div class="privacy-card">
+                <h3><i class="bi bi-hdd-rack me-2"></i>Lagring och skydd av uppgifter</h3>
+                <p>All data lagras krypterat på servrar inom EU för att säkerställa efterlevnad av GDPR. Alla våra databehandlingspartner följer GDPR och garanterar säker lagring av dina uppgifter.</p>
+                <ul>
+                    <li>Vi använder branschstandardkryptering (TLS/SSL) för alla dataöverföringar.</li>
+                    <li>Känsliga personuppgifter lagras i krypterad form i våra databaser.</li>
+                    <li>Vi genomför regelbundna säkerhetstester och sårbarhetsanalyser av våra system.</li>
+                    <li>Vi har implementerat strikta interna rutiner för dataåtkomst, där endast behörig personal har tillgång till personuppgifter.</li>
+                    <li>Vi använder två-faktorsautentisering för alla administrativa konton.</li>
+                </ul>
+            </div>
+
+            <div class="privacy-card">
+                <h3><i class="bi bi-cookie me-2"></i>Cookies och liknande tekniker</h3>
+                <p>Kunskapslitteratur använder cookies och liknande tekniker för att förbättra din upplevelse på vår webbplats. Cookies är små textfiler som lagras på din enhet när du besöker vår webbplats.</p>
+                
+                <h4>Vilka typer av cookies vi använder:</h4>
+                <ul>
+                    <li><strong>Nödvändiga cookies:</strong> Dessa är avgörande för att vår webbplats ska fungera korrekt. De möjliggör grundläggande funktioner som sidnavigering, säkra områden och inloggning. Webbplatsen kan inte fungera korrekt utan dessa cookies.</li>
+                    <li><strong>Sessionscookies:</strong> Vi använder sessionscookies för att hantera din inloggning och för att hålla dig inloggad medan du navigerar på vår webbplats. Dessa cookies raderas när du stänger din webbläsare.</li>
+                    <li><strong>CSRF-skyddscookies:</strong> Dessa cookies skyddar mot Cross-Site Request Forgery-attacker och säkerställer att förfrågningar till vår server kommer från legitima användare.</li>
+                </ul>
+                
+                <h4>Hur vi använder cookies:</h4>
+                <ul>
+                    <li>För att hantera din inloggningssession och hålla dig inloggad mellan sidvisningar.</li>
+                    <li>För att skydda din säkerhet genom att förhindra obehörig åtkomst till ditt konto.</li>
+                    <li>För att komma ihåg dina inställningar och preferenser på vår webbplats.</li>
+                    <li>För att säkerställa att vår webbplats fungerar korrekt och effektivt.</li>
+                </ul>
+                
+                <h4>Hantera cookies:</h4>
+                <p>Du kan hantera eller blockera cookies genom att ändra inställningarna i din webbläsare. Observera dock att om du blockerar vissa cookies kan det påverka funktionaliteten på vår webbplats och du kanske inte kan använda alla våra tjänster.</p>
+                
+                <p>När du först besöker vår webbplats kommer du att se ett meddelande som informerar dig om vår användning av cookies och ber om ditt samtycke. Du har följande alternativ:</p>
+                
+                <ul>
+                    <li><strong>Acceptera alla:</strong> Genom att klicka på "Acceptera alla" godkänner du vår användning av alla cookies enligt denna policy.</li>
+                    <li><strong>Endast nödvändiga:</strong> Genom att klicka på "Endast nödvändiga" godkänner du endast användningen av cookies som är nödvändiga för webbplatsens funktion. Detta inkluderar cookies för inloggning, sessionshantering och CSRF-skydd.</li>
+                    <li><strong>Mer information:</strong> Genom att klicka på "Mer information" kommer du till denna integritetspolicy där du kan läsa mer om hur vi använder cookies.</li>
+                </ul>
+                
+                <p>Du kan när som helst ändra dina cookie-inställningar genom att rensa din webbläsares cookies och besöka vår webbplats igen.</p>
+            </div>
+
+            <div class="privacy-card">
+                <h3><i class="bi bi-clock-history me-2"></i>Hur länge vi sparar dina uppgifter</h3>
+                <p>Vi sparar dina personuppgifter så länge det är nödvändigt för att uppfylla de ändamål för vilka de samlades in, inklusive juridiska och administrativa krav. När data inte längre behövs anonymiseras eller raderas de säkert.</p>
+                <ul>
+                    <li><strong>Kontouppgifter:</strong> Sparas så länge du har ett aktivt konto hos oss och upp till 12 månader efter att kontot avslutats.</li>
+                    <li><strong>Betalningsuppgifter:</strong> Sparas enligt bokföringslagen i 7 år.</li>
+                    <li><strong>Användningsdata:</strong> Anonymiseras efter 24 månader.</li>
+                    <li><strong>Kommunikation:</strong> Sparas i upp till 36 månader för att kunna tillhandahålla kundservice och lösa eventuella tvister.</li>
+                </ul>
+            </div>
+
+            <div class="privacy-card">
+                <h3><i class="bi bi-shield-lock me-2"></i>Hur vi skyddar dina uppgifter</h3>
+                <p>Vi använder avancerade säkerhetsåtgärder för att skydda dina personuppgifter från obehörig åtkomst, ändring eller spridning. Alla betalningsuppgifter krypteras och lagras i enlighet med industristandard.</p>
+                <ul>
+                    <li>Vi har implementerat tekniska skyddsåtgärder som brandväggar, intrångsdetektering och kontinuerlig övervakning.</li>
+                    <li>Vi genomför regelbundna utbildningar för vår personal i dataskydd och informationssäkerhet.</li>
+                    <li>Vi har en incidenthanteringsprocess för att snabbt kunna agera vid misstänkta eller bekräftade dataintrång.</li>
+                    <li>Om ett dataintrång skulle inträffa som påverkar dina personuppgifter, kommer vi att informera dig och relevanta myndigheter inom 72 timmar i enlighet med GDPR.</li>
+                </ul>
+            </div>
+
+            <div class="privacy-card">
+                <h3><i class="bi bi-person-check me-2"></i>Dina rättigheter enligt GDPR</h3>
+                <ul>
+                    <li><strong>Rätt till tillgång:</strong> Du har rätt att begära en kopia av de personuppgifter vi lagrar om dig. Vi tillhandahåller detta i ett strukturerat, allmänt använt och maskinläsbart format.</li>
+                    <li><strong>Rätt till rättelse:</strong> Du kan be oss rätta felaktiga eller ofullständiga uppgifter via ditt konto eller genom att kontakta oss.</li>
+                    <li><strong>Rätt till radering ("rätten att bli bortglömd"):</strong> Du kan begära att vi raderar dina uppgifter, förutsatt att det inte strider mot juridiska krav. Detta innebär att vi raderar all data som identifierar dig personligen.</li>
+                    <li><strong>Rätt till begränsning av behandling:</strong> Du kan begära att vi begränsar behandlingen av dina personuppgifter under vissa omständigheter.</li>
+                    <li><strong>Rätt att göra invändningar:</strong> Du har rätt att invända mot behandling av dina personuppgifter som baseras på vårt berättigade intresse.</li>
+                    <li><strong>Rätt till dataportabilitet:</strong> Du kan begära att få dina uppgifter överförda till en annan tjänsteleverantör i ett maskinläsbart format.</li>
+                    <li><strong>Rätt att inte bli föremål för automatiserat beslutsfattande:</strong> Vi använder inte automatiserat beslutsfattande eller profilering som har rättsliga följder för dig.</li>
+                </ul>
+                <p class="mt-3">För att utöva dina rättigheter, kontakta oss via <strong>info@kunskapslitteratur.se</strong>. Vi kommer att behandla din begäran inom 30 dagar och kan behöva verifiera din identitet innan vi uppfyller begäran.</p>
+            </div>
+
+            <div class="privacy-card">
+                <h3><i class="bi bi-share me-2"></i>Delning av uppgifter</h3>
+                <p>Vi delar endast dina personuppgifter med Stripe för att genomföra betalningar. Ingen annan tredje part får tillgång till individuella användardata, såvida det inte krävs enligt lag. Vi säljer aldrig dina uppgifter till tredje parter.
+                    Försäljningsdata kan delas med bokförlag i anonymiserad och aggregerad form, utan koppling till enskilda användare.</p>
+                <ul>
+                    <li><strong>Tjänsteleverantörer:</strong> Vi använder Stripe för betalningshantering, som endast får den information som är nödvändig för att genomföra betalningar.</li>
+                    <li><strong>Lagstadgade krav:</strong> Vi kan komma att lämna ut information om det krävs enligt lag, domstolsbeslut eller för att skydda våra rättigheter eller andras säkerhet.</li>
+                    <li><strong>Överföringar inom EU/EES:</strong> Alla dataöverföringar sker inom EU/EES eller till länder med adekvat dataskydd enligt EU-kommissionens beslut.</li>
+                </ul>
+            </div>
+
+            <div class="privacy-card">
+                <h3><i class="bi bi-pencil-square me-2"></i>Ändringar i integritetspolicyn</h3>
+                <p>Vi kan komma att uppdatera denna policy vid behov. Alla ändringar publiceras på denna sida och träder i kraft omedelbart.</p>
+                <ul>
+                    <li>Vid väsentliga ändringar kommer vi att meddela dig via e-post innan ändringarna träder i kraft.</li>
+                    <li>Mindre uppdateringar kan ske utan särskilt meddelande.</li>
+                    <li>Vi uppmuntrar dig att regelbundet granska denna policy för att hålla dig informerad om hur vi skyddar dina personuppgifter.</li>
+                </ul>
+            </div>
+
+            <div class="privacy-card">
+                <h3><i class="bi bi-envelope me-2"></i>Kontakt</h3>
+                <p>Om du har frågor om denna integritetspolicy eller vill utöva dina rättigheter, vänligen kontakta oss via <a href="{{ url_for('kontaktaoss') }}" class="privacy-link">Kontakta oss</a> eller direkt på <strong>info@kunskapslitteratur.se</strong>.</p>
+                <p>Om du anser att vi inte hanterar dina personuppgifter korrekt har du rätt att lämna klagomål till <a href="https://www.imy.se/" target="_blank" class="privacy-link">Integritetsskyddsmyndigheten (IMY)</a>, som är tillsynsmyndighet för dataskyddsfrågor i Sverige.</p>
+            </div>
+        </div>
+    </section>
+
+<!-- Footer -->
+<footer class="footer py-5">
+    <div class="container">
+        <div class="row align-items-start text-center text-lg-start">
+            <!-- Left: Logo och Subheader -->
+            <div class="col-lg-5 text-center mb-4 mb-lg-0">
+                <a href="{{ url_for('home') }}">
+                    <img src="{{ url_for('static', filename='bilder/logo.png') }}" alt="Kunskapslitteratur Logo" class="img-fluid mb-3" style="height: 123px;">
+                </a>
+                <p class="text-muted mb-0">Din partner för prisvärd, digital och hållbar kurslitteratur.</p>
+            </div>
+
+            <!-- Right: Länkar -->
+            <div class="col-lg-7">
+                <div class="row justify-content-center justify-content-lg-start">
+                    <!-- Column 1 -->
+                    <div class="col-12 col-sm-4 px-4 mb-4 mb-sm-0">
+                        <h5 class="mb-3">Länkar</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="{{ url_for('home') }}" class="footer-link">Hem</a></li>
+                            <li><a href="{{ url_for('omoss') }}" class="footer-link">Om oss</a></li>
+                            <li><a href="{{ url_for('hallbarhet') }}" class="footer-link">Hållbarhet</a></li>
+                            <li><a href="{{ url_for('kontaktaoss') }}" class="footer-link">Kontakta oss</a></li>
+                        </ul>
+                    </div>
+                    <!-- Column 2 -->
+                    <div class="col-12 col-sm-4 px-4 mb-4 mb-sm-0">
+                        <h5 class="mb-3">Förlag</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="{{ url_for('kontakt') }}" class="footer-link">Kontakt</a></li>
+                            <li><a href="{{ url_for('support') }}" class="footer-link">Support</a></li>
+                            <li><a href="{{ url_for('blipartner') }}" class="footer-link">Bli Partner</a></li>
+                            <li><a href="{{ url_for('forlagsvilkor') }}" class="footer-link">Förlagsvilkor</a></li>
+                        </ul>
+                    </div>
+                    <!-- Column 3 -->
+                    <div class="col-12 col-sm-4 px-4">
+                        <h5 class="mb-3">Hjälp & Info</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="{{ url_for('faq') }}" class="footer-link">Vanliga frågor</a></li>
+                            <li><a href="{{ url_for('anvandarvilkor') }}" class="footer-link">Användarvillkor</a></li>
+                            <li><a href="{{ url_for('Integritetspolicy') }}" class="footer-link">Integritetspolicy</a></li>
+                            <li><a href="{{ url_for('karriar') }}" class="footer-link">Karriär</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Line och Copyright -->
+        <hr class="footer-line">
+        <div class="text-center mt-3">
+            <p class="text-muted mb-0">© 2025 Kunskapslitteratur. Alla rättigheter förbehållna.</p>
+        </div>
+    </div>
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='cookie-consent.js') }}" defer></script>
+</body>
+</html>

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <!-- Favicon och CSS-länkar (oförändrade) -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glömt lösenord - Kunskapslitteratur</title>
+    <style>
+        body {
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            padding-top: 80px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .page-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+        
+        .form-container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 450px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-container:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-title {
+            color: #29231d;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .form-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background-color: #29231d;
+            border-radius: 3px;
+        }
+        
+        .input-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            z-index: 10;
+        }
+        
+        .form-control {
+            padding-left: 45px;
+            height: 50px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #29231d;
+            box-shadow: 0 0 0 0.25rem rgba(41, 35, 29, 0.25);
+        }
+        
+        .btn-primary {
+            background-color: #29231d;
+            border-color: #29231d;
+            height: 50px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: #1e1915;
+            border-color: #1e1915;
+            transform: translateY(-2px);
+        }
+        
+        .alert {
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .invalid-feedback {
+            display: none;
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        .is-invalid ~ .invalid-feedback {
+            display: block;
+        }
+        
+        .is-invalid {
+            border-color: #dc3545 !important;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 1.5rem;
+            color: #29231d;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .back-link:hover {
+            color: #1e1915;
+            text-decoration: underline;
+        }
+        
+        .spinner-border {
+            width: 1.2rem;
+            height: 1.2rem;
+            border-width: 0.2em;
+        }
+    </style>
+    <script>
+        // CSRF-token hantering
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        const csrfToken = getCookie("csrf_token");
+    </script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg bg-white fixed-top shadow">
+        <div class="container">
+          <a class="navbar-brand" href="{{ url_for('home') }}">
+            <img src="{{ url_for('static', filename='bilder/logo.png') }}" alt="Kunskapslitteratur Logo" style="height: 60px;" />
+          </a>
+          <button 
+            class="navbar-toggler" 
+            type="button" 
+            data-bs-toggle="collapse" 
+            data-bs-target="#mainNavbar" 
+            aria-controls="mainNavbar" 
+            aria-expanded="false" 
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav mx-auto gap-lg-5">
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('home') }}">Hem</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('omoss') }}">Om oss</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('hallbarhet') }}">Hållbarhet</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('kontaktaoss') }}">Kontakta oss</a>
+              </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-primary" href="{{ url_for('loggain') }}">
+                      <i class="bi bi-person me-2"></i>
+                      Logga in
+                    </a>
+                </li>
+            </ul>
+          </div>
+        </div>
+    </nav>
+
+    <div class="page-content">
+        <div class="form-container">
+            <h2 class="form-title text-center">Glömt ditt lösenord?</h2>
+            <p class="text-center text-muted mb-4">Ange din e-postadress nedan så skickar vi en länk för att återställa ditt lösenord.</p>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, msg in messages %}
+                        <div class="alert alert-{{ category }} text-center" role="alert">
+                            {{ msg }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Sektion för meddelanden -->
+            <div id="message-container" class="alert alert-danger d-none" role="alert"></div>
+            
+            <!-- Formulär -->
+            <form id="reset-form" action="/send-reset-link" method="POST">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                
+                <div class="input-group">
+                    <i class="bi bi-envelope input-icon"></i>
+                    <input 
+                        type="email" 
+                        class="form-control" 
+                        id="email" 
+                        name="email" 
+                        placeholder="Ange din e-postadress" 
+                        required
+                        autocomplete="email">
+                    <div class="invalid-feedback">
+                        Vänligen ange en giltig e-postadress.
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary w-100">
+                    <span id="submit-text">Skicka återställningslänk</span>
+                    <span id="spinner" class="spinner-border spinner-border-sm d-none ms-2" role="status" aria-hidden="true"></span>
+                </button>
+                
+                <div class="text-center">
+                    <a href="{{ url_for('loggain') }}" class="back-link">
+                        <i class="bi bi-arrow-left me-1"></i> Tillbaka till inloggning
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    
+    <!-- JavaScript för att hantera formulär och visa meddelande -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const resetForm = document.getElementById('reset-form');
+            const emailInput = document.getElementById('email');
+            const messageContainer = document.getElementById('message-container');
+            const submitButton = resetForm.querySelector('button[type="submit"]');
+            const submitText = document.getElementById('submit-text');
+            const spinner = document.getElementById('spinner');
+            
+            // Validera e-post när användaren skriver
+            emailInput.addEventListener('input', function() {
+                validateEmailField();
+            });
+            
+            // Validera e-post när fältet förlorar fokus
+            emailInput.addEventListener('blur', function() {
+                validateEmailField();
+            });
+            
+            // Validera formulär vid inlämning
+            resetForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                // Validera e-post
+                if (!validateEmailField()) {
+                    return;
+                }
+                
+                // Visa laddningsindikator
+                submitButton.disabled = true;
+                submitText.textContent = 'Skickar...';
+                spinner.classList.remove('d-none');
+                
+                // Skicka formuläret efter en kort fördröjning
+                setTimeout(() => {
+                    resetForm.submit();
+                }, 300);
+            });
+            
+            // Funktion för att validera e-postfältet
+            function validateEmailField() {
+                const email = emailInput.value.trim();
+                
+                if (!email) {
+                    showFieldError(emailInput, 'E-postadress krävs');
+                    return false;
+                }
+                
+                if (!validateEmail(email)) {
+                    showFieldError(emailInput, 'Ogiltig e-postadress. Kontrollera formatet (exempel: namn@domän.se)');
+                    return false;
+                }
+                
+                // E-postadressen är giltig
+                emailInput.classList.remove('is-invalid');
+                emailInput.classList.add('is-valid');
+                return true;
+            }
+            
+            // Funktion för att visa fältfel
+            function showFieldError(field, message) {
+                field.classList.add('is-invalid');
+                field.classList.remove('is-valid');
+                
+                const feedbackElement = field.nextElementSibling;
+                if (feedbackElement && feedbackElement.classList.contains('invalid-feedback')) {
+                    feedbackElement.textContent = message;
+                }
+            }
+            
+            // Funktion för att visa meddelande
+            function showMessage(text, type) {
+                messageContainer.innerHTML = '';
+                messageContainer.classList.remove('d-none', 'alert-success', 'alert-danger', 'alert-warning');
+                messageContainer.classList.add(`alert-${type}`);
+                messageContainer.textContent = text;
+            }
+            
+            // Funktion för att validera e-postformat
+            function validateEmail(email) {
+                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return regex.test(email);
+            }
+        });
+    </script>
+<script src="{{ url_for('static', filename='cookie-consent.js') }}" defer></script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+            <!-- Favicon -->
+            <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+            <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+            <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lösenord uppdaterat - Kunskapslitteratur</title>
+    <style>
+        body {
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+        
+        .success-container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            width: 100%;
+            max-width: 450px;
+            transition: all 0.3s ease;
+        }
+        
+        .success-container:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .success-title {
+            color: #29231d;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .success-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background-color: #29231d;
+            border-radius: 3px;
+        }
+        
+        .success-icon {
+            font-size: 4rem;
+            color: #198754;
+            margin-bottom: 1.5rem;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .success-message {
+            color: #6c757d;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .btn-primary {
+            background-color: #29231d;
+            border-color: #29231d;
+            height: 50px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.75rem 2rem;
+        }
+        
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: #1e1915;
+            border-color: #1e1915;
+            transform: translateY(-2px);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container fade-in">
+        <div class="success-icon">
+            <i class="bi bi-check-circle"></i>
+        </div>
+        <h2 class="success-title">Lösenordet uppdaterat!</h2>
+        <p class="success-message">Ditt lösenord har uppdaterats framgångsrikt. Du kan nu logga in med ditt nya lösenord.</p>
+        <a href="{{ url_for('loggain') }}" class="btn btn-primary">
+            <i class="bi bi-box-arrow-in-right me-2"></i>Gå till inloggning
+        </a>
+    </div>
+<script src="{{ url_for('static', filename='cookie-consent.js') }}" defer></script>
+</body>
+</html>

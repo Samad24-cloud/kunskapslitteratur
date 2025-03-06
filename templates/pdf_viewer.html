@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <title>{{ book_title }} - Kunskapslitteratur</title>
+    
+    <!-- CSRF-token för API-anrop -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    
+    <!-- Meta-tagg för användar-ID (för WebSocket-anslutning) -->
+    <meta name="user-id" content="{{ user_id }}">
+    
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        .header {
+            height: 48px;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .viewer-container {
+            height: calc(100% - 48px);
+            width: 100%;
+            position: relative;
+        }
+        
+        #pdf-viewer {
+            height: 100%;
+            width: 100%;
+        }
+        
+        .back-button {
+            text-decoration: none;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.85rem;
+            padding: 6px 10px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .back-button:hover {
+            color: var(--accent);
+            background-color: rgba(0,0,0,0.03);
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #555;
+            padding: 6px 10px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+        }
+        
+        .theme-toggle i {
+            font-size: 1.1rem;
+        }
+        
+        .theme-toggle:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+        
+        .dark-mode .header {
+            background-color: #2d2d2d;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .dark-mode .back-button,
+        .dark-mode .theme-toggle {
+            color: #e0e0e0;
+        }
+        
+        .dark-mode .back-button:hover,
+        .dark-mode .theme-toggle:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        /* Laddningsindikator */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.3s ease;
+        }
+        
+        .dark-mode .loading-overlay {
+            background-color: rgba(45, 45, 45, 0.9);
+        }
+        
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            color: #4361ee;
+        }
+        
+        .loading-text {
+            margin-top: 1rem;
+            font-size: 1rem;
+            color: #333;
+        }
+        
+        .dark-mode .loading-text {
+            color: #e0e0e0;
+        }
+        
+        .progress-container {
+            width: 80%;
+            max-width: 300px;
+            margin-top: 1rem;
+        }
+        
+        .progress {
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            background-color: #4361ee;
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            font-size: 0.8rem;
+            color: #666;
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+        
+        .dark-mode .progress-text {
+            color: #aaa;
+        }
+        
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        /* Stilar för fördröjt meddelande */
+        #delayed-loading-message {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            max-width: 450px;
+            width: 90%;
+            margin: 1.5rem auto 0;
+            background-color: rgba(0,0,0,0.05);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 12px 20px;
+        }
+        
+        #delayed-loading-message.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .delayed-message-text {
+            color: #495057; 
+            font-weight: 500; 
+            font-size: 0.95rem;
+        }
+        
+        .dark-mode #delayed-loading-message {
+            background-color: rgba(40, 44, 52, 0.85);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .dark-mode .delayed-message-text {
+            color: #e0e0e0;
+        }
+        
+        .dark-mode .bi-hourglass-split {
+            color: #ffc107 !important;
+        }
+        
+        .bi-hourglass-split {
+            font-size: 1.1rem;
+        }
+        
+        /* Responsive stilar för laddningsmeddelanden */
+        @media (max-width: 576px) {
+            .loading-text {
+                font-size: 0.9rem;
+            }
+            
+            .progress-container {
+                width: 90%;
+            }
+            
+            #large-book-message,
+            #delayed-loading-message {
+                max-width: 300px;
+                padding: 0 10px;
+            }
+            
+            .delayed-message-text,
+            #large-book-message small {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="{{ url_for('my_books') }}" class="back-button">
+            <i class="bi bi-arrow-left"></i> Tillbaka
+        </a>
+        <div class="header-actions">
+            <button id="theme-toggle" class="theme-toggle" title="Växla mörkt läge">
+                <i class="bi bi-moon"></i> <span id="theme-text">Mörkt läge</span>
+            </button>
+        </div>
+    </div>
+    
+    <div class="viewer-container">
+        <!-- Laddningsindikator -->
+        <div id="loading-overlay" class="loading-overlay">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Laddar...</span>
+            </div>
+            <div class="loading-text">Laddar din bok...</div>
+            <div class="progress-container">
+                <div class="progress">
+                    <div id="progress-bar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <div id="progress-text" class="progress-text">Förbereder dokument...</div>
+            </div>
+            <div id="large-book-message" class="mt-3 text-center {% if not page_count or page_count <= 500 %}d-none{% endif %}" style="max-width: 400px; padding: 0 15px;">
+                <i class="bi bi-info-circle text-info me-1"></i>
+                <small class="text-muted">Denna bok är väldigt stor ({{ page_count }} sidor) och kan ta längre tid att ladda än normalt. Vi arbetar på att optimera laddningstiden.</small>
+            </div>
+            <!-- Fördröjt meddelande som visas efter 6 sekunder -->
+            <div id="delayed-loading-message" class="mt-3 text-center d-none">
+                <i class="bi bi-hourglass-split text-warning me-1"></i>
+                <small class="delayed-message-text">Denna bok tar längre tid än vanligt att ladda. Ha tålamod, vi arbetar på att visa innehållet så snart som möjligt.</small>
+            </div>
+        </div>
+        
+        <div id="pdf-viewer"></div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='pdfjs-express/webviewer.min.js') }}"></script>
+    
+    <!-- Inkludera session-manager.js för WebSocket-hantering -->
+    <script src="{{ url_for('static', filename='session-manager.js') }}"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const viewerElement = document.getElementById('pdf-viewer');
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeText = document.getElementById('theme-text');
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            const largeBookMessage = document.getElementById('large-book-message');
+            const delayedLoadingMessage = document.getElementById('delayed-loading-message');
+            let isDarkMode = localStorage.getItem('pdf_dark_mode') === 'true';
+            
+            // Hämta bok-ID och användar-ID från servern
+            const bookId = '{{ book_id }}';
+            const userId = '{{ user_id }}';
+            const initialPage = parseInt('{{ page_position }}');
+            
+            // Funktion för att spara läsposition via API
+            function saveBookPosition(page) {
+                try {
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                    
+                    fetch('/api/save-book-position', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': csrfToken
+                        },
+                        body: JSON.stringify({
+                            book_id: bookId,
+                            page: page
+                        })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Kunde inte spara läsposition');
+                        }
+                        console.log('Läsposition sparad:', page);
+                    })
+                    .catch(error => {
+                        console.error('Fel vid sparande av läsposition:', error);
+                    });
+                } catch (error) {
+                    console.error('Fel vid sparande av läsposition:', error);
+                }
+            }
+            
+            // Hantera fördröjt meddelande om lång laddningstid
+            let delayedMessageTimer;
+
+            function showDelayedMessage() {
+                if (delayedLoadingMessage) {
+                    delayedLoadingMessage.classList.remove('d-none');
+                    // Lägg till en kort fördröjning innan vi lägger till visible-klassen för att säkerställa att CSS-transition fungerar
+                    setTimeout(function() {
+                        delayedLoadingMessage.classList.add('visible');
+                    }, 10);
+                }
+            }
+
+            // Starta en timer som visar meddelandet efter 6 sekunder om laddningen fortfarande pågår
+            function startDelayedMessageTimer() {
+                // Rensa befintlig timer om den finns
+                if (delayedMessageTimer) {
+                    clearTimeout(delayedMessageTimer);
+                }
+                
+                // Ställ in en ny timer
+                delayedMessageTimer = setTimeout(function() {
+                    // Kontrollera om laddningsöverlagringen fortfarande är synlig
+                    if (loadingOverlay && !loadingOverlay.classList.contains('hidden')) {
+                        console.log('Visar fördröjt laddningsmeddelande efter 6 sekunder');
+                        showDelayedMessage();
+                    }
+                }, 6000); // Visa efter 6 sekunder
+            }
+
+            // Funktion för att dölja det fördröjda meddelandet
+            function hideDelayedMessage() {
+                if (delayedMessageTimer) {
+                    clearTimeout(delayedMessageTimer);
+                }
+                if (delayedLoadingMessage) {
+                    delayedLoadingMessage.classList.remove('visible');
+                    // Ta bort elementet från DOM efter att fade-out animationen är klar
+                    setTimeout(function() {
+                        delayedLoadingMessage.classList.add('d-none');
+                    }, 500);
+                }
+            }
+            
+            // Hämta bokens sidantal för optimeringar
+            const pageCount = parseInt('{{ page_count|default(0) }}');
+            
+            // Applicera sparad tema-inställning
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                themeToggle.querySelector('i').className = 'bi bi-sun';
+                themeText.textContent = 'Ljust läge';
+            }
+            
+            // Funktion för att uppdatera laddningsförloppet
+            function updateLoadingProgress(percent, message) {
+                progressBar.style.width = `${percent}%`;
+                progressBar.setAttribute('aria-valuenow', percent);
+                
+                if (message) {
+                    progressText.textContent = message;
+                } else if (percent < 10) {
+                    progressText.textContent = 'Förbereder dokument...';
+                } else if (percent < 30) {
+                    progressText.textContent = 'Laddar PDF-data...';
+                } else if (percent < 60) {
+                    progressText.textContent = 'Bearbetar sidor...';
+                } else if (percent < 90) {
+                    progressText.textContent = 'Nästan klar...';
+                } else {
+                    progressText.textContent = 'Slutför...';
+                }
+            }
+            
+            // Förbättrad laddningsanimation som visar alla steg även om PDF:en laddas snabbt
+            let loadingProgress = 0;
+            const loadingSteps = [
+                { progress: 10, message: 'Förbereder dokument...' },
+                { progress: 30, message: 'Laddar PDF-data...' },
+                { progress: 60, message: 'Bearbetar sidor...' },
+                { progress: 90, message: 'Nästan klar...' },
+                { progress: 95, message: 'Slutför...' }
+            ];
+            
+            let currentStep = 0;
+            
+            // Visa varje steg i minst 500ms även om laddningen går snabbare
+            function animateLoading() {
+                if (currentStep < loadingSteps.length) {
+                    const step = loadingSteps[currentStep];
+                    updateLoadingProgress(step.progress, step.message);
+                    currentStep++;
+                    setTimeout(animateLoading, 500); // Visa varje steg i minst 500ms
+                }
+            }
+            
+            // Starta laddningsanimationen
+            animateLoading();
+            
+            // Sätt en timeout för att dölja laddningsindikatorn om det tar för lång tid
+            const maxLoadingTimer = setTimeout(function() {
+                loadingOverlay.classList.add('hidden');
+                console.log('Laddningstiden överskreds, döljer laddningsindikator');
+            }, 30000); // 30 sekunder maximal väntetid
+            
+            // Starta en timer som visar det fördröjda meddelandet om laddningen tar lång tid
+            startDelayedMessageTimer();
+            
+            try {
+                // Grundläggande inställningar för WebViewer (förenklade för felsökning)
+                WebViewer({
+                    path: '{{ url_for("static", filename="pdfjs-express/public") }}',
+                    licenseKey: '7OFhM6Do5sjJR5Jy8m1f',
+                    initialDoc: '{{ pdf_url }}',
+                    ui: 'modern',
+                    enableAnnotations: false,
+                    disabledElements: [
+                        'printButton',
+                        'downloadButton',
+                        'toolsButton',
+                        'annotationPopup',
+                        'linkButton',
+                        'measurementOverlay',
+                        'contextMenuPopup'
+                    ],
+                    isReadOnly: true
+                }, viewerElement).then(function(instance) {
+                    // Rensa timeout när WebViewer har laddats
+                    clearTimeout(maxLoadingTimer);
+                    
+                    console.log('WebViewer har initierats');
+                    
+                    // Få tillgång till WebViewer API
+                    const { docViewer } = instance;
+                    
+                    // Uppdatera laddningsförloppet till 50%
+                    updateLoadingProgress(50, 'Initierar PDF-visare...');
+                    
+                    // Applicera sparad tema-inställning till PDF-visaren
+                    if (isDarkMode) {
+                        instance.UI.setTheme('dark');
+                    }
+                    
+                    // Ställ in svenska som standardspråk
+                    instance.UI.setLanguage('sv');
+                    
+                    // Anpassa verktygsfältet
+                    instance.UI.setToolbarGroup('toolbarGroup-View');
+                    
+                    // Hantera dokumentladdning
+                    docViewer.addEventListener('documentLoaded', function() {
+                        console.log('Dokument har laddats');
+                        
+                        // Visa 100% laddning i minst 300ms innan vi döljer laddningsindikatorn
+                        updateLoadingProgress(100, 'Klar!');
+                        
+                        // Dölj det fördröjda meddelandet om det visas
+                        hideDelayedMessage();
+                        
+                        setTimeout(function() {
+                            // Dölj laddningsindikator efter en kort fördröjning
+                            loadingOverlay.classList.add('hidden');
+                        }, 300);
+                        
+                        try {
+                            // Gå till den sparade sidan från servern
+                            if (initialPage > 1) {
+                                docViewer.setCurrentPage(initialPage);
+                            }
+                        } catch (error) {
+                            console.error('Kunde inte återställa läsposition:', error);
+                        }
+                    });
+                    
+                    // Hantera laddningsfel
+                    docViewer.addEventListener('documentLoadingFailed', function(error) {
+                        console.error('Fel vid laddning av dokument:', error);
+                        updateLoadingProgress(100, 'Fel vid laddning av dokument');
+                        
+                        // Dölj det fördröjda meddelandet om det visas
+                        hideDelayedMessage();
+                        
+                        loadingOverlay.classList.add('hidden');
+                    });
+                    
+                    // Spara läsposition när användaren navigerar mellan sidor
+                    docViewer.addEventListener('pageNumberUpdated', function(pageNumber) {
+                        try {
+                            saveBookPosition(pageNumber);
+                        } catch (error) {
+                            console.error('Kunde inte spara läsposition:', error);
+                        }
+                    });
+                    
+                    // Spara läsposition när användaren navigerar bort
+                    window.addEventListener('beforeunload', function() {
+                        try {
+                            const currentPage = docViewer.getCurrentPage();
+                            saveBookPosition(currentPage);
+                        } catch (error) {
+                            console.error('Kunde inte spara läsposition:', error);
+                        }
+                    });
+                    
+                    // Hantera klick på tema-knappen
+                    themeToggle.addEventListener('click', function() {
+                        isDarkMode = !isDarkMode;
+                        
+                        if (isDarkMode) {
+                            document.body.classList.add('dark-mode');
+                            themeToggle.querySelector('i').className = 'bi bi-sun';
+                            themeText.textContent = 'Ljust läge';
+                            instance.UI.setTheme('dark');
+                        } else {
+                            document.body.classList.remove('dark-mode');
+                            themeToggle.querySelector('i').className = 'bi bi-moon';
+                            themeText.textContent = 'Mörkt läge';
+                            instance.UI.setTheme('light');
+                        }
+                        
+                        // Spara inställningen i localStorage
+                        localStorage.setItem('pdf_dark_mode', isDarkMode);
+                    });
+                }).catch(function(error) {
+                    console.error('Fel vid initialisering av WebViewer:', error);
+                    updateLoadingProgress(100, 'Kunde inte ladda PDF-visaren');
+                    
+                    // Dölj det fördröjda meddelandet om det visas
+                    hideDelayedMessage();
+                    
+                    loadingOverlay.classList.add('hidden');
+                    clearTimeout(maxLoadingTimer);
+                });
+            } catch (error) {
+                console.error('Fel vid initialisering av WebViewer:', error);
+                updateLoadingProgress(100, 'Ett fel uppstod');
+                
+                // Dölj det fördröjda meddelandet om det visas
+                hideDelayedMessage();
+                
+                loadingOverlay.classList.add('hidden');
+                clearTimeout(maxLoadingTimer);
+            }
+        });
+    </script>
+<script src="{{ url_for('static', filename='cookie-consent.js') }}" defer></script>
+</body>
+</html> 

@@ -1,0 +1,11 @@
+# Blockera direktåtkomst till PDF-filer i static-katalogen
+<FilesMatch "\.pdf$">
+    Order deny,allow
+    Deny from all
+</FilesMatch>
+
+# Tillåt backend-åtkomst via vår secure-pdf-route
+<Files "secure-pdf">
+    Order deny,allow
+    Allow from all
+</Files> 

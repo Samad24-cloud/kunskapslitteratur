@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+            <!-- Favicon -->
+            <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+            <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+            <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hållbarhet - Kunskapslitteratur</title>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-white fixed-top shadow">
+        <div class="container">
+          <a class="navbar-brand" href="{{ url_for('home') }}">
+            <img src="{{ url_for('static', filename='bilder/logo.png') }}" alt="Kunskapslitteratur Logo" style="height: 60px;" />
+          </a>
+          <button 
+            class="navbar-toggler" 
+            type="button" 
+            data-bs-toggle="collapse" 
+            data-bs-target="#mainNavbar" 
+            aria-controls="mainNavbar" 
+            aria-expanded="false" 
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav mx-auto gap-lg-5">
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('home') }}">Hem</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('omoss') }}">Om oss</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-primary active" href="{{ url_for('hallbarhet') }}">Hållbarhet</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('kontaktaoss') }}">Kontakta oss</a>
+              </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-primary" href="{{ url_for('loggain') }}">
+                      <i class="bi bi-person me-2"></i>
+                      Logga in
+                    </a>
+                </li>
+            </ul>
+          </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="herooo d-flex align-items-center mt-5">
+        <div class="container mt-5">
+          <h1 class="display-2 text-white text-start">Kunskapslitteratur | Hållbarhet</h1>
+          <p class="lead text-white-50 mb-4 text-start">
+            Lär dig mer om hur vi arbetar för en hållbar framtid och bidrar till en bättre värld.
+          </p>
+        </div>
+    </section>
+
+    <!-- Intro Section -->
+    <section class="py-5 my-4">
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-8 text-center">
+                    <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 mb-3 rounded-pill">Vårt hållbarhetsarbete</span>
+                    <h2 class="display-5 mb-4">Vi tar ansvar för framtiden</h2>
+                    <p class="lead">
+                        På Kunskapslitteratur är hållbarhet en central del av vår verksamhet. Vi arbetar aktivt för att bidra till FN:s globala mål för hållbar utveckling och skapa en bättre framtid för kommande generationer.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6">
+                    <div class="position-relative">
+                        <img src="{{ url_for('static', filename='bilder/kontaktaoss.jpg') }}" alt="Hållbarhet" class="img-fluid rounded-4 shadow-sm dark-image" />
+                        <div class="position-absolute bottom-0 end-0 bg-white p-2 rounded-3 shadow-sm d-none d-md-block" style="transform: translate(15%, 15%);">
+                            <i class="bi bi-globe-americas fs-1 custom-icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card border-0 bg-light p-4 mb-4 rounded-4">
+                        <p class="mb-0">
+                            Genom att erbjuda digitala läromedel bidrar vi till att minska pappersförbrukning, transporter och avfall. Vår digitala plattform gör kunskap tillgänglig för alla, samtidigt som vi minimerar vår miljöpåverkan.
+                        </p>
+                    </div>
+                    <p class="lead mb-4">
+                        Vi tror att små förändringar kan göra stor skillnad. Genom att välja digitala läromedel tar du ett aktivt steg mot en mer hållbar framtid.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FN:s 2030-mål Section -->
+    <section class="py-5 bg-light my-4 rounded-4 mx-3">
+        <div class="container py-3">
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-8 text-center">
+                    <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 mb-3 rounded-pill">Agenda 2030</span>
+                    <h2 class="display-5 mb-4">Vårt engagemang för FN:s globala mål</h2>
+                    <p class="lead">
+                        Vi har identifierat fyra av FN:s globala mål där vi kan göra störst skillnad genom vår verksamhet.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 p-4 hover-lift">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3">
+                                <i class="bi bi-book fs-1 text-primary"></i>
+                            </div>
+                            <h3 class="mb-0">Mål 4: God utbildning för alla</h3>
+                        </div>
+                        <p class="text-muted mb-0">
+                            Genom att erbjuda digital kurslitteratur bidrar vi till att göra utbildning mer tillgänglig och inkluderande. Digitala lösningar minskar barriärer och möjliggör lärande för alla, oavsett geografisk plats eller ekonomisk situation.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 p-4 hover-lift">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3">
+                                <i class="bi bi-tree fs-1 text-success"></i>
+                            </div>
+                            <h3 class="mb-0">Mål 13: Bekämpa klimatförändringarna</h3>
+                        </div>
+                        <p class="text-muted mb-0">
+                            Digitala läromedel minskar behovet av papper och transporter, vilket leder till lägre koldioxidutsläpp. Genom att välja digitala resurser kan vi tillsammans bidra till en mer hållbar framtid.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 p-4 hover-lift">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3">
+                                <i class="bi bi-cpu fs-1 text-info"></i>
+                            </div>
+                            <h3 class="mb-0">Mål 9: Hållbar industri och innovation</h3>
+                        </div>
+                        <p class="text-muted mb-0">
+                            Genom att utveckla och erbjuda digitala plattformar och innovativa lösningar bidrar vi till att bygga en hållbar infrastruktur för utbildning. Våra digitala verktyg främjar tillgång till kunskap och stödjer en mer hållbar och effektiv utbildningssektor.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 p-4 hover-lift">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3">
+                                <i class="bi bi-recycle fs-1 text-warning"></i>
+                            </div>
+                            <h3 class="mb-0">Mål 12: Hållbar konsumtion</h3>
+                        </div>
+                        <p class="text-muted mb-0">
+                            Genom att erbjuda digitala läromedel bidrar vi till att minska behovet av papper och andra fysiska resurser, vilket främjar hållbar konsumtion och produktion. Vi strävar efter att minimera avfall och maximera resurseffektivitet i vår verksamhet.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Koldioxid och Miljöpåverkan Section -->
+    <section class="py-5 my-4">
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-8 text-center">
+                    <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 mb-3 rounded-pill">Miljöpåverkan</span>
+                    <h2 class="display-5 mb-4">Minskad klimatpåverkan genom digitalisering</h2>
+                    <p class="lead">
+                        Vår digitala affärsmodell hjälper till att minska koldioxidutsläpp och resursförbrukning.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center hover-lift">
+                        <div class="mb-3">
+                            <i class="bi bi-tree-fill fs-1 text-success"></i>
+                        </div>
+                        <h4 class="mb-3">Mindre pappersförbrukning</h4>
+                        <p class="text-muted mb-0">Digitala böcker sparar träd och minskar behovet av papperstillverkning, vilket bidrar till att bevara skogar och biologisk mångfald.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center hover-lift">
+                        <div class="mb-3">
+                            <i class="bi bi-truck fs-1 text-primary"></i>
+                        </div>
+                        <h4 class="mb-3">Reducerade transporter</h4>
+                        <p class="text-muted mb-0">Utan fysiska böcker eliminerar vi behovet av transporter för distribution, vilket minskar koldioxidutsläpp från fordon.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center hover-lift">
+                        <div class="mb-3">
+                            <i class="bi bi-cloud-download fs-1 text-info"></i>
+                        </div>
+                        <h4 class="mb-3">Livslång tillgång</h4>
+                        <p class="text-muted mb-0">Digitala böcker kan användas om och om igen utan att slitas ut, vilket minskar behovet av att producera nya exemplar.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tillsammans Gör Vi Skillnad Section -->
+    <section class="py-5 bg-light my-4 rounded-4 mx-3">
+        <div class="container py-3">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6 order-lg-2">
+                    <div class="position-relative">
+                        <img src="{{ url_for('static', filename='bilder/hallbarhet.jpg') }}" alt="Tillsammans gör vi skillnad" class="img-fluid rounded-4 shadow dark-image" />
+                        <div class="position-absolute top-0 start-0 bg-white p-2 rounded-3 shadow-sm d-none d-md-block" style="transform: translate(-15%, -15%);">
+                            <i class="bi bi-people fs-1 custom-icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 order-lg-1">
+                    <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 mb-3 rounded-pill">Din roll</span>
+                    <h2 class="display-5 mb-4">Tillsammans gör vi skillnad</h2>
+                    <p class="lead mb-4">
+                        Genom att välja digitala läromedel bidrar du till att minska miljöpåverkan och främja tillgänglig utbildning. Tillsammans kan vi skapa en bättre och mer hållbar framtid.
+                    </p>
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="me-3">
+                            <i class="bi bi-check-circle-fill custom-icon-color fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-1">Minska ditt klimatavtryck</h5>
+                            <p class="mb-0 text-muted">Varje digital bok du väljer istället för en tryckt bok gör skillnad för miljön.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="me-3">
+                            <i class="bi bi-check-circle-fill custom-icon-color fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-1">Sprid kunskapen</h5>
+                            <p class="mb-0 text-muted">Berätta för andra om fördelarna med digitala läromedel för både studier och miljön.</p>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('registrera') }}" class="btn btn-primary btn-lg btn-custom-end px-5 py-3">Kom igång idag!</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call-to-Action Section -->
+    <section class="py-5 my-4 text-white" style="background-color: #29231d; border-radius: 10px;">
+        <div class="container text-center py-3">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h2 class="display-5 mb-4">Vill du veta mer om FN:s globala mål?</h2>
+                    <p class="lead mb-4">
+                        För mer information om FN:s hållbarhetsmål och hur du kan bidra, besök FN:s officiella hemsida.
+                    </p>
+                    <a href="https://www.un.org/sustainabledevelopment/sustainable-development-goals/" 
+                       target="_blank" 
+                       class="btn btn-light btn-lg btn-custom px-5 py-3">
+                        Läs mer på FN:s hemsida
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<!-- Footer -->
+<footer class="footer py-5">
+    <div class="container">
+        <div class="row align-items-start text-center text-lg-start">
+            <!-- Left: Logo och Subheader -->
+            <div class="col-lg-5 text-center mb-4 mb-lg-0">
+                <a href="{{ url_for('home') }}">
+                    <img src="{{ url_for('static', filename='bilder/logo.png') }}" alt="Kunskapslitteratur Logo" class="img-fluid mb-3" style="height: 123px;">
+                </a>
+                <p class="text-muted mb-0">Din partner för prisvärd, digital och hållbar kurslitteratur.</p>
+            </div>
+
+            <!-- Right: Länkar -->
+            <div class="col-lg-7">
+                <div class="row justify-content-center justify-content-lg-start">
+                    <!-- Column 1 -->
+                    <div class="col-12 col-sm-4 px-4 mb-4 mb-sm-0">
+                        <h5 class="mb-3">Länkar</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="{{ url_for('home') }}" class="footer-link">Hem</a></li>
+                            <li><a href="{{ url_for('omoss') }}" class="footer-link">Om oss</a></li>
+                            <li><a href="{{ url_for('hallbarhet') }}" class="footer-link">Hållbarhet</a></li>
+                            <li><a href="{{ url_for('kontaktaoss') }}" class="footer-link">Kontakta oss</a></li>
+                        </ul>
+                    </div>
+                    <!-- Column 2 -->
+                    <div class="col-12 col-sm-4 px-4 mb-4 mb-sm-0">
+                        <h5 class="mb-3">Förlag</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="{{ url_for('kontakt') }}" class="footer-link">Kontakt</a></li>
+                            <li><a href="{{ url_for('support') }}" class="footer-link">Support</a></li>
+                            <li><a href="{{ url_for('blipartner') }}" class="footer-link">Bli Partner</a></li>
+                            <li><a href="{{ url_for('forlagsvilkor') }}" class="footer-link">Förlagsvilkor</a></li>
+                        </ul>
+                    </div>
+                    <!-- Column 3 -->
+                    <div class="col-12 col-sm-4 px-4">
+                        <h5 class="mb-3">Hjälp & Info</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="{{ url_for('faq') }}" class="footer-link">Vanliga frågor</a></li>
+                            <li><a href="{{ url_for('anvandarvilkor') }}" class="footer-link">Användarvillkor</a></li>
+                            <li><a href="{{ url_for('Integritetspolicy') }}" class="footer-link">Integritetspolicy</a></li>
+                            <li><a href="{{ url_for('karriar') }}" class="footer-link">Karriär</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Line och Copyright -->
+        <hr class="footer-line">
+        <div class="text-center mt-3">
+            <p class="text-muted mb-0">© 2025 Kunskapslitteratur. Alla rättigheter förbehållna.</p>
+        </div>
+    </div>
+</footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='cookie-consent.js') }}" defer></script>
+</body>
+</html>

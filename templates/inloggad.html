@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="sv" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Välkommen - Kunskapslitteratur</title>
+    
+    <!-- Bootstrap & Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    
+    <!-- Custom Styles -->
+    <style>
+        body {
+            display: flex;
+        }
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            padding: 3rem;
+            max-width: 1200px;
+        }
+
+        .welcome-header {
+            margin-bottom: 2.5rem;
+        }
+
+        .user-info-card {
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border);
+        }
+
+        .info-badge {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        /* Uppdaterad stil för sidofältet */
+        .sidebar {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Uppdaterad stil för logout-knappen */
+        .logout {
+            margin-top: auto;
+            position: sticky;
+            bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: fixed;
+                bottom: 0;
+                top: auto;
+                height: 80px;
+                flex-direction: row;
+                padding: 1rem;
+                z-index: 1000;
+                border-right: none;
+                border-top: 1px solid rgba(0, 0, 0, 0.05);
+            }
+
+            .nav-links {
+                display: flex;
+                justify-content: center;
+                gap: 1.5rem;
+                overflow-x: auto;
+                margin-bottom: 0;
+                padding: 0 1rem;
+                width: 100%;
+            }
+
+            .nav-links a {
+                flex-direction: column;
+                padding: 0.5rem;
+                font-size: 0.875rem;
+                flex-shrink: 0;
+            }
+
+            .nav-links a span {
+                display: none;
+            }
+
+            .logo, .logout {
+                display: none;
+            }
+
+            .content {
+                margin: 1rem;
+                padding: 1.5rem;
+                margin-bottom: 100px;
+            }
+
+            /* Show mobile logout icon */
+            .mobile-logout {
+                display: block !important;
+            }
+        }
+    </style>
+    
+    <!-- Meta-tagg för användar-ID (för WebSocket-anslutning) -->
+    <meta name="user-id" content="{{ current_user.id }}">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='bilder/logo.png') }}" alt="Kunskapslitteratur Logo">
+        </div>
+        <div class="nav-links">
+            <a href="{{ url_for('inloggad') }}" class="{{ 'active' if request.path == url_for('inloggad') else '' }}">
+                <i class="bi bi-house-door"></i>
+                <span>Välkommen</span>
+            </a>
+            <a href="{{ url_for('my_books') }}" class="{{ 'active' if request.path == url_for('my_books') else '' }}">
+                <i class="bi bi-book"></i>
+                <span>Mina böcker</span>
+            </a>
+            <a href="{{ url_for('utforskabocker') }}" class="{{ 'active' if request.path == url_for('utforskabocker') else '' }}">
+                <i class="bi bi-search"></i>
+                <span>Utforska böcker</span>
+            </a>
+            <a href="{{ url_for('betalningsstatus') }}" class="{{ 'active' if request.path == url_for('betalningsstatus') else '' }}">
+                <i class="bi bi-credit-card"></i>
+                <span>Transaktioner</span>
+            </a>
+            <a href="{{ url_for('mittkonto') }}" class="{{ 'active' if request.path == url_for('mittkonto') else '' }}">
+                <i class="bi bi-person"></i>
+                <span>Mitt Konto</span>
+            </a>
+            <!-- Mobile Logout Icon -->
+            <a href="#" class="mobile-logout d-md-none" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                <i class="bi bi-box-arrow-left"></i>
+                <span>Logga ut</span>
+            </a>
+        </div>
+        <div class="logout mt-auto">
+            <button class="btn btn-outline-secondary w-100" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                <i class="bi bi-box-arrow-left me-2"></i>Logga ut
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="welcome-header">
+            <h1 class="display-5 fw-bold mb-3">Välkommen, {{ username }}!</h1>
+            <p>Din senaste aktivitet var <span id="last-activity">...</span></p>
+        </header>
+
+        <section class="user-info-card">
+            <div class="d-flex flex-column gap-3">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="info-badge">
+                        <i class="bi bi-book me-2"></i>{{ books_count }} köpta böcker
+                    </div>
+                    <div class="info-badge">
+                        {% if membership_active %}
+                        <i class="bi bi-calendar-event me-2"></i>Förnyelse: {{ membership_expiry.strftime('%Y-%m-%d') }}
+                        {% if days_until_expiry > 0 %}
+                        <small class="ms-1 badge rounded-pill bg-light text-dark">{{ days_until_expiry }} dagar kvar</small>
+                        {% elif days_until_expiry == 0 %}
+                        <small class="ms-1 badge rounded-pill bg-warning text-dark">Förfaller idag</small>
+                        {% else %}
+                        <small class="ms-1 badge rounded-pill bg-danger text-white">Förfallen</small>
+                        {% endif %}
+                        {% else %}
+                        <i class="bi bi-calendar-x me-2"></i><span class="text-muted">Inget aktivt medlemskap</span>
+                        {% endif %}
+                    </div>
+            
+                    <!-- Visa medlemskapets status + tooltip -->
+                    {% if membership_active %}
+                    <div class="info-badge text-success"
+                         data-bs-toggle="tooltip" data-bs-placement="top"
+                         title="Medlemskap är obligatorisk för användning och köp av kurslitteratur">
+                        <i class="bi bi-check-circle me-2"></i>Medlemskap: Aktiv
+                    </div>
+                    {% else %}
+                    <div class="info-badge text-danger"
+                         data-bs-toggle="tooltip" data-bs-placement="top"
+                         title="Medlemskap är obligatorisk för användning och köp av kurslitteratur">
+                        <i class="bi bi-x-circle me-2"></i>Medlemskap: Inaktiv
+                    </div>
+                    {% endif %}
+                </div>
+        
+                <div class="border-top pt-4">
+                    <h5 class="fw-semibold mb-3">Ditt senaste köp</h5>
+                    {% if latest_purchase %}
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <strong>{{ latest_purchase.title }}</strong>
+                            <p class="mb-0 text-muted">Klicka på knappen för att öppna boken</p>
+                        </div>
+                        <a href="{{ url_for('secure_pdf', pdf_path=latest_purchase.pdf_path) }}" target="_blank" class="btn btn-primary btn-custom-end">
+                            <i class="bi bi-file-earmark-pdf me-2"></i>Öppna
+                        </a>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">Du har inte köpt några böcker än.</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Ny sektion för förslag till nya användare -->
+                <div class="border-top pt-4 mt-3">
+                    <h5 class="fw-semibold mb-3">Kom igång</h5>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body text-center">
+                                    <div class="mb-2">
+                                        <i class="bi bi-search fs-2" style="color: #29231d;"></i>
+                                    </div>
+                                    <h6>Utforska böcker</h6>
+                                    <p class="card-text small text-muted">Hitta relevant kurslitteratur för dina studier.</p>
+                                    <a href="{{ url_for('utforskabocker') }}" class="stretched-link"></a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body text-center">
+                                    {% if not membership_active %}
+                                    <div class="mb-2">
+                                        <i class="bi bi-credit-card fs-2" style="color: #29231d;"></i>
+                                    </div>
+                                    <h6>Aktivera medlemskap</h6>
+                                    <p class="card-text small text-muted">Aktivera ditt medlemskap för att köpa och använda böcker.</p>
+                                    <button class="btn btn-sm btn-custom-end" id="aktiveraMedlemskapBtn">Aktivera nu</button>
+                                    {% else %}
+                                    <div class="mb-2">
+                                        <i class="bi bi-bookmark-check fs-2" style="color: #29231d;"></i>
+                                    </div>
+                                    <h6>Medlemskap aktivt</h6>
+                                    <p class="card-text small text-muted">Ditt medlemskap är aktivt och du kan köpa och använda böcker.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card h-100 border-0 shadow-sm" data-bs-toggle="modal" data-bs-target="#helpModal" style="cursor: pointer;">
+                                <div class="card-body text-center">
+                                    <div class="mb-2">
+                                        <i class="bi bi-question-circle fs-2" style="color: #29231d;"></i>
+                                    </div>
+                                    <h6>Hjälp & Support</h6>
+                                    <p class="card-text small text-muted">Läs vanliga frågor eller kontakta vår kundtjänst.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </section>
+        
+        
+        
+    </main>
+
+    <!-- Logout Modal -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center px-5">
+                    <div class="mb-4">
+                        <i class="bi bi-door-open" style="font-size: 2.5rem; color: var(--accent);"></i>
+                    </div>
+                    <h5 class="modal-title mb-3">Bekräfta utloggning</h5>
+                    <p class="text-muted">Är du säker på att du vill logga ut?</p>
+                </div>
+                <div class="modal-footer border-0 justify-content-center pb-4">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+                    <a href="/logout" class="btn btn-primary">Logga ut</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hjälp & Support Modal -->
+    <div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="helpModalLabel">Vanliga frågor (FAQ)</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="accordion" id="faqAccordion">
+                        <!-- FAQ Item 1 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    Hur fungerar tillgång till digital kurslitteratur?
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    När du har köpt tillgång till en bok får du omedelbar tillgång till den digitala versionen via vår plattform. Du kan logga in på ditt konto och läsa boken direkt i webbläsaren eller via vår app. Observera att tillgång till böckerna kräver ett aktivt medlemskap som kostar 35 kr/månaden.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ Item 2 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    Vilka betalningsalternativ erbjuder ni?
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Just nu erbjuder vi endast kortbetalning eller Klarna. Vi arbetar på att lägga till möjligheten till delbetalning mellan 3 och 6 månader.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ Item 3 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingThree">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    Hur säger jag upp mitt medlemskap?
+                                </button>
+                            </h2>
+                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Du kan avsluta ditt medlemskap när som helst genom att gå till inställningarna på ditt konto och välja "Avsluta medlemskap". Observera att du behåller tillgången fram till slutet av din betalda period.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Stäng</button>
+                    <a href="{{ url_for('kontaktaoss') }}" class="btn btn-primary">Kontakta oss</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inkludera session-manager.js för WebSocket-hantering -->
+    <script src="{{ url_for('static', filename='session-manager.js') }}"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function timeSince(lastVisit) {
+            const now = new Date();
+            const lastVisitTime = new Date(lastVisit);
+            const diffMs = now - lastVisitTime;
+            const diffMinutes = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMinutes / 60);
+            const diffDays = Math.floor(diffHours / 24);
+    
+            if (diffDays > 0) {
+                return `för ${diffDays} dagar sedan`;
+            } else if (diffHours > 0) {
+                return `för ${diffHours} timmar sedan`;
+            } else if (diffMinutes > 0) {
+                return `för ${diffMinutes} minuter sedan`;
+            } else {
+                return `just nu`;
+            }
+        }
+    
+        document.addEventListener("DOMContentLoaded", function () {
+            let lastVisit = localStorage.getItem("lastVisit");
+
+            if (!lastVisit) {
+                document.getElementById("last-activity").innerText = "Just nu";
+                lastVisit = new Date().toISOString();  // Spara första besöket
+            } else {
+                document.getElementById("last-activity").innerText = timeSince(lastVisit);
+            }
+
+            // Uppdatera senaste besöket
+            localStorage.setItem("lastVisit", new Date().toISOString());
+            
+            // Aktivera medlemskap-knapp
+            const aktiveraMedlemskapBtn = document.getElementById('aktiveraMedlemskapBtn');
+            if (aktiveraMedlemskapBtn) {
+                aktiveraMedlemskapBtn.addEventListener('click', function() {
+                    // Visa laddningsindikator
+                    this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Laddar...';
+                    this.disabled = true;
+                    
+                    // Enkel omdirigering till checkout-membership endpoint istället för att använda Stripe direkt
+                    window.location.href = '/checkout-membership';
+                });
+            }
+        });
+
+        // Aktivera alla tooltips på sidan
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+<script src="{{ url_for('static', filename='cookie-consent.js') }}" defer></script>
+</body>
+</html>

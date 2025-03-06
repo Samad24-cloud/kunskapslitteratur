@@ -1,0 +1,32 @@
+# Flask och relaterade paket
+Flask==2.3.3
+flask-login==0.6.2
+flask-session==0.5.0
+flask-limiter==3.5.0
+flask-seasurf==1.1.1
+flask-socketio==5.3.6
+
+# Databas
+SQLAlchemy==2.0.23
+psycopg2-binary==2.9.9
+redis==5.0.1
+
+# Säkerhet och autentisering
+Werkzeug==2.3.7
+
+# Miljövariabler
+python-dotenv==1.0.0
+
+# Betalning
+stripe==7.5.0
+
+# Övriga verktyg
+gunicorn==21.2.0
+eventlet==0.33.3
+gevent==23.9.1
+
+# Komprimering och prestanda
+flask-compress==1.14
+
+# Loggning och övervakning
+sentry-sdk==1.32.0 

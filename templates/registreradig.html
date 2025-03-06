@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Registrera dig - QuizMaster</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <!-- Din egen CSS -->
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <style>
+        .form-container {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 30px;
+            background-color: #ffffff;
+        }
+        
+        .progress-container {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .invalid-feedback {
+            display: block;
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            border-radius: 4px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            animation: shake 0.5s ease-in-out 0s 1;
+            border-left: 5px solid #dc3545;
+        }
+        
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            border-radius: 4px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 5px solid #28a745;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        /* Förbättrat utseende på felmeddelanden */
+        #registerError {
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2);
+            font-weight: 500;
+            position: relative;
+            padding-right: 30px;
+        }
+        
+        /* Förbättrat utseende på framgångsmeddelanden */
+        #registerSuccess {
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
+            font-weight: 500;
+        }
+        
+        /* Highlighta fält som har fel */
+        .is-invalid {
+            border-color: #dc3545 !important;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+        }
+        
+        /* Responsive styling för mobiltelefoner */
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 15px;
+            }
+        }
+        
+        /* Stilar för felmeddelanden */
+        .invalid-feedback {
+            display: none;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 0.875em;
+            color: #dc3545;
+            font-weight: 500;
+        }
+        
+        .is-invalid ~ .invalid-feedback {
+            display: block;
+        }
+        
+        .is-invalid {
+            border-color: #dc3545 !important;
+            padding-right: calc(1.5em + 0.75rem) !important;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e") !important;
+            background-repeat: no-repeat !important;
+            background-position: right calc(0.375em + 0.1875rem) center !important;
+            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem) !important;
+        }
+        
+        .is-valid {
+            border-color: #198754 !important;
+            padding-right: calc(1.5em + 0.75rem) !important;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e") !important;
+            background-repeat: no-repeat !important;
+            background-position: right calc(0.375em + 0.1875rem) center !important;
+            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem) !important;
+        }
+        
+        /* Förbättra synligheten för hjälptexter */
+        .form-text {
+            margin-top: 0.25rem;
+            font-size: 0.875em;
+            color: #6c757d;
+            transition: opacity 0.3s ease;
+        }
+        
+        /* Animera felmeddelanden */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .invalid-feedback, #emailUsedError, #recaptchaError, #registerError {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        /* Stilar för alert-meddelanden */
+        .alert {
+            position: relative;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+            border-radius: 0.375rem;
+        }
+        
+        .alert-danger {
+            color: #842029;
+            background-color: #f8d7da;
+            border-color: #f5c2c7;
+        }
+        
+        .alert-success {
+            color: #0f5132;
+            background-color: #d1e7dd;
+            border-color: #badbcc;
+        }
+        
+        /* Fokus-stil för att visa hjälptext när fältet är i fokus */
+        .form-control:focus + .form-text:not(.d-none) {
+            opacity: 1;
+        }
+        
+        /* Dölj hjälptext när fältet inte är i fokus */
+        .form-text.d-none {
+            opacity: 0;
+            height: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+        
+        /* Hover-effekt för länkar */
+        .custom-link {
+            color: #29231d;
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .custom-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: #29231d;
+            transition: width 0.3s ease;
+        }
+        
+        .custom-link:hover {
+            color: #29231d;
+        }
+        
+        .custom-link:hover::after {
+            width: 100%;
+        }
+    </style>
+    <script>
+      // Säkerhetsfunktioner - CSRF token
+      function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+      }
+
+      // Använd CSRF-token från meta-tag (säkrare än cookies)
+      function getCSRFToken() {
+        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        console.log("CSRF token hämtat:", token); // Debugging
+        return token;
+      }
+    </script>
+</head>
+<body>
+     <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg bg-white fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('home') }}">
+                <img src="{{ url_for('static', filename='bilder/logo.png') }}" alt="Kunskapslitteratur Logo" style="height: 60px;" />
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <ul class="navbar-nav mx-auto gap-lg-5">
+                    <li class="nav-item">
+                        <a class="nav-link text-primary" href="{{ url_for('home') }}">Hem</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-primary" href="{{ url_for('omoss') }}">Om oss</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-primary" href="{{ url_for('hallbarhet') }}">Hållbarhet</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-primary" href="{{ url_for('kontaktaoss') }}">Kontakta oss</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-primary" href="{{ url_for('loggain') }}">
+                            <i class="bi bi-person me-2"></i>Logga in
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- FORM-SEKTION -->
+    <div class="container py-5" style="margin-top: 5rem;">
+        <div class="row g-5">
+            <!-- Vänster: Formulär -->
+            <div class="col-md-6">
+                <div class="card shadow border-0 rounded-4">
+                  <div class="card-header text-white py-3" style="background-color: #29231d;">
+                     <h3 class="mb-0">Registrera dig</h3>
+                  </div>
+                    <div class="card-body p-4">
+                      <div id="registerSuccess" class="alert alert-success d-none" role="alert">
+                        Registrering lyckades! Du kommer att omdirigeras till inloggningssidan...
+                      </div>
+                      
+                      <form id="signupForm" method="POST" action="/register" novalidate>
+                        <!-- SeaSurf förväntar sig exakt detta format -->
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                            
+                            <!-- Stegindikator -->
+                            <div class="mb-4">
+                              <div class="progress" style="height: 5px;">
+                                <div id="formProgress" class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
+                              </div>
+                            </div>
+                        
+                            <!-- Användarnamn -->
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Användarnamn</label>
+                                <div class="input-group">
+                                  <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                  <input 
+                                      type="text" 
+                                      class="form-control" 
+                                      id="username"
+                                      name="username" 
+                                      placeholder="Skriv ditt användarnamn" 
+                                      required 
+                                      minlength="3" 
+                                      maxlength="20"
+                                      autocomplete="username"
+                                  >
+                                </div>
+                                <div class="form-text text-muted d-none">Användarnamnet måste vara mellan 3 och 20 tecken.</div>
+                                <div id="usernameError" class="invalid-feedback">
+                                    Användarnamnet måste vara mellan 3 och 20 tecken.
+                                </div>
+                                <div id="usernameUsedError" class="text-danger mt-2" style="display: none;"></div>
+                            </div>
+                            
+                            <!-- Email -->
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <div class="input-group">
+                                  <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                  <input 
+                                      type="email" 
+                                      class="form-control" 
+                                      id="email" 
+                                      name="email"
+                                      placeholder="Skriv din email" 
+                                      required
+                                      autocomplete="email"
+                                  >
+                                </div>
+                                <div class="form-text text-muted d-none">Ange en giltig e-postadress (exempel: namn@domän.se).</div>
+                                <div id="emailError" class="invalid-feedback">
+                                    Ange en giltig e-postadress i formatet namn@domän.se
+                                </div>
+                                <div id="emailUsedError" class="text-danger mt-2" style="display: none;"></div>
+                            </div>
+                            
+                            <!-- Lösenord -->
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Lösenord</label>
+                                <div class="input-group">
+                                  <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                  <input 
+                                      type="password" 
+                                      class="form-control" 
+                                      id="password" 
+                                      name="password"
+                                      placeholder="Skriv ditt lösenord" 
+                                      required 
+                                      minlength="8"
+                                      autocomplete="new-password"
+                                  >
+                                  <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="bi bi-eye"></i>
+                                  </button>
+                                </div>
+                                <div class="form-text text-muted d-none">Lösenordet måste vara minst 8 tecken långt och innehålla minst en stor bokstav, en liten bokstav och en siffra.</div>
+                                
+                                <!-- Lösenordsstyrka -->
+                                <div class="mt-2">
+                                  <div class="progress" style="height: 5px;">
+                                    <div id="passwordStrength" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                  </div>
+                                  <small id="passwordStrengthText" class="form-text text-muted">Lösenordsstyrka: Ej angivet</small>
+                                </div>
+                                
+                                <div id="passwordError" class="invalid-feedback">
+                                    Lösenordet måste vara minst 8 tecken långt och innehålla minst en stor bokstav, en liten bokstav och en siffra.
+                                </div>
+                            </div>
+                            
+                            <!-- Bekräfta lösenord -->
+                            <div class="mb-4">
+                                <label for="confirmPassword" class="form-label">Bekräfta lösenord</label>
+                                <div class="input-group">
+                                  <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                                  <input 
+                                      type="password" 
+                                      class="form-control" 
+                                      id="confirmPassword" 
+                                      name="confirm_password"
+                                      placeholder="Upprepa ditt lösenord" 
+                                      required 
+                                      minlength="8"
+                                      autocomplete="new-password"
+                                  >
+                                  <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+                                    <i class="bi bi-eye"></i>
+                                  </button>
+                                </div>
+                                <div class="form-text text-muted d-none">Upprepa ditt lösenord exakt som ovan.</div>
+                                <div id="confirmPasswordError" class="invalid-feedback">
+                                    Lösenorden matchar inte. Kontrollera att du skrivit samma lösenord.
+                                </div>
+                            </div>
+                            
+                            <!-- reCAPTCHA -->
+                            <div class="mb-4">
+                              <!-- Temporärt kommenterat tills reCAPTCHA-nycklar är konfigurerade -->
+                              <!-- <div id="recaptcha" class="g-recaptcha" data-sitekey="{{ recaptcha_site_key }}"></div> -->
+                              <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="notRobot" name="notRobot" required style="background-color: #29231d; border-color: #29231d;">
+                                <label class="form-check-label" for="notRobot">
+                                  Jag intygar att jag inte är en robot
+                                </label>
+                                <div class="invalid-feedback">
+                                  Du måste bekräfta att du inte är en robot.
+                                </div>
+                              </div>
+                              <div id="recaptchaError" class="text-danger mt-1" style="display: none;">
+                                Vänligen bekräfta att du inte är en robot.
+                              </div>
+                            </div>
+                            
+                            <!-- Användarvillkor -->
+                            <div class="mb-4 form-check">
+                              <input type="checkbox" class="form-check-input" id="agreeTerms" name="agreeTerms" required style="background-color: #29231d; border-color: #29231d;">
+                              <label class="form-check-label" for="agreeTerms">
+                                Jag godkänner <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal" class="custom-link">användarvillkoren</a> och <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal" class="custom-link">integritetspolicyn</a>
+                              </label>
+                              <div id="termsError" class="invalid-feedback">
+                                Du måste godkänna villkoren för att fortsätta.
+                              </div>
+                            </div>
+                            
+                            <!-- Knapp: Registrera -->
+                            <div class="d-flex justify-content-between align-items-center">
+                              <a href="{{ url_for('loggain') }}" class="custom-link">Har du redan ett konto?</a>
+                              <button type="submit" id="submitBtn" class="btn btn-primary btn-custom-end">
+                                <span id="submitSpinner" class="spinner-border spinner-border-sm d-none me-2" role="status" aria-hidden="true"></span>
+                                Registrera dig
+                              </button>
+                            </div>
+                      </form>
+                    </div> 
+                </div>
+            </div>
+
+            <!-- Höger: Information och logo -->
+            <div class="col-md-6">
+                <div class="card shadow border-0 rounded-4 h-100">
+                  <div class="card-body p-4 d-flex flex-column justify-content-between">
+                    <div>
+                      <h4 class="mb-4">Fördelar med att registrera dig:</h4>
+                      <ul class="list-group list-group-flush mb-4">
+                        <li class="list-group-item d-flex align-items-center">
+                          <i class="bi bi-check-circle-fill text-success me-3 fs-4"></i>
+                          <span>Spara dina favoritböcker och få personliga rekommendationer</span>
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                          <i class="bi bi-check-circle-fill text-success me-3 fs-4"></i>
+                          <span>Få exklusiva erbjudanden och rabatter</span>
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                          <i class="bi bi-check-circle-fill text-success me-3 fs-4"></i>
+                          <span>Snabbare utcheckning vid beställning</span>
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                          <i class="bi bi-check-circle-fill text-success me-3 fs-4"></i>
+                          <span>Få notiser om nya böcker inom dina intresseområden</span>
+                        </li>
+                      </ul>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                      <img 
+                          src="{{ url_for('static', filename='bilder/logo.png') }}" 
+                          alt="Kunskapslitteratur Logo" 
+                          class="img-fluid" 
+                          style="max-height: 180px; margin-bottom: 30px;"
+                      >
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modaler för användarvillkor och integritetspolicy -->
+    <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="termsModalLabel">Användarvillkor</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Stäng"></button>
+          </div>
+          <div class="modal-body">
+            <h4>Användarvillkor för Kunskapslitteratur</h4>
+            <p>Senast uppdaterad: Januari 2025</p>
+            
+            <h5>Vår tjänst</h5>
+            <p>
+              Kärnan i vår verksamhet är att erbjuda digital kurslitteratur på ett smidigt och lättillgängligt sätt. Detta inkluderar:
+            </p>
+            <ul>
+              <li>Tillgång till ett ständigt växande digitalt bibliotek av kurslitteratur från ledande förlag, anpassat för olika utbildningsprogram.</li>
+              <li>För närvarande erbjuder vi endast kortbetalning eller Klarna. Vi arbetar på att lägga till möjligheten till delbetalning mellan 3 och 6 månader.</li>
+              <li>Omedelbar digital leverans av kurslitteraturen direkt efter bekräftad betalning.</li>
+              <li>Automatiskt genererade kvitton skickas via e-post vid varje köp.</li>
+              <li>Endast auktoriserade användare med ett aktivt medlemskap får tillgång till kurslitteraturen.</li>
+              <li>En användarvänlig PDF-läsare som möjliggör enkel navigering och läsupplevelse.</li>
+              <li>Eftersom vi levererar digitalt innehåll avstår du från ångerrätten enligt lag om distansavtal.</li>
+            </ul>
+            
+            <h5>Användarkonto</h5>
+            <ul>
+              <li>Du ansvarar för att hålla ditt lösenord säkert och för all aktivitet som sker på ditt konto.</li>
+              <li>Flera personer kan dela ett konto, men endast en användare kan vara inloggad åt gången. Vi förbehåller oss rätten att begränsa antal samtidiga inloggningar om vi upptäcker missbruk.</li>
+              <li>Du förbinder dig att ge korrekta och aktuella uppgifter vid registrering.</li>
+              <li>Vi kan komma att begära verifiering av användarens identitet i enlighet med gällande bestämmelser mot penningtvätt och bedrägerier.</li>
+              <li>Vi förbehåller oss rätten att stänga av konton som visar tecken på missbruk, olaglig aktivitet eller brott mot dessa villkor.</li>
+            </ul>
+            
+            <h5>Abonnemang och betalning</h5>
+            <ul>
+              <li>Abonnemanget kostar 35 kr/månad och ger obegränsad tillgång till kurslitteraturen som du har tillgång till.</li>
+              <li>Det finns ingen bindningstid. Du kan när som helst avsluta din prenumeration via "Mitt konto".</li>
+              <li>Tillgång till tjänsterna fortsätter fram till slutet av din betalda period.</li>
+              <li>För att få tillgång till kurslitteraturen i PDF-läsaren krävs ett aktivt medlemskap.</li>
+              <li>Betalning sker automatiskt varje månad via ditt registrerade betalningsmedel.</li>
+              <li>Vid misslyckad betalning kommer vi att försöka genomföra transaktionen igen. Om betalningen fortsätter att misslyckas, kan ditt konto pausas tills betalningen genomförs.</li>
+              <li>Ingen ångerrätt eller återbetalning gäller efter genomfört köp eller abonnemangsbetalning.</li>
+            </ul>
+            
+            <h5>Immateriella rättigheter</h5>
+            <p>Allt innehåll på plattformen, inklusive kurslitteratur och vår PDF-läsare, tillhör Kunskapslitteratur eller dess licensgivare. Det är förbjudet att kopiera, sprida eller modifiera innehållet utan tillstånd.</p>
+            <ul>
+              <li>Du får enbart använda innehållet för personligt, icke-kommersiellt bruk.</li>
+              <li>Anteckningar och markeringar som du gör i böckerna är dina, men ger dig inte några rättigheter till det underliggande materialet.</li>
+              <li>Det är förbjudet att systematiskt ladda ned, skanna eller på annat sätt extrahera innehåll från plattformen.</li>
+              <li>Obehörig spridning av innehåll kan leda till rättsliga påföljder och avstängning från tjänsten.</li>
+            </ul>
+            
+            <h5>Kontaktinformation</h5>
+            <p>Om du har frågor om dessa villkor, kontakta oss på info@kunskapslitteratur.se</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Jag förstår</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="privacyModalLabel">Integritetspolicy</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Stäng"></button>
+          </div>
+          <div class="modal-body">
+            <h4>Integritetspolicy för Kunskapslitteratur</h4>
+            <p>Senast uppdaterad: Januari 2025</p>
+            
+            <h5>Introduktion</h5>
+            <p>På Kunskapslitteratur värnar vi om din integritet. Denna policy förklarar hur vi samlar in, använder och skyddar dina personuppgifter i enlighet med gällande dataskyddslagstiftning, inklusive GDPR.</p>
+            <p>Vi är personuppgiftsansvariga för behandlingen av dina personuppgifter och tar detta ansvar på största allvar. Denna policy uppdateras regelbundet för att återspegla förändringar i vår verksamhet eller lagstiftning.</p>
+            
+            <h5>Vilka uppgifter vi samlar in</h5>
+            <ul>
+              <li><strong>För användare:</strong> Vid registrering samlar vi in e-postadress, lösenord och användarnamn. Användare har även möjlighet att frivilligt ange ytterligare information under 'Mitt konto', såsom för- och efternamn, stad, land och postnummer.</li>
+              <li><strong>För förlag:</strong> Samlas namn, förlagsnamn, telefonnummer, organisationsnummer och e-postadress in för att hantera affärsrelationen och utbetalningar.</li>
+              <li><strong>Betalningsinformation:</strong> Vi lagrar inte fullständiga kreditkortsuppgifter, utan använder säkra tredjepartstjänster för betalningshantering.</li>
+              <li><strong>Användningsdata:</strong> Information om hur du använder vår plattform, inklusive besökta sidor, klickade länkar, lästa böcker, läshistorik och användningsmönster.</li>
+              <li><strong>Teknisk data:</strong> IP-adress, enhetstyp, webbläsarversion, operativsystem och skärmupplösning för att optimera användarupplevelsen.</li>
+            </ul>
+            
+            <h5>Hur vi använder dina uppgifter</h5>
+            <ul>
+              <li>För att tillhandahålla våra tjänster, inklusive åtkomst till kurslitteratur och den integrerade PDF-läsaren.</li>
+              <li>För att hantera betalningar och prenumerationer.</li>
+              <li>För att förbättra och utveckla vår plattform baserat på användarfeedback och analys.</li>
+              <li>För att anpassa innehållet efter dina preferenser och tidigare användning.</li>
+              <li>För att analysera användningsmönster och ta fram statistik i anonymiserad form.</li>
+              <li>För att upptäcka och förhindra bedrägerier eller missbruk av våra tjänster.</li>
+              <li>För att uppfylla våra rättsliga skyldigheter, inklusive bokföringslag och skatterätt.</li>
+              <li>För att skicka viktig information, såsom uppdateringar av användarvillkor eller nyheter om våra tjänster.</li>
+            </ul>
+            
+            <h5>Cookies och liknande tekniker</h5>
+            <p>Kunskapslitteratur använder cookies och liknande tekniker för att förbättra din upplevelse på vår webbplats. Cookies är små textfiler som lagras på din enhet när du besöker vår webbplats.</p>
+            
+            <p>Vi använder följande typer av cookies:</p>
+            <ul>
+              <li><strong>Nödvändiga cookies:</strong> Dessa är avgörande för att vår webbplats ska fungera korrekt. De möjliggör grundläggande funktioner som sidnavigering, säkra områden och inloggning.</li>
+              <li><strong>Sessionscookies:</strong> Vi använder sessionscookies för att hantera din inloggning och för att hålla dig inloggad medan du navigerar på vår webbplats.</li>
+              <li><strong>CSRF-skyddscookies:</strong> Dessa cookies skyddar mot Cross-Site Request Forgery-attacker och säkerställer att förfrågningar till vår server kommer från legitima användare.</li>
+            </ul>
+            
+            <p>När du först besöker vår webbplats kommer du att se ett meddelande som informerar dig om vår användning av cookies och ber om ditt samtycke. Du har följande alternativ:</p>
+            <ul>
+              <li><strong>Acceptera alla:</strong> Genom att klicka på "Acceptera alla" godkänner du vår användning av alla cookies enligt denna policy.</li>
+              <li><strong>Endast nödvändiga:</strong> Genom att klicka på "Endast nödvändiga" godkänner du endast användningen av cookies som är nödvändiga för webbplatsens funktion.</li>
+              <li><strong>Mer information:</strong> Genom att klicka på "Mer information" kommer du till denna integritetspolicy där du kan läsa mer om hur vi använder cookies.</li>
+            </ul>
+            
+            <h5>Dina rättigheter enligt GDPR</h5>
+            <ul>
+              <li><strong>Rätt till tillgång:</strong> Du har rätt att begära en kopia av de personuppgifter vi lagrar om dig.</li>
+              <li><strong>Rätt till rättelse:</strong> Du kan be oss rätta felaktiga eller ofullständiga uppgifter via ditt konto eller genom att kontakta oss.</li>
+              <li><strong>Rätt till radering:</strong> Du kan begära att vi raderar dina uppgifter, förutsatt att det inte strider mot juridiska krav.</li>
+              <li><strong>Rätt till begränsning av behandling:</strong> Du kan begära att vi begränsar behandlingen av dina personuppgifter under vissa omständigheter.</li>
+              <li><strong>Rätt att göra invändningar:</strong> Du har rätt att invända mot behandling av dina personuppgifter som baseras på vårt berättigade intresse.</li>
+            </ul>
+            
+            <h5>Kontaktinformation</h5>
+            <p>Om du har frågor om vår integritetspolicy, kontakta oss på info@kunskapslitteratur.se</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Jag förstår</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap Bundle med Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- reCAPTCHA temporärt borttagen -->
+    <!-- <script src="https://www.google.com/recaptcha/api.js" async defer></script> -->
+    
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // Anpassa alla länkar i dokumentet med vår färg och stil
+        document.querySelectorAll('a').forEach(link => {
+          if (!link.classList.contains('navbar-brand') && !link.classList.contains('nav-link') && !link.hasAttribute('data-bs-toggle') && !link.classList.contains('btn')) {
+            link.classList.add('custom-link');
+          }
+        });
+        
+        // Anpassa alla checkboxar med vår färg
+        document.querySelectorAll('.form-check-input:checked').forEach(checkbox => {
+          checkbox.style.backgroundColor = '#29231d';
+          checkbox.style.borderColor = '#29231d';
+        });
+        
+        // Lyssna på checkbox förändringar för att applicera stil vid ändring
+        document.querySelectorAll('.form-check-input').forEach(checkbox => {
+          checkbox.addEventListener('change', function() {
+            if (this.checked) {
+              this.style.backgroundColor = '#29231d';
+              this.style.borderColor = '#29231d';
+            }
+          });
+        });
+
+        // Kontrollera att CSRF-token finns tillgängligt och uppdateras
+        console.log("CSRF-token finns tillgängligt:", !!getCSRFToken());
+        
+        // Globala variabler för att hålla koll på om email/användarnamn redan används
+        let emailUsed = false;
+        let usernameUsed = false;
+        
+        // Hämta DOM-element
+        const signupForm = document.getElementById('signupForm');
+        const usernameInput = document.getElementById('username');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const agreeTermsCheckbox = document.getElementById('agreeTerms');
+        const notRobotCheckbox = document.getElementById('notRobot');
+        const submitBtn = document.getElementById('submitBtn');
+        const submitSpinner = document.getElementById('submitSpinner');
+        const formProgress = document.getElementById('formProgress');
+        const registerSuccess = document.getElementById('registerSuccess');
+        const usernameError = document.getElementById('usernameError');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+        const confirmPasswordError = document.getElementById('confirmPasswordError');
+        const emailUsedError = document.getElementById('emailUsedError');
+        const usernameUsedError = document.getElementById('usernameUsedError');
+        
+        // Hantera fokus för att visa hjälptexter
+        [usernameInput, emailInput, passwordInput, confirmPasswordInput].forEach(input => {
+          // Visa hjälptext när fältet får fokus
+          input.addEventListener('focus', function() {
+            this.parentElement.nextElementSibling.classList.remove('d-none');
+          });
+          
+          // Dölj hjälptext när fältet förlorar fokus om det är korrekt ifyllt
+          input.addEventListener('blur', function() {
+            if (this.classList.contains('is-valid')) {
+              this.parentElement.nextElementSibling.classList.add('d-none');
+            }
+          });
+        });
+        
+        // Visa/dölj lösenord
+        const togglePassword = document.getElementById("togglePassword");
+        const toggleConfirmPassword = document.getElementById("toggleConfirmPassword");
+        
+        togglePassword.addEventListener('click', function() {
+          const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+          passwordInput.setAttribute('type', type);
+          this.querySelector('i').classList.toggle('bi-eye');
+          this.querySelector('i').classList.toggle('bi-eye-slash');
+        });
+        
+        toggleConfirmPassword.addEventListener('click', function() {
+          const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+          confirmPasswordInput.setAttribute('type', type);
+          this.querySelector('i').classList.toggle('bi-eye');
+          this.querySelector('i').classList.toggle('bi-eye-slash');
+        });
+        
+        // Lösenordsstyrka
+        function checkPasswordStrength(password) {
+          let strength = 0;
+          
+          if (password.length >= 8) strength += 1;
+          if (password.length >= 12) strength += 1;
+          if (/[A-Z]/.test(password)) strength += 1;
+          if (/[a-z]/.test(password)) strength += 1;
+          if (/[0-9]/.test(password)) strength += 1;
+          if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+          
+          return strength;
+        }
+        
+        // Uppdatera formulärets framstegsindikator
+        function updateFormProgress() {
+          let progress = 0;
+          let totalFields = 5; // Användarnamn, email, lösenord, bekräfta lösenord, villkor
+          
+          if (usernameInput.value.trim().length >= 3) progress++;
+          if (emailInput.checkValidity() && emailInput.value.trim().length > 0) progress++;
+          if (passwordInput.value.trim().length >= 8) progress++;
+          if (confirmPasswordInput.value === passwordInput.value && confirmPasswordInput.value.trim().length > 0) progress++;
+          if (agreeTermsCheckbox.checked) progress++;
+          
+          const progressPercentage = (progress / totalFields) * 100;
+          formProgress.style.width = progressPercentage + '%';
+          
+          // Ändra färg baserat på framsteg
+          if (progressPercentage < 40) {
+            formProgress.className = 'progress-bar bg-danger';
+          } else if (progressPercentage < 80) {
+            formProgress.className = 'progress-bar bg-warning';
+          } else {
+            formProgress.className = 'progress-bar bg-success';
+          }
+        }
+        
+        // Uppdaterar lösenordsstyrka visuellt
+        passwordInput.addEventListener('input', function() {
+          const val = this.value;
+          const strength = checkPasswordStrength(val);
+          
+          let strengthPercentage = (strength / 6) * 100;
+          document.getElementById("passwordStrength").style.width = strengthPercentage + '%';
+          
+          // Ändra färg baserat på styrka
+          if (strength <= 1) {
+            document.getElementById("passwordStrength").className = 'progress-bar bg-danger';
+            document.getElementById("passwordStrengthText").textContent = 'Lösenordsstyrka: Mycket svagt';
+          } else if (strength <= 3) {
+            document.getElementById("passwordStrength").className = 'progress-bar bg-warning';
+            document.getElementById("passwordStrengthText").textContent = 'Lösenordsstyrka: Svagt';
+          } else if (strength <= 4) {
+            document.getElementById("passwordStrength").className = 'progress-bar bg-info';
+            document.getElementById("passwordStrengthText").textContent = 'Lösenordsstyrka: Bra';
+          } else {
+            document.getElementById("passwordStrength").className = 'progress-bar bg-success';
+            document.getElementById("passwordStrengthText").textContent = 'Lösenordsstyrka: Starkt';
+          }
+          
+          // Uppdatera även formulärets allmänna framsteg
+          updateFormProgress();
+        });
+        
+        // Uppdatera framsteg vid värdeförändringar för alla relevanta fält
+        usernameInput.addEventListener('input', updateFormProgress);
+        emailInput.addEventListener('input', updateFormProgress);
+        confirmPasswordInput.addEventListener('input', updateFormProgress);
+        agreeTermsCheckbox.addEventListener('change', updateFormProgress);
+        notRobotCheckbox.addEventListener('change', updateFormProgress);
+        
+        // Validering vid inmatning
+        // Validera användarnamn vid inmatning
+        usernameInput.addEventListener('input', function() {
+          const val = this.value.trim();
+          // Visa hjälptext när användaren börjar skriva
+          this.parentElement.nextElementSibling.classList.remove('d-none');
+          
+          if (val.length < 3 || val.length > 20) {
+            this.classList.add('is-invalid');
+            this.classList.remove('is-valid');
+            usernameError.textContent = val.length < 3 
+              ? "Användarnamnet är för kort. Minst 3 tecken krävs." 
+              : "Användarnamnet är för långt. Max 20 tecken tillåts.";
+          } else {
+            this.classList.remove('is-invalid');
+            this.classList.add('is-valid');
+            // Dölj hjälptext när fältet är korrekt ifyllt
+            this.parentElement.nextElementSibling.classList.add('d-none');
+          }
+        });
+        
+        // Validera e-post vid inmatning
+        emailInput.addEventListener('input', function() {
+          const val = this.value.trim();
+          // Visa hjälptext när användaren börjar skriva
+          this.parentElement.nextElementSibling.classList.remove('d-none');
+          
+          if (!isValidEmail(val)) {
+            this.classList.add('is-invalid');
+            this.classList.remove('is-valid');
+            if (val.length > 0) {
+              emailError.textContent = "Ogiltig e-postadress. Kontrollera formatet (exempel: namn@domän.se)";
+            } else {
+              emailError.textContent = "E-postadress krävs";
+            }
+          } else {
+            this.classList.remove('is-invalid');
+            this.classList.add('is-valid');
+            // Dölj hjälptext när fältet är korrekt ifyllt
+            this.parentElement.nextElementSibling.classList.add('d-none');
+          }
+        });
+        
+        // Validera lösenord vid inmatning
+        passwordInput.addEventListener('input', function() {
+          const val = this.value.trim();
+          // Visa hjälptext när användaren börjar skriva
+          this.parentElement.nextElementSibling.classList.remove('d-none');
+          
+          const missingUppercase = !/[A-Z]/.test(val);
+          const missingLowercase = !/[a-z]/.test(val);
+          const missingNumber = !/[0-9]/.test(val);
+          const tooShort = val.length < 8;
+          
+          if (tooShort || missingUppercase || missingLowercase || missingNumber) {
+            this.classList.add('is-invalid');
+            this.classList.remove('is-valid');
+            
+            let errorMsg = "Lösenordet måste innehålla: ";
+            let errors = [];
+            
+            if (tooShort) errors.push("minst 8 tecken");
+            if (missingUppercase) errors.push("minst en stor bokstav");
+            if (missingLowercase) errors.push("minst en liten bokstav");
+            if (missingNumber) errors.push("minst en siffra");
+            
+            passwordError.textContent = errorMsg + errors.join(", ");
+          } else {
+            this.classList.remove('is-invalid');
+            this.classList.add('is-valid');
+            // Dölj hjälptext när fältet är korrekt ifyllt
+            this.parentElement.nextElementSibling.classList.add('d-none');
+          }
+        });
+        
+        // Validera lösenordsbekräftelse vid inmatning
+        confirmPasswordInput.addEventListener('input', function() {
+          const val = this.value;
+          const passwordVal = passwordInput.value;
+          // Visa hjälptext när användaren börjar skriva
+          this.parentElement.nextElementSibling.classList.remove('d-none');
+          
+          if (val !== passwordVal) {
+            this.classList.add('is-invalid');
+            this.classList.remove('is-valid');
+            confirmPasswordError.textContent = "Lösenorden matchar inte. Kontrollera att du skrivit samma lösenord.";
+          } else if (val.length === 0) {
+            this.classList.add('is-invalid');
+            this.classList.remove('is-valid');
+            confirmPasswordError.textContent = "Du måste bekräfta ditt lösenord";
+          } else {
+            this.classList.remove('is-invalid');
+            this.classList.add('is-valid');
+            // Dölj hjälptext när fältet är korrekt ifyllt
+            this.parentElement.nextElementSibling.classList.add('d-none');
+          }
+        });
+        
+        // Validera checkboxar när de ändras
+        agreeTermsCheckbox.addEventListener('change', function() {
+          if (!this.checked) {
+            this.classList.add('is-invalid');
+            document.getElementById('termsError').style.display = 'block';
+          } else {
+            this.classList.remove('is-invalid');
+            document.getElementById('termsError').style.display = 'none';
+          }
+        });
+        
+        notRobotCheckbox.addEventListener('change', function() {
+          if (!this.checked) {
+            this.classList.add('is-invalid');
+            document.getElementById('recaptchaError').style.display = 'block';
+          } else {
+            this.classList.remove('is-invalid');
+            document.getElementById('recaptchaError').style.display = 'none';
+          }
+        });
+        
+        // Validera email-format
+        function isValidEmail(email) {
+          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+        
+        // Validera lösenordskrav
+        function isValidPassword(password) {
+          return password.length >= 8 && 
+                 /[A-Z]/.test(password) && 
+                 /[a-z]/.test(password) && 
+                 /[0-9]/.test(password);
+        }
+        
+        // Vid "blur" på e-postfältet kontrolleras om e-posten redan finns
+        emailInput.addEventListener('blur', () => {
+          const val = emailInput.value.trim();
+          if (!val || !isValidEmail(val)) {
+            emailUsedError.style.display = "none";
+            emailUsedError.textContent = "";
+            emailUsed = false;
+            return;
+          }
+          
+          // Visa laddningsindikator
+          emailUsedError.style.display = "block";
+          emailUsedError.textContent = "Kontrollerar epostadressen...";
+          emailUsedError.className = "text-muted mt-2";
+          
+          // Ändrar till GET-anrop eftersom servern väntar sig GET istället för POST
+          fetch('/check_email?email=' + encodeURIComponent(val), {
+            method: 'GET',
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Nätverksfel vid kontroll av e-post');
+              }
+              return response.json();
+            })
+            .then(data => {
+              if (data.used) {
+                emailUsed = true;
+                emailUsedError.style.display = "block";
+                emailUsedError.textContent = "Ett konto med denna e-post finns redan!";
+                emailUsedError.className = "text-danger mt-2";
+              } else {
+                emailUsed = false;
+                emailUsedError.style.display = "none";
+                emailUsedError.textContent = "";
+              }
+            })
+            .catch(err => {
+              console.error("Fel vid check_email:", err);
+              emailUsedError.style.display = "block";
+              emailUsedError.textContent = "Kunde inte verifiera e-postadressen. Försök igen senare.";
+              emailUsedError.className = "text-warning mt-2";
+            });
+        });
+        
+        // Vid "blur" på användarnamn-fältet kontrolleras om användarnamnet redan finns
+        usernameInput.addEventListener('blur', () => {
+          const val = usernameInput.value.trim();
+          if (!val || val.length < 3) {
+            usernameUsedError.style.display = "none";
+            usernameUsedError.textContent = "";
+            usernameUsed = false;
+            return;
+          }
+          
+          // Visa laddningsindikator
+          usernameUsedError.style.display = "block";
+          usernameUsedError.textContent = "Kontrollerar användarnamnet...";
+          usernameUsedError.className = "text-muted mt-2";
+          
+          // Ändrar till GET-anrop eftersom servern väntar sig GET istället för POST
+          fetch('/check_username?username=' + encodeURIComponent(val), {
+            method: 'GET',
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Nätverksfel vid kontroll av användarnamn');
+              }
+              return response.json();
+            })
+            .then(data => {
+              if (data.used) {
+                usernameUsed = true;
+                usernameUsedError.style.display = "block";
+                usernameUsedError.textContent = "Detta användarnamn är redan taget!";
+                usernameUsedError.className = "text-danger mt-2";
+              } else {
+                usernameUsed = false;
+                usernameUsedError.style.display = "none";
+                usernameUsedError.textContent = "";
+              }
+            })
+            .catch(err => {
+              console.error("Fel vid check_username:", err);
+              usernameUsedError.style.display = "block";
+              usernameUsedError.textContent = "Kunde inte verifiera användarnamnet. Försök igen senare.";
+              usernameUsedError.className = "text-warning mt-2";
+            });
+        });
+        
+        // Vid formulärinlämning - validering
+        signupForm.addEventListener("submit", function(event) {
+          event.preventDefault(); // Förhindra standardformulärinsändning
+          
+          let valid = true;
+          
+          // Dölj alla hjälptexter först
+          document.querySelectorAll('.form-text').forEach(text => {
+            text.classList.add('d-none');
+          });
+          
+          // Validera användarnamn
+          const username = usernameInput.value.trim();
+          if (username.length < 3 || username.length > 20) {
+            usernameInput.classList.add('is-invalid');
+            usernameInput.parentElement.nextElementSibling.classList.remove('d-none');
+            usernameError.textContent = username.length < 3 
+              ? "Användarnamnet är för kort. Minst 3 tecken krävs." 
+              : "Användarnamnet är för långt. Max 20 tecken tillåts.";
+            valid = false;
+          } else if (usernameUsed) {
+            usernameInput.classList.add('is-invalid');
+            usernameUsedError.style.display = "block";
+            usernameUsedError.textContent = "Detta användarnamn är redan taget!";
+            valid = false;
+          } else {
+            usernameInput.classList.remove('is-invalid');
+            usernameInput.classList.add('is-valid');
+          }
+    
+          // Validera e-post
+          const email = emailInput.value.trim();
+          if (!isValidEmail(email)) {
+            emailInput.classList.add('is-invalid');
+            emailInput.parentElement.nextElementSibling.classList.remove('d-none');
+            if (email.length > 0) {
+              emailError.textContent = "Ogiltig e-postadress. Kontrollera formatet (exempel: namn@domän.se)";
+            } else {
+              emailError.textContent = "E-postadress krävs";
+            }
+            valid = false;
+          } else if (emailUsed) {
+            emailInput.classList.add('is-invalid');
+            emailUsedError.style.display = "block";
+            emailUsedError.textContent = "Ett konto med denna e-post finns redan!";
+            valid = false;
+          } else {
+            emailInput.classList.remove('is-invalid');
+            emailInput.classList.add('is-valid');
+          }
+    
+          // Validera lösenord
+          const password = passwordInput.value.trim();
+          const missingUppercase = !/[A-Z]/.test(password);
+          const missingLowercase = !/[a-z]/.test(password);
+          const missingNumber = !/[0-9]/.test(password);
+          const tooShort = password.length < 8;
+          
+          if (tooShort || missingUppercase || missingLowercase || missingNumber) {
+            passwordInput.classList.add('is-invalid');
+            passwordInput.parentElement.nextElementSibling.classList.remove('d-none');
+            
+            let errorMsg = "Lösenordet måste innehålla: ";
+            let errors = [];
+            
+            if (tooShort) errors.push("minst 8 tecken");
+            if (missingUppercase) errors.push("minst en stor bokstav");
+            if (missingLowercase) errors.push("minst en liten bokstav");
+            if (missingNumber) errors.push("minst en siffra");
+            
+            passwordError.textContent = errorMsg + errors.join(", ");
+            valid = false;
+          } else {
+            passwordInput.classList.remove('is-invalid');
+            passwordInput.classList.add('is-valid');
+          }
+          
+          // Validera lösenordsbekräftelse
+          const confirmPassword = confirmPasswordInput.value;
+          if (confirmPassword !== password) {
+            confirmPasswordInput.classList.add('is-invalid');
+            confirmPasswordInput.parentElement.nextElementSibling.classList.remove('d-none');
+            confirmPasswordError.textContent = "Lösenorden matchar inte. Kontrollera att du skrivit samma lösenord.";
+            valid = false;
+          } else if (confirmPassword.length === 0) {
+            confirmPasswordInput.classList.add('is-invalid');
+            confirmPasswordInput.parentElement.nextElementSibling.classList.remove('d-none');
+            confirmPasswordError.textContent = "Du måste bekräfta ditt lösenord";
+            valid = false;
+          } else {
+            confirmPasswordInput.classList.remove('is-invalid');
+            confirmPasswordInput.classList.add('is-valid');
+          }
+          
+          // Validera användarvillkor
+          if (!agreeTermsCheckbox.checked) {
+            agreeTermsCheckbox.classList.add('is-invalid');
+            document.getElementById('termsError').style.display = 'block';
+            valid = false;
+          } else {
+            agreeTermsCheckbox.classList.remove('is-invalid');
+            document.getElementById('termsError').style.display = 'none';
+          }
+          
+          // Validera "inte en robot" istället för reCAPTCHA
+          if (!notRobotCheckbox.checked) {
+            notRobotCheckbox.classList.add('is-invalid');
+            document.getElementById('recaptchaError').style.display = 'block';
+            document.getElementById('recaptchaError').textContent = "Du måste bekräfta att du inte är en robot";
+            valid = false;
+          } else {
+            notRobotCheckbox.classList.remove('is-invalid');
+            document.getElementById('recaptchaError').style.display = 'none';
+          }
+    
+          // Kontrollera om e-posten redan används
+          if (emailUsed) {
+            emailUsedError.style.display = "block";
+            emailUsedError.textContent = "Ett konto med denna e-post finns redan!";
+            emailUsedError.className = "text-danger mt-2";
+            valid = false;
+          }
+    
+          // Om alla validerar OK, skicka formuläret via AJAX
+          if (valid) {
+            // Visa laddningsspinner
+            submitBtn.disabled = true;
+            submitSpinner.classList.remove('d-none');
+            
+            // Skapa ett FormData-objekt för att skicka formulärdata
+            const formData = new FormData(signupForm);
+            
+            // Logga formulärdata för felsökning
+            console.log("Formulärdata som skickas:");
+            for (const pair of formData.entries()) {
+              console.log(pair[0] + ': ' + pair[1]);
+            }
+            
+            // Hämta CSRF-token
+            const csrfToken = getCookie('csrf_token');
+            console.log("CSRF-token: ", csrfToken); // Debugging
+            
+            // Skicka registreringsdata via AJAX
+            fetch('/register', {
+              method: 'POST',
+              body: formData,
+              headers: {
+                'X-CSRFToken': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
+              },
+              credentials: 'same-origin' // Inkludera cookies i begäran
+            })
+            .then(response => {
+              console.log("Server status:", response.status); // Debugging
+              console.log("Response headers:", response.headers); // Debugging
+              
+              // Kontrollera om svaret är JSON eller en omdirigering
+              const contentType = response.headers.get('content-type');
+              console.log("Content-Type:", contentType); // Debugging
+              
+              if (contentType && contentType.includes('application/json')) {
+                return response.json().then(data => {
+                  // Det är ett JSON-svar
+                  console.log("Raw JSON response:", data); // Debugging
+                  if (!response.ok) {
+                    // Hantera felsvaret från servern
+                    return { success: false, data: data, status: response.status };
+                  }
+                  return { success: true, data: data };
+                });
+              } else {
+                // Det är troligen en omdirigering
+                console.log("Redirect to:", response.url); // Debugging
+                window.location.href = response.url;
+                return { success: true, redirected: true };
+              }
+            })
+            .then(result => {
+              if (result.redirected) {
+                // Redan omdirigerad, gör ingenting
+                return;
+              }
+              
+              if (result.success) {
+                // Hantera framgångsrikt svar
+                if (result.data.redirect) {
+                  window.location.href = result.data.redirect;
+                } else {
+                  // Visa framgångsmeddelande
+                  registerSuccess.textContent = 'Registrering slutförd! Du omdirigeras nu...';
+                  registerSuccess.classList.remove('d-none');
+                  
+                  // Ta bort eventuella felmeddelanden
+                  let errorAlert = document.getElementById('registerError');
+                  if (errorAlert) {
+                    errorAlert.remove();
+                  }
+                  
+                  // Omdirigera efter några sekunder om ingen redirect URL gavs
+                  setTimeout(() => {
+                    window.location.href = '/inloggad';
+                  }, 2000);
+                }
+              } else {
+                // Hantera fel från servern
+                submitBtn.disabled = false;
+                submitSpinner.classList.add('d-none');
+                
+                // Visa felmeddelanden i ett alert-element överst i formuläret
+                let errorAlert = document.getElementById('registerError');
+                if (!errorAlert) {
+                  errorAlert = document.createElement('div');
+                  errorAlert.id = 'registerError';
+                  errorAlert.className = 'alert alert-danger';
+                  errorAlert.role = 'alert';
+                  signupForm.insertBefore(errorAlert, signupForm.firstChild);
+                }
+
+                console.log('Server response:', result.data); // Logga svaret för felsökning
+                
+                // Visa alla felmeddelanden
+                if (result.data && result.data.message) {
+                  // Direkt felmeddelande från servern
+                  errorAlert.innerHTML = '<strong>Fel:</strong> ' + result.data.message;
+                  
+                  // Hantera specifika felmeddelanden och markera relevanta fält
+                  if (result.data.message.toLowerCase().includes('lösenord') && 
+                      result.data.message.toLowerCase().includes('matchar inte')) {
+                    passwordInput.classList.add('is-invalid');
+                    confirmPasswordInput.classList.add('is-invalid');
+                    
+                    // Uppdatera det visuella felmeddelandet för lösenordsbekräftelsen
+                    confirmPasswordError.textContent = result.data.message;
+                    confirmPasswordInput.parentElement.nextElementSibling.classList.remove('d-none');
+                  }
+                } else if (result.data && result.data.errors && result.data.errors.length > 0) {
+                  // Lista med felmeddelanden
+                  errorAlert.innerHTML = '<strong>Fel:</strong><br>' + result.data.errors.join('<br>');
+                  
+                  // Markera relevanta fält som ogiltiga
+                  result.data.errors.forEach(err => {
+                    const lowerErr = err.toLowerCase();
+                    if (lowerErr.includes('lösenord') && lowerErr.includes('matchar inte')) {
+                      passwordInput.classList.add('is-invalid');
+                      confirmPasswordInput.classList.add('is-invalid');
+                      
+                      // Uppdatera det visuella felmeddelandet för lösenordsbekräftelsen
+                      confirmPasswordError.textContent = err;
+                      confirmPasswordInput.parentElement.nextElementSibling.classList.remove('d-none');
+                    } else if (lowerErr.includes('e-post') || lowerErr.includes('email')) {
+                      emailInput.classList.add('is-invalid');
+                    } else if (lowerErr.includes('användarnamn')) {
+                      usernameInput.classList.add('is-invalid');
+                    }
+                  });
+                } else {
+                  errorAlert.textContent = 'Ett oväntat fel uppstod. Vänligen försök igen.';
+                }
+                
+                // Skrolla till toppen av formuläret för att visa felmeddelandet
+                errorAlert.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              submitBtn.disabled = false;
+              submitSpinner.classList.add('d-none');
+              
+              // Visa ett generellt felmeddelande
+              let errorAlert = document.getElementById('registerError');
+              if (!errorAlert) {
+                errorAlert = document.createElement('div');
+                errorAlert.id = 'registerError';
+                errorAlert.className = 'alert alert-danger';
+                errorAlert.role = 'alert';
+                signupForm.insertBefore(errorAlert, signupForm.firstChild);
+              }
+              errorAlert.textContent = 'Ett nätverksfel uppstod. Kontrollera din internetanslutning och försök igen.';
+              errorAlert.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+          } else {
+            // Visa ett sammanfattande felmeddelande högst upp i formuläret om valideringen misslyckas
+            if (!registerSuccess.classList.contains('d-none')) {
+              registerSuccess.classList.add('d-none');
+            }
+            
+            // Skapa ett felmeddelande om det inte redan finns
+            let errorAlert = document.getElementById('registerError');
+            if (!errorAlert) {
+              errorAlert = document.createElement('div');
+              errorAlert.id = 'registerError';
+              errorAlert.className = 'alert alert-danger';
+              errorAlert.role = 'alert';
+              signupForm.insertBefore(errorAlert, signupForm.firstChild);
+            }
+            
+            errorAlert.textContent = 'Det finns fel i formuläret. Vänligen kontrollera de markerade fälten.';
+            
+            // Skrolla till toppen av formuläret
+            errorAlert.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      });
+    </script>
+    
+<script src="{{ url_for('static', filename='cookie-consent.js') }}" defer></script>
+</body>
+</html>

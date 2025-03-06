@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="sv">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Kunskapslitteratur erbjuder prisvärd, digital och hållbar kurslitteratur för studenter. Hitta dina kursböcker enkelt och till överkomliga priser.">
+        <meta name="keywords" content="kurslitteratur, studentlitteratur, kursböcker, digitala böcker, hållbar litteratur">
+        <meta name="author" content="Kunskapslitteratur">
+        <meta name="robots" content="index, follow">
+        <link rel="canonical" href="{{ request.url }}">
+        
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="{{ request.url }}">
+        <meta property="og:title" content="Hem - Kunskapslitteratur">
+        <meta property="og:description" content="Kunskapslitteratur erbjuder prisvärd, digital och hållbar kurslitteratur för studenter. Hitta dina kursböcker enkelt och till överkomliga priser.">
+        <meta property="og:image" content="{{ url_for('static', filename='bilder/logo.png', _external=True) }}">
+        
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image">
+        <meta property="twitter:url" content="{{ request.url }}">
+        <meta property="twitter:title" content="Hem - Kunskapslitteratur">
+        <meta property="twitter:description" content="Kunskapslitteratur erbjuder prisvärd, digital och hållbar kurslitteratur för studenter. Hitta dina kursböcker enkelt och till överkomliga priser.">
+        <meta property="twitter:image" content="{{ url_for('static', filename='bilder/logo.png', _external=True) }}">
+        
+        <title>Hem - Kunskapslitteratur</title>
+        
+        <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    
+        <!-- Favicon -->
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+        
+        <!-- Schema.org strukturerad data -->
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "Kunskapslitteratur",
+            "url": "{{ request.url_root }}",
+            "logo": "{{ url_for('static', filename='bilder/logo.png', _external=True) }}",
+            "description": "Kunskapslitteratur erbjuder prisvärd, digital och hållbar kurslitteratur för studenter.",
+            "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "",
+                "contactType": "customer service",
+                "email": "info@kunskapslitteratur.se"
+            },
+            "sameAs": [
+                "https://www.facebook.com/kunskapslitteratur",
+                "https://www.instagram.com/kunskapslitteratur"
+            ]
+        }
+        </script>
+    </head>
+<body>
+    <nav class="navbar navbar-expand-lg bg-white fixed-top shadow">
+        <div class="container">
+          <a class="navbar-brand" href="{{ url_for('home') }}" aria-label="Kunskapslitteratur hemsida">
+            <img src="{{ url_for('static', filename='bilder/logo.png') }}" alt="Kunskapslitteratur Logo" style="height: 60px;" width="auto" height="60" />
+          </a>
+          <button 
+            class="navbar-toggler" 
+            type="button" 
+            data-bs-toggle="collapse" 
+            data-bs-target="#mainNavbar" 
+            aria-controls="mainNavbar" 
+            aria-expanded="false" 
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav mx-auto gap-lg-5">
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('home') }}">Hem</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('omoss') }}">Om oss</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('hallbarhet') }}">Hållbarhet</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('kontaktaoss') }}">Kontakta oss</a>
+              </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-primary" href="{{ url_for('loggain') }}">
+                      <i class="bi bi-person me-2"></i>
+                      Logga in
+                    </a>
+                  </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Hero Section - Moderniserad med bättre spacing och tydligare CTA -->
+      <section class="hero d-flex align-items-center">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-8 col-md-10">
+              <h1 class="display-2 text-white mb-3">Kunskapslitteratur</h1>
+              <p class="lead text-white-50 mb-4 fs-4">
+                Upptäck en ny värld av kurslitteratur – enkel, prisvärd och skräddarsydd för dina behov.
+              </p>
+              <a href="{{ url_for('registrera') }}" class="btn btn-lg btn-custom px-4 py-2">Registrera dig här!</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Lösning Section - Moderniserad med card-design och bättre typografi -->
+      <section class="py-5 my-3">
+        <div class="container">
+          <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+              <div class="position-relative">
+                <img src="{{ url_for('static', filename='bilder/lösning.png') }}" alt="Studenter som använder Kunskapslitteraturs tjänster" class="img-fluid rounded-4 shadow-sm dark-image" loading="lazy" width="600" height="400" />
+                <div class="position-absolute bottom-0 end-0 bg-white p-2 rounded-3 shadow-sm d-none d-md-block" style="transform: translate(15%, 15%);">
+                  <i class="bi bi-book fs-1 custom-icon"></i>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 mb-3 rounded-pill">För studenter</span>
+              <h2 class="display-5 mb-4">En smidig lösning för studenter</h2>
+              <p class="lead mb-4">
+                Att hitta rätt kurslitteratur kan vara en utmaning – det är ofta dyrt, tidskrävande och stressande.
+              </p>
+              <div class="card border-0 bg-light p-4 mb-4 rounded-4">
+                <p class="mb-0">
+                  Vi har skapat en plattform som gör det enkelt att hitta och köpa de böcker du behöver till överkomliga priser. 
+                  Med ett brett utbud av titlar och enkel tillgång till digitala versioner, sparar du både tid och pengar.
+                </p>
+              </div>
+              <p class="fst-italic">Låt oss ta hand om litteraturen så att du kan fokusera på det som verkligen betyder något – dina studier.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Varför välja oss - Moderniserad med bättre visuell hierarki -->
+      <section class="py-5 bg-light my-3 rounded-4 mx-3">
+        <div class="container py-3">
+          <div class="row align-items-center g-5">
+            <div class="col-lg-6 order-lg-2">
+              <div class="position-relative">
+                <img src="{{ url_for('static', filename='bilder/varför.png') }}" alt="Fördelar med Kunskapslitteraturs tjänster för studenter" class="img-fluid rounded-4 shadow dark-image" loading="lazy" width="600" height="400" />
+                <div class="position-absolute top-0 start-0 bg-white p-2 rounded-3 shadow-sm d-none d-md-block" style="transform: translate(-15%, -15%);">
+                  <i class="bi bi-lightbulb fs-1 custom-icon"></i>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6 order-lg-1">
+              <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 mb-3 rounded-pill">Våra fördelar</span>
+              <h2 class="display-5 mb-4">Varför välja Kunskapslitteratur?</h2>
+              <p class="lead mb-4">
+                Kunskapslitteratur är mer än bara böcker – det är en investering i din framtid. Vårt skräddarsydda utbud, kombinerat med hållbara och prisvärda lösningar, gör oss till det självklara valet.
+              </p>
+              
+              <div class="row g-4 mt-2">
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center">
+                    <div class="me-3">
+                      <i class="bi bi-check-circle-fill custom-icon-color fs-4"></i>
+                    </div>
+                    <div>
+                      <h5 class="mb-1">Kostnadseffektivt</h5>
+                      <p class="mb-0 text-muted">Spara pengar utan att kompromissa med kvalitet.</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center">
+                    <div class="me-3">
+                      <i class="bi bi-check-circle-fill custom-icon-color fs-4"></i>
+                    </div>
+                    <div>
+                      <h5 class="mb-1">Fördjupad förståelse</h5>
+                      <p class="mb-0 text-muted">Få tillgång till böcker som förbättrar dina kunskaper.</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center">
+                    <div class="me-3">
+                      <i class="bi bi-check-circle-fill custom-icon-color fs-4"></i>
+                    </div>
+                    <div>
+                      <h5 class="mb-1">Bredare perspektiv</h5>
+                      <p class="mb-0 text-muted">Utforska ämnen från olika synvinklar.</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center">
+                    <div class="me-3">
+                      <i class="bi bi-check-circle-fill custom-icon-color fs-4"></i>
+                    </div>
+                    <div>
+                      <h5 class="mb-1">Skräddarsytt utbud</h5>
+                      <p class="mb-0 text-muted">Böcker anpassade efter dina behov.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Kom igång CTA - Moderniserad med gradient bakgrund -->
+      <section class="d-flex align-items-center justify-content-center text-center hero-section my-5 py-5">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-lg-8">
+              <h2 class="display-4 text-white mb-3">Kom igång redan idag!</h2>
+              <p class="lead text-white-50 mb-4 fs-5">Gör som tusentals andra studenter – bli medlem och upplev en enklare och mer prisvärd lösning för din kurslitteratur.</p>
+              <a href="{{ url_for('registrera') }}" class="btn btn-lg btn-custom px-5 py-3">Kom igång!</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Fördelar Section - Moderniserad med cards -->
+      <section class="py-5 my-3">
+        <div class="container">
+          <div class="row justify-content-center mb-5">
+            <div class="col-lg-6 text-center">
+              <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 mb-3 rounded-pill">Våra tjänster</span>
+              <h2 class="display-5 mb-3">Allt du behöver för dina studier</h2>
+              <p class="lead">Vi erbjuder en komplett lösning för alla dina litteraturbehov</p>
+            </div>
+          </div>
+          
+          <div class="row g-4">
+            <div class="col-lg-5">
+              <div class="position-relative h-100">
+                <img src="{{ url_for('static', filename='bilder/mål.png') }}" alt="Kunskapslitteraturs mål och vision för framtiden" class="img-fluid rounded-4 shadow-sm h-100 object-fit-cover dark-image" loading="lazy" width="500" height="600" />
+                <div class="position-absolute top-0 end-0 bg-white p-2 rounded-3 shadow-sm d-none d-md-block" style="transform: translate(15%, -15%);">
+                  <i class="bi bi-target fs-1 custom-icon"></i>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-lg-7">
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center hover-lift">
+                    <div class="mb-3">
+                      <i class="bi bi-credit-card fs-1 custom-icon"></i>
+                    </div>
+                    <h4 class="mb-3">Priseffektiv</h4>
+                    <p class="text-muted mb-0">Spara pengar med våra konkurrenskraftiga priser och flexibla betalningsalternativ.</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center hover-lift">
+                    <div class="mb-3">
+                      <i class="bi bi-people fs-1 custom-icon"></i>
+                    </div>
+                    <h4 class="mb-3">Skräddarsydd</h4>
+                    <p class="text-muted mb-0">Böcker anpassade efter ditt program och dina specifika studiebehov.</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center hover-lift">
+                    <div class="mb-3">
+                      <i class="bi bi-laptop fs-1 custom-icon"></i>
+                    </div>
+                    <h4 class="mb-3">Digitalt</h4>
+                    <p class="text-muted mb-0">Omedelbar tillgång till dina böcker online, var du än befinner dig.</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center hover-lift">
+                    <div class="mb-3">
+                      <i class="bi bi-globe fs-1 custom-icon"></i>
+                    </div>
+                    <h4 class="mb-3">Hållbarhet</h4>
+                    <p class="text-muted mb-0">Vi stödjer FN:s Agenda 2030 för en hållbar framtid och miljövänliga alternativ.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Final CTA - Moderniserad med gradient bakgrund -->
+      <section class="cta-section py-5 my-3 bg-light rounded-4 mx-3">
+        <div class="container py-3">
+          <div class="row align-items-center">
+            <div class="col-lg-7 mb-4 mb-lg-0">
+              <h2 class="display-5 mb-3">Vad väntar du på?</h2>
+              <p class="lead mb-0">Ta steget mot en enklare, prisvänligare och hållbar lösning för din kurslitteratur.</p>
+            </div>
+            <div class="col-lg-5 text-lg-end">
+              <a href="{{ url_for('registrera') }}" class="btn btn-primary btn-lg btn-custom-end px-5 py-3">Gå med nu!</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+<!-- Footer -->
+<footer class="footer py-5">
+  <div class="container">
+      <div class="row align-items-start text-center text-lg-start">
+          <!-- Left: Logo och Subheader -->
+          <div class="col-lg-5 text-center mb-4 mb-lg-0">
+              <a href="{{ url_for('home') }}" aria-label="Kunskapslitteratur hemsida">
+                  <img src="{{ url_for('static', filename='bilder/logo.png') }}" alt="Kunskapslitteratur Logo" class="img-fluid mb-3" style="height: 123px;" width="auto" height="123">
+              </a>
+              <p class="text-muted mb-0">Din partner för prisvärd, digital och hållbar kurslitteratur.</p>
+          </div>
+
+          <!-- Right: Länkar -->
+          <div class="col-lg-7">
+              <div class="row justify-content-center justify-content-lg-start">
+                  <!-- Column 1 -->
+                  <div class="col-12 col-sm-4 px-4 mb-4 mb-sm-0">
+                      <h5 class="mb-3">Länkar</h5>
+                      <ul class="list-unstyled">
+                          <li><a href="{{ url_for('home') }}" class="footer-link">Hem</a></li>
+                          <li><a href="{{ url_for('omoss') }}" class="footer-link">Om oss</a></li>
+                          <li><a href="{{ url_for('hallbarhet') }}" class="footer-link">Hållbarhet</a></li>
+                          <li><a href="{{ url_for('kontaktaoss') }}" class="footer-link">Kontakta oss</a></li>
+                      </ul>
+                  </div>
+                  <!-- Column 2 -->
+                  <div class="col-12 col-sm-4 px-4 mb-4 mb-sm-0">
+                      <h5 class="mb-3">Förlag</h5>
+                      <ul class="list-unstyled">
+                          <li><a href="{{ url_for('kontakt') }}" class="footer-link">Kontakt</a></li>
+                          <li><a href="{{ url_for('support') }}" class="footer-link">Support</a></li>
+                          <li><a href="{{ url_for('blipartner') }}" class="footer-link">Bli Partner</a></li>
+                          <li><a href="{{ url_for('forlagsvilkor') }}" class="footer-link">Förlagsvilkor</a></li>
+                      </ul>
+                  </div>
+                  <!-- Column 3 -->
+                  <div class="col-12 col-sm-4 px-4">
+                      <h5 class="mb-3">Hjälp & Info</h5>
+                      <ul class="list-unstyled">
+                          <li><a href="{{ url_for('faq') }}" class="footer-link">Vanliga frågor</a></li>
+                          <li><a href="{{ url_for('anvandarvilkor') }}" class="footer-link">Användarvillkor</a></li>
+                          <li><a href="{{ url_for('Integritetspolicy') }}" class="footer-link">Integritetspolicy</a></li>
+                          <li><a href="{{ url_for('karriar') }}" class="footer-link">Karriär</a></li>
+                      </ul>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <!-- Line och Copyright -->
+      <hr class="footer-line">
+      <div class="text-center mt-3">
+          <p class="text-muted mb-0">© 2025 Kunskapslitteratur. Alla rättigheter förbehållna.</p>
+      </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='script.js') }}" defer></script>
+<script src="{{ url_for('static', filename='cookie-consent.js') }}" defer></script>
+
+<!-- Preload viktiga resurser -->
+<link rel="preload" href="{{ url_for('static', filename='bilder/logo.png') }}" as="image">
+
+<!-- Inline kritisk CSS för snabbare rendering -->
+<style>
+  /* Kritisk CSS för att förhindra layout shifts */
+  .hero {
+    min-height: 500px;
+    background-size: cover;
+    background-position: center;
+  }
+  .navbar-brand img {
+    height: 60px;
+    width: auto;
+  }
+</style>
+
+<!-- Strukturerad data för breadcrumbs -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Hem",
+    "item": "{{ request.url_root }}"
+  }]
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="sv">
+  <head>
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Förlagsvilkor - Kunskapslitteratur</title>
+
+    <!-- Favicon -->
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="{{ url_for('static', filename='bilder/favicon.ico') }}"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="{{ url_for('static', filename='bilder/favicon.ico') }}"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="{{ url_for('static', filename='bilder/favicon.ico') }}"
+    />
+    <style>
+      /* Enkla färgvariabler */
+      :root {
+        --primary-color: #29231d;
+        --accent-color: #e67e22;
+        --light-bg: #f8f9fa;
+      }
+      
+      /* Huvudinnehåll */
+      .main-content {
+        padding-top: 120px;
+        padding-bottom: 60px;
+      }
+      
+      /* Sektionsrubriker */
+      .section-title {
+        margin-bottom: 1.5rem;
+        color: var(--primary-color);
+        position: relative;
+        display: inline-block;
+      }
+      
+      .section-title:after {
+        content: '';
+        position: absolute;
+        width: 50px;
+        height: 3px;
+        background-color: var(--accent-color);
+        bottom: -10px;
+        left: 0;
+      }
+      
+      /* Villkorssektion */
+      .terms-section {
+        margin-bottom: 40px;
+        padding: 25px;
+        border-radius: 8px;
+        background-color: white;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      
+      .terms-section:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+      }
+      
+      /* Numrerade rubriker */
+      .numbered-title {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.2rem;
+      }
+      
+      .numbered-title .number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 50%;
+        margin-right: 15px;
+        font-weight: bold;
+        flex-shrink: 0;
+      }
+      
+      /* Undervillkor */
+      .sub-term {
+        border-left: 3px solid var(--accent-color);
+        border-radius: 0 8px 8px 0;
+        padding: 15px;
+        margin-bottom: 15px;
+        background-color: var(--light-bg);
+      }
+      
+      .sub-term-title {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--primary-color);
+      }
+      
+      /* Kontaktsektion */
+      .contact-box {
+        background-color: var(--light-bg);
+        border-radius: 8px;
+        padding: 25px;
+        margin-top: 30px;
+        border-left: 4px solid var(--accent-color);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-white fixed-top shadow">
+      <div class="container">
+        <a class="navbar-brand" href="{{ url_for('home') }}">
+          <img
+            src="{{ url_for('static', filename='bilder/logo.png') }}"
+            alt="Kunskapslitteratur Logo"
+            style="height: 60px;"
+          />
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#mainNavbar"
+          aria-controls="mainNavbar"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNavbar">
+          <ul class="navbar-nav mx-auto gap-lg-5">
+            <li class="nav-item">
+              <a class="nav-link text-primary" href="{{ url_for('home') }}"
+                >Hem</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-primary" href="{{ url_for('omoss') }}"
+                >Om oss</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-primary" href="{{ url_for('hallbarhet') }}"
+                >Hållbarhet</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link text-primary"
+                href="{{ url_for('kontaktaoss') }}"
+                >Kontakta oss</a
+              >
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link text-primary" href="{{ url_for('loggain') }}">
+                <i class="bi bi-person me-2"></i>Logga in
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Huvudinnehåll -->
+    <main class="main-content">
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col-12">
+            <h1 class="mb-4">Förlagsvilkor</h1>
+            <p class="lead">
+              Dessa förlagsvillkor ("Villkoren") reglerar samarbetet mellan
+              Kunskapslitteratur ("vi", "oss", "vår") och dig som förlag
+              ("Förlaget"). Genom att samarbeta med Kunskapslitteratur bekräftar
+              du att du har läst, förstått och accepterat dessa Villkor.
+            </p>
+          </div>
+        </div>
+
+        <!-- Avtalets Omfattning -->
+        <div class="terms-section">
+          <div class="numbered-title">
+            <span class="number">1</span>
+            <h2>Avtalets Omfattning</h2>
+          </div>
+          <p>
+            Samarbetet innebär att Förlaget tillgängliggör sina böcker och
+            övriga publikationer för försäljning via vår plattform. Villkoren
+            omfattar även frågor som rör distribution, ersättning och
+            upphovsrätt.
+          </p>
+          <ul class="mt-3">
+            <li>Detta avtal reglerar relationen mellan Kunskapslitteratur och Förlaget avseende försäljning av digital kurslitteratur.</li>
+            <li>Avtalet träder i kraft när Förlaget registrerar sig på plattformen och laddar upp sitt första verk.</li>
+            <li>Avtalet löper tills vidare tills någon av parterna väljer att säga upp det enligt villkoren under "Avtalets Uppsägning".</li>
+          </ul>
+        </div>
+
+        <!-- Ersättning och Betalning -->
+        <div class="terms-section">
+          <div class="numbered-title">
+            <span class="number">2</span>
+            <h2>Ersättning och Betalning</h2>
+          </div>
+          
+          <div class="sub-term">
+            <div class="sub-term-title">2.1 Ersättningsmodell</div>
+            <p class="mb-0">
+              Förlaget får minst 90% av försäljningspriset för varje såld bok via Kunskapslitteratur. 
+              Andra avtalsmodeller kan förhandlas individuellt baserat på förlagets önskemål och specifika behov.
+              Kunskapslitteratur behåller resterande andel för att täcka plattformskostnader och administration.
+            </p>
+          </div>
+          
+          <div class="sub-term">
+            <div class="sub-term-title">2.2 Utbetalningar</div>
+            <p class="mb-0">
+              Utbetalningar sker månadsvis. Varje utbetalning åtföljs av en detaljerad försäljningsrapport som specificerar antal sålda böcker, pris per enhet och total intäkt per titel
+            </p>
+          </div>
+          
+          <div class="sub-term">
+            <div class="sub-term-title">2.3 Prissättning</div>
+            <p class="mb-0">
+              Förlagen sätter själva sina priser för böcker och publikationer. Vi uppmuntrar dock att hålla 
+              priserna låga för att maximera försäljningsvolymen genom vår 90/10-modell, vilket kan leda till
+              högre totala intäkter för förlaget. Förlaget kan när som helst justera priserna genom att
+              logga in på admin-portalen.
+            </p>
+          </div>
+          
+          <div class="sub-term">
+            <div class="sub-term-title">2.4 Betalningsinformation</div>
+            <p class="mb-0">
+              Förlaget ansvarar för att tillhandahålla korrekt betalningsinformation, inklusive bankuppgifter
+              och organisationsnummer. Alla utbetalningar görs via banköverföring till det konto som Förlaget har angett.
+              Eventuella ändringar i betalningsinformation måste meddelas skriftligen minst 14 dagar före nästa utbetalning.
+            </p>
+          </div>
+        </div>
+
+        <!-- Distribution och Publicering -->
+        <div class="terms-section">
+          <div class="numbered-title">
+            <span class="number">3</span>
+            <h2>Distribution och Publicering</h2>
+          </div>
+          
+          <div class="sub-term">
+            <div class="sub-term-title">3.1 Tillgängliggörande</div>
+            <p class="mb-0">
+              Förlaget ansvarar för att tillhandahålla korrekt metadata,
+              omslagsbilder samt uppdaterad information om sina publikationer.
+              Förlaget ska leverera verken i PDF-format med sökkbara texter och tydliga kapitelmarkeringar.
+              För att säkerställa optimal läsupplevelse i vår PDF-läsare uppmuntrar vi förlag att följa våra
+              riktlinjer för formatering.
+            </p>
+          </div>
+          
+          <div class="sub-term">
+            <div class="sub-term-title">3.2 Exklusivitet</div>
+            <p class="mb-0">
+              Förlaget får sälja sina böcker på andra plattformar, men måste följa Kunskapslitteraturs villkor
+              gällande tillgänglighet och kvalitet. Detta icke-exklusiva samarbete ger förlaget frihet att 
+              maximera sin distribution men kräver följsamhet till vår plattforms standarder.
+              Kunskapslitteratur får dock inte kräva prisparitet mellan olika plattformar.
+            </p>
+          </div>
+          
+          <div class="sub-term">
+            <div class="sub-term-title">3.3 Marknadsföring</div>
+            <p class="mb-0">
+              Kunskapslitteratur marknadsför böcker inom sin egen plattform utan extra kostnad. För utökad synlighet 
+              kan förlag betala för särskilda marknadsföringstjänster enligt separata överenskommelser. Information
+              om tillgängliga marknadsföringstjänster tillhandahålls på förfrågan.
+              Vi erbjuder även möjlighet till kampanjer och tillfälliga rabatter för att öka försäljningen.
+            </p>
+          </div>
+          
+          <div class="sub-term">
+            <div class="sub-term-title">3.4 Digital Distribution</div>
+            <p class="mb-0">
+              All distribution sker digitalt – vi tillhandahåller inga fysiska böcker. Förlaget godkänner att
+              deras innehåll tillgängliggörs genom ett implementerat PDF-läsare för att garantera säkerhet
+              och användarvänlighet.
+            </p>
+          </div>
+          
+          <div class="sub-term">
+            <div class="sub-term-title">3.5 Kvalitetskontroll</div>
+            <p class="mb-0">
+              Vi förbehåller oss rätten att granska och godkänna allt innehåll innan publicering för att säkerställa
+              att det uppfyller våra kvalitetsstandarder. Vid behov kan vi begära ändringar eller förbättringar av
+              materialet. Förlag har 14 dagar på sig att åtgärda eventuella brister som identifieras.
+            </p>
+          </div>
+        </div>
+
+        <!-- Upphovsrätt -->
+        <div class="terms-section">
+          <div class="numbered-title">
+            <span class="number">4</span>
+            <h2>Upphovsrätt och Rättigheter</h2>
+          </div>
+          <p>
+            Förlaget garanterar att man innehar nödvändiga rättigheter för de
+            publikationer som görs tillgängliga på vår plattform. Förlaget behåller fullständiga rättigheter till 
+            sina böcker och kan när som helst ta bort eller redigera sina titlar. Förlaget ansvarar 
+            för eventuella anspråk från tredje part som uppstår till följd av intrång i 
+            upphovsrätt eller andra immateriella rättigheter.
+          </p>
+          <ul class="mt-3">
+            <li>Förlaget garanterar att de material som tillhandahålls inte kränker tredje parts upphovsrätt, varumärke eller andra immateriella rättigheter.</li>
+            <li>Förlaget godkänner att Kunskapslitteratur får använda utdrag och omslagsbilder från verken i marknadsföringssyfte.</li>
+            <li>Kunskapslitteratur erhåller en icke-exklusiv licens att distribuera verken via sin plattform, men förvärvar inga upphovsrätter till innehållet.</li>
+            <li>Om Kunskapslitteratur blir föremål för rättsliga anspråk relaterade till förlagets material ska förlaget försvara och hålla Kunskapslitteratur skadeslöst.</li>
+          </ul>
+        </div>
+        
+        <!-- Användarfeedback och statistik -->
+        <div class="terms-section">
+          <div class="numbered-title">
+            <span class="number">5</span>
+            <h2>Användarfeedback och statistik</h2>
+          </div>
+          <p>
+            Vi tillhandahåller förlagen med detaljerad statistik och användarfeedback för att hjälpa dem förbättra sina publikationer och förstå sin läsarkrets bättre.
+          </p>
+          <ul class="mt-3">
+            <li>Förlaget får tillgång till en förlags-portal där de kan se detaljerad statistik över läsare och försäljning.</li>
+            <li>Statistik inkluderar antal läsningar, läsningstid, mest lästa kapitel och användarrecensioner (om tillgängliga).</li>
+            <li>All användardata delas i anonymiserad form för att skydda användarnas integritet.</li>
+            <li>Förlaget kan använda denna data för att förbättra framtida utgåvor och rikta sitt marknadsföringsarbete.</li>
+          </ul>
+        </div>
+
+        <!-- Ansvarsbegränsning -->
+        <div class="terms-section">
+          <div class="numbered-title">
+            <span class="number">6</span>
+            <h2>Ansvarsbegränsning</h2>
+          </div>
+          <p>
+            Kunskapslitteratur strävar efter att tillhandahålla en stabil och
+            säker plattform, men kan inte hållas ansvarigt för förluster eller
+            skador som uppstår på grund av tekniska fel, avbrott eller andra
+            omständigheter utanför vår kontroll.
+          </p>
+          <ul class="mt-3">
+            <li>Kunskapslitteratur ansvarar inte för eventuella förluster i försäljning till följd av tillfälliga driftstörningar eller underhållsarbeten.</li>
+            <li>Vårt maximala ansvar är begränsat till den ersättning som Förlaget skulle ha erhållit under en tremånadersperiod före skadan.</li>
+            <li>Varken Kunskapslitteratur eller Förlaget ansvarar för oförutsebara händelser som ligger utanför parternas kontroll (force majeure).</li>
+          </ul>
+        </div>
+
+        <!-- Sekretess -->
+        <div class="terms-section">
+          <div class="numbered-title">
+            <span class="number">7</span>
+            <h2>Sekretess</h2>
+          </div>
+          <p>
+            Båda parter förbinder sig att behandla affärshemligheter och konfidentiell information med största sekretess.
+          </p>
+          <ul class="mt-3">
+            <li>Kunskapslitteratur behandlar förlagets försäljningsdata, intäkter och användarstatistik konfidentiellt.</li>
+            <li>Förlaget får inte dela information om villkor, royaltysatser eller andra avtalsdetaljer med tredje part utan skriftligt godkännande.</li>
+            <li>Sekretessåtagandet gäller även efter avtalets upphörande.</li>
+            <li>Information som redan är offentlig eller blir offentlig utan parts förskyllan omfattas inte av sekretessåtagandet.</li>
+          </ul>
+        </div>
+
+        <!-- Ändringar i Villkoren -->
+        <div class="terms-section">
+          <div class="numbered-title">
+            <span class="number">8</span>
+            <h2>Ändringar i Villkoren</h2>
+          </div>
+          <p>
+            Vi förbehåller oss rätten att ändra dessa Villkor vid behov. Om
+            förändringar sker meddelar vi Förlaget i förväg via e-post eller
+            genom att publicera uppdaterade Villkor på vår webbplats. Fortsatt
+            samarbete efter ändringar innebär att Förlaget accepterar de
+            reviderade Villkoren.
+          </p>
+          <ul class="mt-3">
+            <li>Väsentliga ändringar i villkoren uppdateras minst 30 dagar i förväg via förlags-portalen.</li>
+            <li>Om Förlaget inte accepterar de nya villkoren har de rätt att säga upp avtalet innan ändringarna träder i kraft.</li>
+            <li>Mindre ändringar av administrativ karaktär kan ske utan föregående meddelande.</li>
+          </ul>
+        </div>
+
+        <!-- Avtalets Uppsägning -->
+        <div class="terms-section">
+          <div class="numbered-title">
+            <span class="number">9</span>
+            <h2>Avtalets Uppsägning</h2>
+          </div>
+          <p>
+            Förlagen kan säga upp samarbetet när som helst genom att kontakta Kunskapslitteratur. 
+            Eventuella utestående intäkter betalas ut fram till samarbetets sista dag. 
+            Uppsägning påverkar inte redan gjorda försäljningar. Vi förbehåller oss rätten 
+            att omedelbart avbryta samarbetet om Förlaget bryter mot dessa Villkor.
+          </p>
+          <ul class="mt-3">
+            <li>Skriftlig uppsägning ska skickas via e-post till forlag@kunskapslitteratur.se med "Uppsägning av avtal" i ämnesraden.</li>
+            <li>Efter uppsägning kommer publikationerna att tas bort från plattformen inom 30 dagar.</li>
+            <li>Användare som redan köpt tillgång till publikationerna behåller sin åtkomst trots uppsägningen.</li>
+            <li>Vid väsentliga avtalsbrott från endera part kan avtalet sägas upp med omedelbar verkan.</li>
+          </ul>
+        </div>
+
+        <!-- Tvistlösning -->
+        <div class="terms-section">
+          <div class="numbered-title">
+            <span class="number">10</span>
+            <h2>Tvistlösning</h2>
+          </div>
+          <p>
+            Eventuella tvister som uppstår i samband med detta avtal ska i första hand lösas genom förhandling mellan parterna.
+          </p>
+          <ul class="mt-3">
+            <li>Om parterna inte kan nå en överenskommelse genom förhandling ska tvisten avgöras av svensk domstol.</li>
+            <li>Detta avtal lyder under svensk lag.</li>
+            <li>Parterna kan gemensamt besluta att anlita en medlare för att lösa tvisten utanför domstol.</li>
+          </ul>
+        </div>
+
+        <!-- Kontakt -->
+        <div class="terms-section">
+          <div class="numbered-title">
+            <span class="number">11</span>
+            <h2>Kontakt</h2>
+          </div>
+          <div class="contact-box">
+            <h5><i class="bi bi-question-circle me-2"></i>Har du ytterligare frågor?</h5>
+            <p class="mb-3">
+              Vänligen kontakta oss via någon av kanalerna nedan:
+            </p>
+            <div class="d-flex align-items-center mb-2">
+              <i class="bi bi-envelope me-3 text-primary"></i>
+              <a href="mailto:forlag@kunskapslitteratur.se">forlag@kunskapslitteratur.se</a>
+            </div>
+            <div class="d-flex align-items-center">
+              <i class="bi bi-telephone me-3 text-primary"></i>
+              <a href="#">Kommer snart</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer py-5">
+      <div class="container">
+        <div class="row align-items-start text-center text-lg-start">
+          <!-- Left: Logo och Subheader -->
+          <div class="col-lg-5 text-center mb-4 mb-lg-0">
+            <a href="{{ url_for('home') }}">
+              <img
+                src="{{ url_for('static', filename='bilder/logo.png') }}"
+                alt="Kunskapslitteratur Logo"
+                class="img-fluid mb-3"
+                style="height: 123px;"
+              />
+            </a>
+            <p class="text-muted mb-0">
+              Din partner för prisvärd, digital och hållbar kurslitteratur.
+            </p>
+          </div>
+
+          <!-- Right: Länkar -->
+          <div class="col-lg-7">
+            <div class="row justify-content-center justify-content-lg-start">
+              <!-- Column 1 -->
+              <div class="col-12 col-sm-4 px-4 mb-4 mb-sm-0">
+                <h5 class="mb-3">Länkar</h5>
+                <ul class="list-unstyled">
+                  <li>
+                    <a href="{{ url_for('home') }}" class="footer-link">Hem</a>
+                  </li>
+                  <li>
+                    <a href="{{ url_for('omoss') }}" class="footer-link"
+                      >Om oss</a
+                    >
+                  </li>
+                  <li>
+                    <a href="{{ url_for('hallbarhet') }}" class="footer-link"
+                      >Hållbarhet</a
+                    >
+                  </li>
+                  <li>
+                    <a href="{{ url_for('kontaktaoss') }}" class="footer-link"
+                      >Kontakta oss</a
+                    >
+                  </li>
+                </ul>
+              </div>
+              <!-- Column 2 -->
+              <div class="col-12 col-sm-4 px-4 mb-4 mb-sm-0">
+                <h5 class="mb-3">Förlag</h5>
+                <ul class="list-unstyled">
+                  <li>
+                    <a href="{{ url_for('kontakt') }}" class="footer-link"
+                      >Kontakt</a
+                    >
+                  </li>
+                  <li>
+                    <a href="{{ url_for('support') }}" class="footer-link"
+                      >Support</a
+                    >
+                  </li>
+                  <li>
+                    <a href="{{ url_for('blipartner') }}" class="footer-link"
+                      >Bli Partner</a
+                    >
+                  </li>
+                  <li>
+                    <a href="{{ url_for('forlagsvilkor') }}" class="footer-link"
+                      >Förlagsvilkor</a
+                    >
+                  </li>
+                </ul>
+              </div>
+              <!-- Column 3 -->
+              <div class="col-12 col-sm-4 px-4">
+                <h5 class="mb-3">Hjälp & Info</h5>
+                <ul class="list-unstyled">
+                  <li>
+                    <a href="{{ url_for('faq') }}" class="footer-link"
+                      >Vanliga frågor</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="{{ url_for('anvandarvilkor') }}"
+                      class="footer-link"
+                      >Användarvillkor</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="{{ url_for('Integritetspolicy') }}"
+                      class="footer-link"
+                      >Integritetspolicy</a
+                    >
+                  </li>
+                  <li>
+                    <a href="{{ url_for('karriar') }}" class="footer-link"
+                      >Karriär</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Line och Copyright -->
+        <hr class="footer-line" />
+        <div class="text-center mt-3">
+          <p class="text-muted mb-0">
+            © 2025 Kunskapslitteratur. Alla rättigheter förbehållna.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    ></script>
+  <script src="{{ url_for('static', filename='cookie-consent.js') }}" defer></script>
+</body>
+</html>

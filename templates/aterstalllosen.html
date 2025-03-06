@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+        <!-- Favicon -->
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Återställ lösenord - Kunskapslitteratur</title>
+    <style>
+        body {
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            padding-top: 80px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .page-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+        
+        .form-container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 450px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-container:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-title {
+            color: #29231d;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .form-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background-color: #29231d;
+            border-radius: 3px;
+        }
+        
+        .input-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            z-index: 10;
+        }
+        
+        .form-control {
+            padding-left: 45px;
+            height: 50px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #29231d;
+            box-shadow: 0 0 0 0.25rem rgba(41, 35, 29, 0.25);
+        }
+        
+        .btn-primary {
+            background-color: #29231d;
+            border-color: #29231d;
+            height: 50px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: #1e1915;
+            border-color: #1e1915;
+            transform: translateY(-2px);
+        }
+        
+        .invalid-feedback {
+            display: none;
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        .is-invalid ~ .invalid-feedback {
+            display: block;
+        }
+        
+        .is-invalid {
+            border-color: #dc3545 !important;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 1.5rem;
+            color: #29231d;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .back-link:hover {
+            color: #1e1915;
+            text-decoration: underline;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .password-requirements {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 0.5rem;
+            padding-left: 0.5rem;
+            border-left: 2px solid #dee2e6;
+        }
+        
+        .password-strength {
+            height: 5px;
+            margin-top: 0.5rem;
+            border-radius: 5px;
+            background-color: #e9ecef;
+            overflow: hidden;
+        }
+        
+        .password-strength-meter {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg bg-white fixed-top shadow">
+        <div class="container">
+          <a class="navbar-brand" href="{{ url_for('home') }}">
+            <img src="{{ url_for('static', filename='bilder/logo.png') }}" alt="Kunskapslitteratur Logo" style="height: 60px;" />
+          </a>
+          <button 
+            class="navbar-toggler" 
+            type="button" 
+            data-bs-toggle="collapse" 
+            data-bs-target="#mainNavbar" 
+            aria-controls="mainNavbar" 
+            aria-expanded="false" 
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav mx-auto gap-lg-5">
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('home') }}">Hem</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('omoss') }}">Om oss</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('hallbarhet') }}">Hållbarhet</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('kontaktaoss') }}">Kontakta oss</a>
+              </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-primary" href="{{ url_for('loggain') }}">
+                      <i class="bi bi-person me-2"></i>
+                      Logga in
+                    </a>
+                </li>
+            </ul>
+          </div>
+        </div>
+    </nav>
+
+    <div class="page-content">
+        <div class="form-container">
+            <h2 class="form-title text-center">Återställ lösenord</h2>
+            <p class="text-center text-muted mb-4">Skapa ett nytt, säkert lösenord för ditt konto.</p>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, msg in messages %}
+                        <div class="alert alert-{{ category }} text-center" role="alert">
+                            {{ msg }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <form id="resetPasswordForm" action="/reset-password" method="POST">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="token" value="{{ token }}">
+                
+                <div class="input-group">
+                    <i class="bi bi-lock input-icon"></i>
+                    <input 
+                        type="password" 
+                        class="form-control" 
+                        id="password" 
+                        name="password" 
+                        placeholder="Nytt lösenord" 
+                        required>
+                    <div class="invalid-feedback">
+                        Lösenordet uppfyller inte kraven.
+                    </div>
+                </div>
+                
+                <div class="password-requirements">
+                    <p class="mb-1">Lösenordet måste innehålla:</p>
+                    <ul class="mb-2 ps-3">
+                        <li id="length-check">Minst 8 tecken</li>
+                        <li id="uppercase-check">Minst en stor bokstav</li>
+                        <li id="number-check">Minst en siffra</li>
+                    </ul>
+                </div>
+                
+                <div class="password-strength">
+                    <div class="password-strength-meter" id="strength-meter"></div>
+                </div>
+                
+                <div class="input-group mt-3">
+                    <i class="bi bi-shield-lock input-icon"></i>
+                    <input 
+                        type="password" 
+                        class="form-control" 
+                        id="confirmPassword" 
+                        name="confirmPassword" 
+                        placeholder="Bekräfta lösenord" 
+                        required>
+                    <div class="invalid-feedback">
+                        Lösenorden matchar inte.
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary w-100 mt-4">
+                    <span id="submit-text">Spara nytt lösenord</span>
+                    <span id="spinner" class="spinner-border spinner-border-sm d-none ms-2" role="status" aria-hidden="true"></span>
+                </button>
+                
+                <div class="text-center">
+                    <a href="{{ url_for('loggain') }}" class="back-link">
+                        <i class="bi bi-arrow-left me-1"></i> Tillbaka till inloggning
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('resetPasswordForm');
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirmPassword');
+            const submitButton = form.querySelector('button[type="submit"]');
+            const submitText = document.getElementById('submit-text');
+            const spinner = document.getElementById('spinner');
+            
+            // Element för lösenordskrav
+            const lengthCheck = document.getElementById('length-check');
+            const uppercaseCheck = document.getElementById('uppercase-check');
+            const numberCheck = document.getElementById('number-check');
+            const strengthMeter = document.getElementById('strength-meter');
+            
+            // Validera lösenord när användaren skriver
+            password.addEventListener('input', function() {
+                validatePassword();
+                updatePasswordStrength();
+            });
+            
+            // Validera bekräfta lösenord när användaren skriver
+            confirmPassword.addEventListener('input', function() {
+                validateConfirmPassword();
+            });
+            
+            // Validera formulär vid inlämning
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                const isPasswordValid = validatePassword();
+                const isConfirmValid = validateConfirmPassword();
+                
+                if (!isPasswordValid || !isConfirmValid) {
+                    return;
+                }
+                
+                // Visa laddningsindikator
+                submitButton.disabled = true;
+                submitText.textContent = 'Sparar...';
+                spinner.classList.remove('d-none');
+                
+                // Skicka formuläret efter en kort fördröjning
+                setTimeout(() => {
+                    form.submit();
+                }, 300);
+            });
+            
+            // Funktion för att validera lösenord
+            function validatePassword() {
+                const passwordValue = password.value;
+                
+                // Kontrollera lösenordets styrka
+                const hasLength = passwordValue.length >= 8;
+                const hasUppercase = /[A-Z]/.test(passwordValue);
+                const hasNumber = /\d/.test(passwordValue);
+                
+                // Uppdatera visuella indikatorer
+                updateCheckItem(lengthCheck, hasLength);
+                updateCheckItem(uppercaseCheck, hasUppercase);
+                updateCheckItem(numberCheck, hasNumber);
+                
+                const isValid = hasLength && hasUppercase && hasNumber;
+                
+                if (!isValid) {
+                    password.classList.add('is-invalid');
+                    password.classList.remove('is-valid');
+                } else {
+                    password.classList.remove('is-invalid');
+                    password.classList.add('is-valid');
+                }
+                
+                return isValid;
+            }
+            
+            // Funktion för att validera bekräfta lösenord
+            function validateConfirmPassword() {
+                const passwordValue = password.value;
+                const confirmValue = confirmPassword.value;
+                
+                const isValid = confirmValue && confirmValue === passwordValue;
+                
+                if (!isValid) {
+                    confirmPassword.classList.add('is-invalid');
+                    confirmPassword.classList.remove('is-valid');
+                } else {
+                    confirmPassword.classList.remove('is-invalid');
+                    confirmPassword.classList.add('is-valid');
+                }
+                
+                return isValid;
+            }
+            
+            // Funktion för att uppdatera visuell indikator för lösenordskrav
+            function updateCheckItem(element, isValid) {
+                if (isValid) {
+                    element.style.color = '#198754'; // Grön
+                    element.innerHTML = `<i class="bi bi-check-circle-fill me-1"></i>${element.textContent.replace(/^[\u2714\u2716]\s*/, '').replace(/^.*?\s/, '')}`;
+                } else {
+                    element.style.color = '#6c757d'; // Grå
+                    element.innerHTML = element.textContent.replace(/^[\u2714\u2716]\s*/, '').replace(/^.*?\s/, '');
+                }
+            }
+            
+            // Funktion för att uppdatera lösenordsstyrka
+            function updatePasswordStrength() {
+                const passwordValue = password.value;
+                
+                if (!passwordValue) {
+                    strengthMeter.style.width = '0%';
+                    strengthMeter.style.backgroundColor = '#e9ecef';
+                    return;
+                }
+                
+                // Beräkna lösenordsstyrka
+                let strength = 0;
+                
+                // Grundläggande längdkontroll
+                if (passwordValue.length >= 8) strength += 25;
+                if (passwordValue.length >= 12) strength += 15;
+                
+                // Kontrollera komplexitet
+                if (/[A-Z]/.test(passwordValue)) strength += 20;
+                if (/[a-z]/.test(passwordValue)) strength += 10;
+                if (/\d/.test(passwordValue)) strength += 15;
+                if (/[^A-Za-z0-9]/.test(passwordValue)) strength += 15;
+                
+                // Begränsa till 100%
+                strength = Math.min(strength, 100);
+                
+                // Uppdatera visuell indikator
+                strengthMeter.style.width = `${strength}%`;
+                
+                // Färgkodning baserat på styrka
+                if (strength < 30) {
+                    strengthMeter.style.backgroundColor = '#dc3545'; // Röd
+                } else if (strength < 60) {
+                    strengthMeter.style.backgroundColor = '#ffc107'; // Gul
+                } else if (strength < 80) {
+                    strengthMeter.style.backgroundColor = '#0dcaf0'; // Ljusblå
+                } else {
+                    strengthMeter.style.backgroundColor = '#198754'; // Grön
+                }
+            }
+        });
+    </script>
+<script src="{{ url_for('static', filename='cookie-consent.js') }}" defer></script>
+</body>
+</html>

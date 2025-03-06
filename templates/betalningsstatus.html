@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="sv" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Betalningsstatus - Kunskapslitteratur</title>
+    <!-- Bootstrap & Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            background-color: #f8f9fa;
+        }
+        
+        .transaction-card {
+            border: none;
+            border-radius: 16px;
+            padding: 1.75rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background-color: #ffffff;
+        }
+        
+        .transaction-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+        }
+        
+        .transaction-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+        
+        .transaction-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .transaction-number {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--bs-primary);
+            background-color: rgba(var(--bs-primary-rgb), 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+        }
+        
+        .transaction-date {
+            font-size: 0.9rem;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .transaction-amount {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #198754;
+            background-color: rgba(25, 135, 84, 0.1);
+            padding: 0.5rem 1.25rem;
+            border-radius: 12px;
+        }
+        
+        .transaction-items {
+            padding-left: 0;
+            margin-top: 1rem;
+        }
+        
+        .transaction-items li {
+            list-style: none;
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.75rem;
+            border-radius: 12px;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.2s ease;
+        }
+        
+        .transaction-items li:hover {
+            background-color: #f0f1f2;
+        }
+        
+        .transaction-items li:last-child {
+            margin-bottom: 0;
+        }
+        
+        .book-title {
+            font-weight: 500;
+            color: #212529;
+        }
+        
+        .book-price {
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        }
+        
+        .empty-state i {
+            font-size: 3.5rem;
+            color: var(--bs-primary);
+            margin-bottom: 1.5rem;
+            opacity: 0.8;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1rem 0;
+        }
+        
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #212529;
+            margin: 0;
+        }
+        
+        .transaction-count {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #fff;
+            background-color: var(--bs-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+        }
+        
+        .books-section {
+            margin-top: 1.5rem;
+        }
+        
+        .books-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .books-header i {
+            font-size: 1.25rem;
+            color: var(--bs-primary);
+        }
+        
+        .books-count {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #6c757d;
+            background-color: #e9ecef;
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+        }
+        
+        .no-books {
+            text-align: center;
+            padding: 2rem;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar (samma som på dina andra sidor) -->
+    <div class="sidebar">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='bilder/logo.png') }}" alt="Kunskapslitteratur Logo">
+        </div>
+        <div class="nav-links">
+            <a href="{{ url_for('inloggad') }}" class="{{ 'active' if request.path == url_for('inloggad') else '' }}">
+                <i class="bi bi-house-door"></i>
+                <span>Välkommen</span>
+            </a>
+            <a href="{{ url_for('my_books') }}" class="{{ 'active' if request.path == url_for('my_books') else '' }}">
+                <i class="bi bi-book"></i>
+                <span>Mina böcker</span>
+            </a>
+            <a href="{{ url_for('utforskabocker') }}" class="{{ 'active' if request.path == url_for('utforskabocker') else '' }}">
+                <i class="bi bi-search"></i>
+                <span>Utforska böcker</span>
+            </a>
+            <a href="{{ url_for('betalningsstatus') }}" class="{{ 'active' if request.path == url_for('betalningsstatus') else '' }}">
+                <i class="bi bi-credit-card"></i>
+                <span>Transaktioner</span>
+            </a>
+            <a href="{{ url_for('mittkonto') }}" class="{{ 'active' if request.path == url_for('mittkonto') else '' }}">
+                <i class="bi bi-person"></i>
+                <span>Mitt Konto</span>
+            </a>
+            <!-- Mobile Logout Icon -->
+            <a href="#" class="mobile-logout d-md-none" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                <i class="bi bi-box-arrow-left"></i>
+                <span>Logga ut</span>
+            </a>
+        </div>
+        <div class="logout mt-auto">
+            <button class="btn btn-outline-secondary w-100" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                <i class="bi bi-box-arrow-left me-2"></i>Logga ut
+            </button>
+        </div>
+    </div>
+
+    <!-- Logout Modal (om det behövs) -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center px-5">
+                    <div class="mb-4">
+                        <i class="bi bi-door-open" style="font-size: 2.5rem; color: var(--accent);"></i>
+                    </div>
+                    <h5 class="modal-title mb-3">Bekräfta utloggning</h5>
+                    <p class="text-muted">Är du säker på att du vill logga ut?</p>
+                </div>
+                <div class="modal-footer border-0 justify-content-center pb-4">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+                    <a href="/logout" class="btn btn-primary">Logga ut</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="main-content container my-4">
+        <div class="page-header">
+            <h1 class="page-title">Dina transaktioner</h1>
+            <span class="transaction-count">
+                {{ transactions|length if transactions else 0 }} totalt
+            </span>
+        </div>
+        
+        {% if transactions %}
+            {% for tx in transactions %}
+            <div class="transaction-card">
+                <div class="transaction-header">
+                    <div class="transaction-info">
+                        <span class="transaction-number">{{ tx.display_id }}</span>
+                        <div class="transaction-date">
+                            <i class="bi bi-calendar3"></i>
+                            {{ tx.purchase_date.strftime('%Y-%m-%d %H:%M') }}
+                        </div>
+                    </div>
+                    <div class="transaction-amount">
+                        {{ tx.total_amount }} kr
+                    </div>
+                </div>
+                
+                <div class="books-section">
+                    <div class="books-header">
+                        <i class="bi bi-book"></i>
+                        <h6 class="mb-0 fw-semibold">Inköpta böcker</h6>
+                        {% if tx.purchased_books %}
+                        <span class="books-count">{{ tx.purchased_books|length }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    {% if tx.purchased_books %}
+                    <ul class="transaction-items">
+                        {% for book in tx.purchased_books %}
+                        <li>
+                            <span class="book-title">{{ book.title }}</span>
+                            <span class="book-price">{{ book.price }} kr</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                        <div class="no-books">
+                            <p class="mb-0">Inga böcker listade</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <i class="bi bi-receipt"></i>
+                <h4>Inga transaktioner än</h4>
+                <p class="text-muted mb-0">När du gör ditt första köp kommer det att visas här.</p>
+            </div>
+        {% endif %}
+    </main>
+    
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='cookie-consent.js') }}" defer></script>
+</body>
+</html>

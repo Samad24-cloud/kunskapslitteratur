@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <title>Mina Böcker - Kunskapslitteratur</title>
+    <style>
+
+        body {
+            display: flex;
+            
+        }
+        .truncate-text {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis; /* Lägg till "..." om texten är för lång */
+    max-width: 100%; /* Justera bredden om nödvändigt */
+}
+
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.card-text {
+    flex-grow: 1; /* Gör att texten tar upp utrymme jämnt */
+    font-size: 0.9rem;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.card-img-top {
+    display: block !important;
+    width: 100% !important;
+    height: 200px !important; /* Se till att bilderna har en konsekvent höjd */
+    object-fit: contain !important; /* Gör att hela bilden syns utan beskärning */
+    background-color: #f0f0f0 !important; /* Grå bakgrund för tomma områden */
+    border-bottom: 1px solid #ddd !important; /* Separationslinje mellan bilden och text */
+}
+
+        /* Uppdaterad stil för sidofältet */
+        .sidebar {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Uppdaterad stil för logout-knappen */
+        .logout {
+            margin-top: auto;
+            position: sticky;
+            bottom: 1rem;
+        }
+        
+        /* Stil för filter-sektionen */
+        #filterCollapse {
+            transition: all 0.3s ease;
+        }
+        
+        .badge {
+            padding: 0.5rem 0.7rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .badge .btn-close {
+            font-size: 0.6rem;
+            padding: 0.25rem;
+        }
+        
+        #filter-button {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+        
+        #active-filters {
+            min-height: 38px;
+        }
+        
+        /* Stil för markerade söktermer */
+        mark {
+            background-color: rgba(255, 230, 0, 0.4);
+            padding: 0.1rem 0.2rem;
+            border-radius: 2px;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: fixed;
+                bottom: 0;
+                top: auto;
+                height: 80px;
+                flex-direction: row;
+                padding: 1rem;
+                z-index: 1000;
+                border-right: none;
+                border-top: 1px solid rgba(0, 0, 0, 0.05);
+            }
+    
+            .nav-links {
+                justify-content: center !important;
+                gap: 1.5rem;
+                padding: 0 1rem;
+                display: flex;
+                overflow-x: auto;
+                margin-bottom: 0;
+                width: 100%;
+            }
+    
+            .nav-links a {
+                margin: 0 !important;
+                flex-shrink: 0;
+                flex-direction: column;
+                padding: 0.5rem;
+                font-size: 0.875rem;
+            }
+    
+            .nav-links a span {
+                display: none;
+            }
+    
+            .logo, .logout {
+                display: none;
+            }
+    
+            .content {
+                margin: 1rem;
+                padding: 1.5rem;
+                margin-bottom: 100px;
+            }
+                
+            /* Mobile logout button styling */
+            .mobile-logout {
+                display: block !important;
+            }
+        }
+
+    </style>
+
+    <!-- Meta-tagg för användar-ID (för WebSocket-anslutning) -->
+    <meta name="user-id" content="{{ current_user.id }}">
+
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='bilder/logo.png') }}" alt="Kunskapslitteratur Logo">
+        </div>
+        <div class="nav-links">
+            <a href="{{ url_for('inloggad') }}" class="{{ 'active' if request.path == url_for('inloggad') else '' }}">
+                <i class="bi bi-house-door"></i>
+                <span>Välkommen</span>
+            </a>
+            <a href="{{ url_for('my_books') }}" class="{{ 'active' if request.path == url_for('my_books') else '' }}">
+                <i class="bi bi-book"></i>
+                <span>Mina böcker</span>
+            </a>
+            <a href="{{ url_for('utforskabocker') }}" class="{{ 'active' if request.path == url_for('utforskabocker') else '' }}">
+                <i class="bi bi-search"></i>
+                <span>Utforska böcker</span>
+            </a>
+            <a href="{{ url_for('betalningsstatus') }}" class="{{ 'active' if request.path == url_for('betalningsstatus') else '' }}">
+                <i class="bi bi-credit-card"></i>
+                <span>Transaktioner</span>
+            </a>
+            <a href="{{ url_for('mittkonto') }}" class="{{ 'active' if request.path == url_for('mittkonto') else '' }}">
+                <i class="bi bi-person"></i>
+                <span>Mitt Konto</span>
+            </a>
+            <!-- Mobile Logout Icon -->
+            <a href="#" class="mobile-logout d-md-none" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                <i class="bi bi-box-arrow-left"></i>
+                <span>Logga ut</span>
+            </a>
+        </div>
+        <div class="logout mt-auto">
+            <button class="btn btn-outline-secondary w-100" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                <i class="bi bi-box-arrow-left me-2"></i>Logga ut
+            </button>
+        </div>
+    </div>
+
+   
+
+
+    <!-- Logout Modal -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center px-5">
+                    <div class="mb-4">
+                        <i class="bi bi-door-open" style="font-size: 2.5rem; color: var(--accent);"></i>
+                    </div>
+                    <h5 class="modal-title mb-3">Bekräfta utloggning</h5>
+                    <p class="text-muted">Är du säker på att du vill logga ut?</p>
+                </div>
+                <div class="modal-footer border-0 justify-content-center pb-4">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+                    <a href="/logout" class="btn btn-primary">Logga ut</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1000;">
+                    <a href="{{ url_for('checkout') }}" 
+            class="btn btn-primary position-relative btn-custom-end" 
+            id="cart-icon" 
+            style="background-color: #007bff; color: white; border-color: #007bff;">
+                <i class="bi bi-cart"></i> Varukorg
+                <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    0
+                </span>                
+            </a>
+        </button>
+    </div>
+     
+    
+
+    <div class="container mt-5">
+        <div class="row mb-4">
+            <div class="col-md-8 d-flex">
+                <div class="input-group">
+                    <span class="input-group-text bg-primary text-white">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input 
+                        type="text" 
+                        id="search-bar" 
+                        class="form-control" 
+                        placeholder="Sök efter böcker..." 
+                        aria-label="Search books">
+                    <button 
+                        class="btn btn-outline-primary" 
+                        type="button" 
+                        id="filter-button"
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#filterCollapse" 
+                        aria-expanded="false" 
+                        aria-controls="filterCollapse">
+                        <i class="bi bi-funnel"></i> Filter
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="collapse mb-4" id="filterCollapse">
+            <div class="card card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label for="category-filter" class="form-label">Kategori</label>
+                        <select class="form-select" id="category-filter">
+                            <option value="">Alla kategorier</option>
+                            <!-- Kategorier laddas dynamiskt -->
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="publisher-filter" class="form-label">Förlag</label>
+                        <select class="form-select" id="publisher-filter">
+                            <option value="">Alla förlag</option>
+                            <!-- Förlag laddas dynamiskt -->
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="year-filter" class="form-label">Publiceringsår</label>
+                        <select class="form-select" id="year-filter">
+                            <option value="">Alla år</option>
+                            <!-- År laddas dynamiskt -->
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="price-range" class="form-label">Pris (kr)</label>
+                        <div class="d-flex align-items-center">
+                            <input type="number" class="form-control me-2" id="min-price" placeholder="Min" min="0">
+                            <span>-</span>
+                            <input type="number" class="form-control ms-2" id="max-price" placeholder="Max" min="0">
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-12 d-flex justify-content-between align-items-center">
+                        <div id="active-filters" class="d-flex flex-wrap gap-2">
+                            <!-- Active filters will be displayed here -->
+                        </div>
+                        <div>
+                            <button class="btn btn-secondary me-2" id="reset-filters">Återställ</button>
+                            <button class="btn btn-primary" id="apply-filters">Tillämpa filter</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="book-list" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+            <!-- Initiala böcker laddas här -->
+        </div>
+        <div class="text-center mt-4">
+            <button id="load-more" class="btn btn-primary mb-5">Se fler +</button>
+        </div>
+    </div>
+    
+    
+
+   
+    
+    
+
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toast-message" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    Boken har lagts till i varukorgen!
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bokdetalj Modal -->
+    <div class="modal fade" id="bookDetailModal" tabindex="-1" aria-labelledby="bookDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="bookDetailModalLabel">Bokdetaljer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <img id="modal-book-cover" src="" alt="Bokomslag" class="img-fluid mb-3" style="max-height: 300px; object-fit: contain;">
+                        </div>
+                        <div class="col-md-8">
+                            <h4 id="modal-book-title" class="mb-3"></h4>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <p><strong>Författare:</strong> <span id="modal-book-author"></span></p>
+                                    <p><strong>Kategori:</strong> <span id="modal-book-category">-</span></p>
+                                    <p><strong>ISBN:</strong> <span id="modal-book-isbn">-</span></p>
+                                    <p><strong>Förlag:</strong> <span id="modal-book-publisher">-</span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Publiceringsår:</strong> <span id="modal-book-year">-</span></p>
+                                    <p><strong>Språk:</strong> <span id="modal-book-language">-</span></p>
+                                    <p><strong>Sidantal:</strong> <span id="modal-book-pages">-</span></p>
+                                    <p><strong>Pris:</strong> <span id="modal-book-price"></span> kr</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <p><strong>Beskrivning:</strong></p>
+                                <p id="modal-book-description" class="mb-4"></p>
+                            </div>
+                            
+                            <div id="modal-book-owned" class="text-success fw-bold mb-3" style="display: none;">
+                                Du äger redan denna bok
+                            </div>
+                            
+                            <button id="modal-cart-button" class="btn btn-primary">
+                                Lägg till i varukorg
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='session-manager.js') }}"></script>
+    <script>
+       // ... din existerande kod ...
+
+document.addEventListener('DOMContentLoaded', function () {
+    const bookList = document.getElementById('book-list');
+    const loadMoreButton = document.getElementById('load-more');
+    const cartIcon = document.getElementById('cart-icon');
+    const cartCount = document.getElementById('cart-count');
+    const toastEl = document.getElementById('toast-message');
+    const toastBody = toastEl.querySelector('.toast-body');
+    const toast = new bootstrap.Toast(toastEl);
+    const searchBar = document.getElementById('search-bar');
+    const bookDetailModal = new bootstrap.Modal(document.getElementById('bookDetailModal'));
+    
+    // Filter-element
+    const categoryFilter = document.getElementById('category-filter');
+    const publisherFilter = document.getElementById('publisher-filter');
+    const yearFilter = document.getElementById('year-filter');
+    const minPriceInput = document.getElementById('min-price');
+    const maxPriceInput = document.getElementById('max-price');
+    const applyFiltersBtn = document.getElementById('apply-filters');
+    const resetFiltersBtn = document.getElementById('reset-filters');
+    const filterButton = document.getElementById('filter-button');
+    
+    let currentPage = 1;
+    let cart = JSON.parse(localStorage.getItem('cart')) || {}; // Läs in varukorgen från localStorage vid start
+    let allBooks = [];
+    let filteredBooks = [];
+    let currentModalBook = null; // För att hålla reda på vilken bok som visas i modalen
+    let searchTimeout = null; // För att fördröja sökning medan användaren skriver
+    
+    // Filter-variabler
+    let activeFilters = {
+        category: '',
+        publisher: '',
+        year: '',
+        minPrice: '',
+        maxPrice: '',
+        searchQuery: ''
+    };
+    
+    // Unika värden för filter
+    let uniqueCategories = new Set();
+    let uniquePublishers = new Set();
+    let uniqueYears = new Set();
+
+    // Funktion för att uppdatera varukorgsräknaren
+    function updateCartCount() {
+        // Hämta varukorgen från localStorage
+        cart = JSON.parse(localStorage.getItem('cart')) || {};
+        // Räkna det totala antalet artiklar
+        const totalItems = Object.values(cart).reduce((total, item) => total + (item.quantity || 1), 0);
+        // Uppdatera texten i räknaren
+        cartCount.textContent = totalItems;
+        // Visa eller dölj räknaren beroende på om det finns några artiklar
+        cartCount.style.display = totalItems > 0 ? 'inline' : 'none';
+    }
+
+    // Funktion för toastmeddelande
+    function showToast(message, isSuccess = true) {
+        toastBody.textContent = message;
+        toastEl.className = `toast align-items-center text-bg-${isSuccess ? 'success' : 'danger'} border-0`;
+        toast.show();
+    }
+
+    // Funktion för att lägga till eller ta bort från varukorgen
+    function toggleCart(bookId, button, bookData) {
+        cart = JSON.parse(localStorage.getItem('cart')) || {};
+        const inCart = cart[bookId] ? true : false;
+
+        if (inCart) {
+            delete cart[bookId]; // Ta bort boken från varukorgen
+            button.textContent = 'Lägg till i varukorg';
+            button.classList.remove('btn-danger');
+            button.classList.add('btn-primary');
+            showToast('Boken har tagits bort från varukorgen!', false);
+        } else {
+            cart[bookId] = {
+                id: bookId,
+                title: bookData.title,
+                author: bookData.author,
+                price: parseFloat(bookData.price),
+                quantity: 1, // Sätt antalet till 1 när boken läggs till
+                cover_image: bookData.cover_image,
+            };
+            button.textContent = 'Ta bort från varukorg';
+            button.classList.remove('btn-primary');
+            button.classList.add('btn-danger');
+            showToast('Boken har lagts till i varukorgen!');
+        }
+
+        // Spara uppdaterad varukorg i localStorage
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartCount(); // Uppdatera varukorgsräknaren
+    }
+
+    // Funktion för att visa bokdetaljer i modal
+    function showBookDetails(book) {
+        currentModalBook = book;
+        
+        // Uppdatera modal med bokens information
+        document.getElementById('modal-book-title').textContent = book.title;
+        document.getElementById('modal-book-author').textContent = book.author || 'Okänd';
+        document.getElementById('modal-book-price').textContent = book.price;
+        document.getElementById('modal-book-description').textContent = book.description || 'Ingen beskrivning tillgänglig.';
+        document.getElementById('modal-book-cover').src = `/static/${book.cover_image}`;
+        
+        // Sätt standardvärden för fälten som kommer att uppdateras
+        document.getElementById('modal-book-isbn').textContent = '-';
+        document.getElementById('modal-book-publisher').textContent = '-';
+        document.getElementById('modal-book-year').textContent = '-';
+        document.getElementById('modal-book-language').textContent = '-';
+        document.getElementById('modal-book-pages').textContent = '-';
+        document.getElementById('modal-book-category').textContent = 'Okategoriserad';
+        
+        // Visa eventuella data som redan finns tillgängliga
+        if (book.category) document.getElementById('modal-book-category').textContent = book.category;
+        if (book.pages) document.getElementById('modal-book-pages').textContent = book.pages;
+        if (book.language) document.getElementById('modal-book-language').textContent = book.language;
+        if (book.isbn) document.getElementById('modal-book-isbn').textContent = book.isbn;
+        if (book.publisher) document.getElementById('modal-book-publisher').textContent = book.publisher;
+        if (book.publication_year) document.getElementById('modal-book-year').textContent = book.publication_year;
+        
+        // Hämta extra information om boken från servern
+        fetch(`/get-book-cover?title=${encodeURIComponent(book.title)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.cover_image) {
+                    document.getElementById('modal-book-cover').src = `/static/${data.cover_image}`;
+                }
+                
+                // Uppdatera alla fält med data från servern
+                if (data.isbn) document.getElementById('modal-book-isbn').textContent = data.isbn;
+                if (data.publisher) document.getElementById('modal-book-publisher').textContent = data.publisher;
+                if (data.publication_year) document.getElementById('modal-book-year').textContent = data.publication_year;
+                if (data.pages) document.getElementById('modal-book-pages').textContent = data.pages;
+                if (data.category) document.getElementById('modal-book-category').textContent = data.category;
+                if (data.language) document.getElementById('modal-book-language').textContent = data.language;
+                
+                // Uppdatera beskrivningen om den finns i svaret
+                if (data.description && data.description !== 'Ingen beskrivning tillgänglig.') {
+                    document.getElementById('modal-book-description').textContent = data.description;
+                }
+            })
+            .catch(error => {
+                console.error('Fel vid hämtning av bokinformation:', error);
+            });
+        
+        const cartButton = document.getElementById('modal-cart-button');
+        const ownedMessage = document.getElementById('modal-book-owned');
+        
+        // Visa/dölj rätt element baserat på om boken ägs eller inte
+        if (book.owned) {
+            cartButton.style.display = 'none';
+            ownedMessage.style.display = 'block';
+        } else {
+            cartButton.style.display = 'block';
+            ownedMessage.style.display = 'none';
+            
+            // Uppdatera knapptext baserat på om boken finns i varukorgen
+            if (cart[book.id]) {
+                cartButton.textContent = 'Ta bort från varukorg';
+                cartButton.classList.remove('btn-primary');
+                cartButton.classList.add('btn-danger');
+            } else {
+                cartButton.textContent = 'Lägg till i varukorg';
+                cartButton.classList.remove('btn-danger');
+                cartButton.classList.add('btn-primary');
+            }
+        }
+        
+        // Visa modalen
+        bookDetailModal.show();
+    }
+
+    // Funktion för att markera söktermer i text
+    function highlightSearchTerm(text, searchTerm) {
+        if (!searchTerm || !text) return text;
+        
+        const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+        return text.replace(regex, '<mark>$1</mark>');
+    }
+
+    // Funktion för att visa böcker i listan
+    function displayBooks(books) {
+        bookList.innerHTML = '';
+        
+        // Hämta aktuell sökterm
+        const searchTerm = activeFilters.searchQuery;
+        
+        books.forEach((book) => {
+            if (!book || !book.id || !book.title || !book.price) {
+                console.error('Ogiltig bokdata:', book);
+                return;
+            }
+
+            // Markera söktermer i titel och beskrivning om det finns en sökterm
+            let title = book.title;
+            let description = book.description ? book.description.slice(0, 80) + '...' : '';
+            let author = book.author || 'Okänd';
+            let category = book.category || 'Okategoriserad';
+            
+            if (searchTerm) {
+                title = highlightSearchTerm(title, searchTerm);
+                description = highlightSearchTerm(description, searchTerm);
+                author = highlightSearchTerm(author, searchTerm);
+                category = highlightSearchTerm(category, searchTerm);
+            }
+
+            const col = document.createElement('div');
+            col.className = 'col';
+
+            if (book.owned) {
+                // Om användaren redan äger boken
+                col.innerHTML = `
+                    <div class="card h-100" style="cursor: pointer;">
+                        <img src="/static/${book.cover_image}" class="card-img-top" alt="Bokomslag">
+                        <div class="card-body">
+                            <h5 class="card-title truncate-text">${title}</h5>
+                            <p class="card-text">${description}</p>
+                            <hr>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <small class="text-muted d-block">Kategori: ${category}</small>
+                                    <small class="text-muted d-block">Pris: ${book.price} kr</small>
+                                </div>
+                                <span class="badge bg-success">Ägd</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Annars visar vi "Lägg till i varukorg"
+                col.innerHTML = `
+                    <div class="card h-100" style="cursor: pointer;">
+                        <img src="/static/${book.cover_image}" class="card-img-top" alt="Bokomslag">
+                        <div class="card-body">
+                            <h5 class="card-title truncate-text">${title}</h5>
+                            <p class="card-text">${description}</p>
+                            <hr>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <small class="text-muted d-block">Kategori: ${category}</small>
+                                    <small class="text-muted d-block">Pris: ${book.price} kr</small>
+                                </div>
+                            </div>
+                            <button 
+                                class="btn btn-primary w-100 toggle-cart" 
+                                data-book-id="${book.id}">
+                                Lägg till i varukorg
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            bookList.appendChild(col);
+            
+            // Lägg till klickhändelse på hela kortet för att visa detaljer
+            const card = col.querySelector('.card');
+            card.addEventListener('click', function(event) {
+                // Förhindra att klick på knappen öppnar modalen
+                if (!event.target.classList.contains('toggle-cart') && 
+                    !event.target.closest('.toggle-cart')) {
+                    showBookDetails(book);
+                }
+            });
+
+            // Om boken inte ägs, koppla event till knappen
+            if (!book.owned) {
+                const button = col.querySelector('.toggle-cart');
+                if (cart[book.id]) {
+                    button.textContent = 'Ta bort från varukorg';
+                    button.classList.remove('btn-primary');
+                    button.classList.add('btn-danger');
+                }
+                button.addEventListener('click', function (event) {
+                    event.stopPropagation(); // Förhindra att kortet öppnar modalen
+                    toggleCart(book.id, button, book);
+                });
+            }
+        });
+    }
+
+    // Funktion för att uppdatera filter-dropdowns med unika värden
+    function updateFilterOptions() {
+        // Rensa befintliga alternativ men behåll standardalternativet
+        categoryFilter.innerHTML = '<option value="">Alla kategorier</option>';
+        publisherFilter.innerHTML = '<option value="">Alla förlag</option>';
+        yearFilter.innerHTML = '<option value="">Alla år</option>';
+        
+        // Sortera värdena
+        const sortedCategories = Array.from(uniqueCategories).sort();
+        const sortedPublishers = Array.from(uniquePublishers).sort();
+        const sortedYears = Array.from(uniqueYears).sort((a, b) => b - a); // Nyaste först
+        
+        // Lägg till alternativ för varje unikt värde
+        sortedCategories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = category;
+            categoryFilter.appendChild(option);
+        });
+        
+        sortedPublishers.forEach(publisher => {
+            const option = document.createElement('option');
+            option.value = publisher;
+            option.textContent = publisher;
+            publisherFilter.appendChild(option);
+        });
+        
+        sortedYears.forEach(year => {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            yearFilter.appendChild(option);
+        });
+    }
+    
+    // Funktion för att uppdatera aktiva filter-indikatorer
+    function updateActiveFilterIndicators() {
+        const activeFiltersContainer = document.getElementById('active-filters');
+        activeFiltersContainer.innerHTML = '';
+        
+        let hasActiveFilters = false;
+        
+        // Skapa indikatorer för varje aktivt filter
+        if (activeFilters.category) {
+            createFilterBadge('Kategori: ' + activeFilters.category, 'category');
+            hasActiveFilters = true;
+        }
+        
+        if (activeFilters.publisher) {
+            createFilterBadge('Förlag: ' + activeFilters.publisher, 'publisher');
+            hasActiveFilters = true;
+        }
+        
+        if (activeFilters.year) {
+            createFilterBadge('År: ' + activeFilters.year, 'year');
+            hasActiveFilters = true;
+        }
+        
+        if (activeFilters.minPrice && activeFilters.maxPrice) {
+            createFilterBadge(`Pris: ${activeFilters.minPrice} - ${activeFilters.maxPrice} kr`, 'price');
+            hasActiveFilters = true;
+        } else if (activeFilters.minPrice) {
+            createFilterBadge(`Pris: Min ${activeFilters.minPrice} kr`, 'price');
+            hasActiveFilters = true;
+        } else if (activeFilters.maxPrice) {
+            createFilterBadge(`Pris: Max ${activeFilters.maxPrice} kr`, 'price');
+            hasActiveFilters = true;
+        }
+        
+        if (activeFilters.searchQuery) {
+            createFilterBadge('Sök: ' + activeFilters.searchQuery, 'search');
+            hasActiveFilters = true;
+        }
+        
+        // Om inga filter är aktiva, visa ett meddelande
+        if (!hasActiveFilters) {
+            activeFiltersContainer.innerHTML = '<span class="text-muted">Inga aktiva filter</span>';
+        }
+        
+        // Uppdatera utseendet på filterknappen
+        if (hasActiveFilters) {
+            filterButton.classList.add('btn-primary');
+            filterButton.classList.remove('btn-outline-primary');
+        } else {
+            filterButton.classList.remove('btn-primary');
+            filterButton.classList.add('btn-outline-primary');
+        }
+    }
+    
+    // Hjälpfunktion för att skapa filter-badges
+    function createFilterBadge(text, filterType) {
+        const badge = document.createElement('span');
+        badge.className = 'badge bg-primary d-flex align-items-center';
+        badge.innerHTML = `
+            ${text}
+            <button type="button" class="btn-close btn-close-white ms-2" aria-label="Remove filter"></button>
+        `;
+        
+        // Lägg till händelselyssnare för att ta bort filtret
+        const closeButton = badge.querySelector('.btn-close');
+        closeButton.addEventListener('click', () => {
+            removeFilter(filterType);
+        });
+        
+        document.getElementById('active-filters').appendChild(badge);
+    }
+    
+    // Funktion för att ta bort ett specifikt filter
+    function removeFilter(filterType) {
+        switch (filterType) {
+            case 'category':
+                categoryFilter.value = '';
+                activeFilters.category = '';
+                break;
+            case 'publisher':
+                publisherFilter.value = '';
+                activeFilters.publisher = '';
+                break;
+            case 'year':
+                yearFilter.value = '';
+                activeFilters.year = '';
+                break;
+            case 'price':
+                minPriceInput.value = '';
+                maxPriceInput.value = '';
+                activeFilters.minPrice = '';
+                activeFilters.maxPrice = '';
+                break;
+            case 'search':
+                searchBar.value = '';
+                activeFilters.searchQuery = '';
+                break;
+        }
+        
+        // Uppdatera filter-indikatorer och tillämpa filter
+        updateActiveFilterIndicators();
+        applyFilters();
+    }
+
+    // Funktion för att tillämpa filter på böcker
+    function applyFilters() {
+        // Uppdatera aktiva filter
+        activeFilters.category = categoryFilter.value;
+        activeFilters.publisher = publisherFilter.value;
+        activeFilters.year = yearFilter.value;
+        activeFilters.minPrice = minPriceInput.value ? parseFloat(minPriceInput.value) : '';
+        activeFilters.maxPrice = maxPriceInput.value ? parseFloat(maxPriceInput.value) : '';
+        
+        // Uppdatera filter-indikatorer
+        updateActiveFilterIndicators();
+        
+        // Återställ till första sidan och ladda böcker med aktiva filter
+        currentPage = 1;
+        loadBooks(currentPage, activeFilters.searchQuery);
+    }
+    
+    // Funktion för att återställa filter
+    function resetFilters() {
+        categoryFilter.value = '';
+        publisherFilter.value = '';
+        yearFilter.value = '';
+        minPriceInput.value = '';
+        maxPriceInput.value = '';
+        searchBar.value = '';
+        
+        activeFilters = {
+            category: '',
+            publisher: '',
+            year: '',
+            minPrice: '',
+            maxPrice: '',
+            searchQuery: ''
+        };
+        
+        // Uppdatera filter-indikatorer
+        updateActiveFilterIndicators();
+        
+        // Ladda om alla böcker från första sidan utan filter
+        currentPage = 1;
+        loadBooks(currentPage);
+    }
+
+    // Funktion för att ladda böcker med sökning och paginering
+    function loadBooks(page, query = '') {
+        activeFilters.searchQuery = query;
+        
+        // Visa laddningsindikator
+        bookList.innerHTML = '<div class="col-12 text-center mt-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Laddar...</span></div></div>';
+        
+        // Bygg URL med filter-parametrar
+        let url = `/get-books?page=${page}&search=${encodeURIComponent(query)}`;
+        
+        // Lägg till filter-parametrar till URL om de finns
+        if (activeFilters.category) {
+            url += `&category=${encodeURIComponent(activeFilters.category)}`;
+        }
+        if (activeFilters.publisher) {
+            url += `&publisher=${encodeURIComponent(activeFilters.publisher)}`;
+        }
+        if (activeFilters.year) {
+            url += `&year=${encodeURIComponent(activeFilters.year)}`;
+        }
+        if (activeFilters.minPrice) {
+            url += `&min_price=${encodeURIComponent(activeFilters.minPrice)}`;
+        }
+        if (activeFilters.maxPrice) {
+            url += `&max_price=${encodeURIComponent(activeFilters.maxPrice)}`;
+        }
+        
+        fetch(url)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log('Hämtade böcker:', data.books);
+                if (page === 1) {
+                    allBooks = [];
+                    uniqueCategories.clear();
+                    uniquePublishers.clear();
+                    uniqueYears.clear();
+                }
+                
+                if (data.books && data.books.length > 0) {
+                    allBooks = [...allBooks, ...data.books];
+                    
+                    // Om vi får filter-alternativ från servern, använd dem
+                    if (data.filter_options) {
+                        // Uppdatera unika värden för filter
+                        uniqueCategories = new Set(data.filter_options.categories || []);
+                        uniquePublishers = new Set(data.filter_options.publishers || []);
+                        uniqueYears = new Set(data.filter_options.years || []);
+                        
+                        // Uppdatera filter-alternativ
+                        updateFilterOptions();
+                    } else {
+                        // Fallback: Samla unika värden från hämtade böcker
+                        data.books.forEach(book => {
+                            if (book.category) uniqueCategories.add(book.category);
+                            if (book.publisher) uniquePublishers.add(book.publisher);
+                            if (book.publication_year) uniqueYears.add(book.publication_year);
+                        });
+                        
+                        // Uppdatera filter-alternativ
+                        updateFilterOptions();
+                    }
+                    
+                    // Visa böcker
+                    filteredBooks = allBooks;
+                    displayBooks(filteredBooks);
+                    
+                    // Visa "Se fler"-knappen om det finns fler böcker att hämta
+                    loadMoreButton.style.display = data.books.length >= 12 ? 'inline-block' : 'none';
+                } else if (page === 1) {
+                    bookList.innerHTML = '<div class="col-12 text-center mt-4"><p>Inga böcker matchade din sökning. Prova ett annat sökord.</p></div>';
+                    loadMoreButton.style.display = 'none';
+                } else {
+                    loadMoreButton.style.display = 'none';
+                }
+                
+                // Uppdatera filter-indikatorer
+                updateActiveFilterIndicators();
+            })
+            .catch((error) => {
+                console.error('Error vid hämtning av böcker:', error);
+                bookList.innerHTML = '<div class="col-12 text-center mt-4"><p>Ett fel inträffade. Försök igen senare.</p></div>';
+                showToast('Ett fel inträffade. Försök igen.', false);
+            });
+    }
+
+    // Sätt upp live-sökning med fördröjning
+    searchBar.addEventListener('input', function () {
+        const query = searchBar.value.toLowerCase();
+        activeFilters.searchQuery = query;
+        
+        // Uppdatera filter-indikatorer
+        updateActiveFilterIndicators();
+        
+        // Rensa tidigare timeout
+        if (searchTimeout) {
+            clearTimeout(searchTimeout);
+        }
+        
+        // Sätt en ny timeout för att fördröja sökningen
+        searchTimeout = setTimeout(() => {
+            currentPage = 1;
+            loadBooks(currentPage, query);
+        }, 300); // 300ms fördröjning
+    });
+    
+    // Lägg till händelselyssnare för filter-knappar
+    applyFiltersBtn.addEventListener('click', applyFilters);
+    resetFiltersBtn.addEventListener('click', resetFilters);
+    
+    // Lägg till händelselyssnare för filter-ändringar
+    categoryFilter.addEventListener('change', function() {
+        activeFilters.category = this.value;
+        updateActiveFilterIndicators();
+    });
+    
+    publisherFilter.addEventListener('change', function() {
+        activeFilters.publisher = this.value;
+        updateActiveFilterIndicators();
+    });
+    
+    yearFilter.addEventListener('change', function() {
+        activeFilters.year = this.value;
+        updateActiveFilterIndicators();
+    });
+    
+    minPriceInput.addEventListener('input', function() {
+        activeFilters.minPrice = this.value ? parseFloat(this.value) : '';
+        updateActiveFilterIndicators();
+    });
+    
+    maxPriceInput.addEventListener('input', function() {
+        activeFilters.maxPrice = this.value ? parseFloat(this.value) : '';
+        updateActiveFilterIndicators();
+    });
+
+    // Ladda initiala böcker
+    loadBooks(currentPage);
+    
+    // Uppdatera filter-indikatorer vid start
+    updateActiveFilterIndicators();
+
+    // Hantera "Se fler"-knappen
+    loadMoreButton.addEventListener('click', function () {
+        currentPage += 1;
+        loadBooks(currentPage, activeFilters.searchQuery);
+    });
+
+    // Uppdatera varukorgsräknaren vid start
+    updateCartCount();
+
+    // --- NYTT: Lyssnare för storage-eventet ---
+    window.addEventListener('storage', function (event) {
+        if (event.key === 'cart') {
+            // Hämta den uppdaterade varukorgen
+            cart = JSON.parse(event.newValue) || {};
+            updateCartCount();
+
+            // Uppdatera även knapptext och stilar om du har flera böcker listade
+            document.querySelectorAll('.toggle-cart').forEach((button) => {
+                const bookId = button.getAttribute('data-book-id');
+                if (cart[bookId]) {
+                    button.textContent = 'Ta bort från varukorg';
+                    button.classList.remove('btn-primary');
+                    button.classList.add('btn-danger');
+                } else {
+                    button.textContent = 'Lägg till i varukorg';
+                    button.classList.remove('btn-danger');
+                    button.classList.add('btn-primary');
+                }
+            });
+        }
+    });
+
+    // Lägg till händelselyssnare för varukorgsknappen i modalen
+    document.getElementById('modal-cart-button').addEventListener('click', function() {
+        if (currentModalBook) {
+            const inCart = cart[currentModalBook.id] ? true : false;
+            
+            if (inCart) {
+                delete cart[currentModalBook.id];
+                this.textContent = 'Lägg till i varukorg';
+                this.classList.remove('btn-danger');
+                this.classList.add('btn-primary');
+                showToast('Boken har tagits bort från varukorgen!', false);
+            } else {
+                cart[currentModalBook.id] = {
+                    id: currentModalBook.id,
+                    title: currentModalBook.title,
+                    author: currentModalBook.author,
+                    price: parseFloat(currentModalBook.price),
+                    quantity: 1,
+                    cover_image: currentModalBook.cover_image,
+                };
+                this.textContent = 'Ta bort från varukorg';
+                this.classList.remove('btn-primary');
+                this.classList.add('btn-danger');
+                showToast('Boken har lagts till i varukorgen!');
+            }
+            
+            // Uppdatera varukorgen och räknaren
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            
+            // Uppdatera även knappen i listan om den finns
+            const listButton = document.querySelector(`.toggle-cart[data-book-id="${currentModalBook.id}"]`);
+            if (listButton) {
+                if (cart[currentModalBook.id]) {
+                    listButton.textContent = 'Ta bort från varukorg';
+                    listButton.classList.remove('btn-primary');
+                    listButton.classList.add('btn-danger');
+                } else {
+                    listButton.textContent = 'Lägg till i varukorg';
+                    listButton.classList.remove('btn-danger');
+                    listButton.classList.add('btn-primary');
+                }
+            }
+        }
+    });
+});
+    </script>
+    
+<script src="{{ url_for('static', filename='cookie-consent.js') }}" defer></script>
+</body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="sv">
+  <head>
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support - Kunskapslitteratur</title>
+  
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <style>
+      /* Enkla färgvariabler */
+      :root {
+        --primary-color: #29231d;
+        --accent-color: #e67e22;
+        --light-bg: #f8f9fa;
+      }
+      
+      /* Huvudinnehåll */
+      .main-content {
+        padding-top: 120px;
+        padding-bottom: 60px;
+      }
+      
+      /* Sektionsrubriker */
+      .section-title {
+        margin-bottom: 1.5rem;
+        color: var(--primary-color);
+        position: relative;
+        display: inline-block;
+      }
+      
+      .section-title:after {
+        content: '';
+        position: absolute;
+        width: 50px;
+        height: 3px;
+        background-color: var(--accent-color);
+        bottom: -10px;
+        left: 0;
+      }
+      
+      /* Enkla kort */
+      .simple-card {
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        margin-bottom: 20px;
+        border: none;
+      }
+      
+      .simple-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+      }
+      
+      /* Ljus bakgrund för varannan sektion */
+      .bg-light-section {
+        background-color: var(--light-bg);
+        padding: 60px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-white fixed-top shadow">
+      <div class="container">
+        <a class="navbar-brand" href="{{ url_for('home') }}">
+          <img src="{{ url_for('static', filename='bilder/logo.png') }}" alt="Kunskapslitteratur Logo" style="height: 60px;">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNavbar">
+          <ul class="navbar-nav mx-auto gap-lg-5">
+            <li class="nav-item">
+              <a class="nav-link text-primary" href="{{ url_for('home') }}">Hem</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-primary" href="{{ url_for('omoss') }}">Om oss</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-primary" href="{{ url_for('hallbarhet') }}">Hållbarhet</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-primary" href="{{ url_for('kontaktaoss') }}">Kontakta oss</a>
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link text-primary" href="{{ url_for('loggain') }}">
+                <i class="bi bi-person me-2"></i>Logga in
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Huvudinnehåll -->
+    <main class="main-content">
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col-12">
+            <h1 class="mb-4">Support för Bokförlag</h1>
+            <p class="lead">
+              Välkommen till Kunskapslitteraturs dedikerade supportcenter för bokförlag. Här hittar du hjälp och resurser för att optimera ditt samarbete med oss. Oavsett om du har tekniska frågor, behöver assistans med integration, eller har frågor kring licensiering av era publikationer, så finns vi här för att hjälpa till.
+            </p>
+          </div>
+        </div>
+        
+        <!-- Vanliga frågor -->
+        <div class="row mb-5">
+          <div class="col-12">
+            <h2 class="section-title mb-4">Vanliga Frågor</h2>
+            
+            <div class="accordion" id="faqAccordion">
+              <div class="accordion-item simple-card mb-3">
+                <h2 class="accordion-header">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1" aria-expanded="true">
+                    Hur fungerar samarbetet?
+                  </button>
+                </h2>
+                <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">
+                    Vårt samarbete är enkelt och transparent. Ni tillhandahåller ert material,
+                    och vi ser till att det finns tillgängligt för våra användare via vår plattform.
+                    Vi hjälper även gärna till med marknadsföring och distribution.
+                  </div>
+                </div>
+              </div>
+              
+              <div class="accordion-item simple-card mb-3">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                    Vilka licensavtal erbjuder ni?
+                  </button>
+                </h2>
+                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">
+                    Våra avtal är flexibla och följer en 90/10-fördelning, där ni får minst 90 % av försäljningspriset. Kontakta oss för mer information.
+                  </div>
+                </div>
+              </div>
+              
+              <div class="accordion-item simple-card mb-3">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                    Hur lägger jag till nya titlar?
+                  </button>
+                </h2>
+                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">
+                    Lägg till nya böcker direkt i adminpanelen när du loggar in som förlag. Där kan du även redigera tidigare uppladdade titlar.
+                  </div>
+                </div>
+              </div>
+              
+              <div class="accordion-item simple-card mb-3">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                    Hur får vi betalt?
+                  </button>
+                </h2>
+                <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">
+                    Vi har en fördelningsmodell baserad på försäljningsvolym.
+                    Intäkterna betalas ut månadsvis
+                  </div>
+                </div>
+              </div>
+              
+              <div class="accordion-item simple-card">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                    Kan jag se sammanställd statistik över sålda böcker och annan information?
+                  </button>
+                </h2>
+                <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">
+                    Ja, i adminpanelen kan ni se all statistik över sålda böcker, intäkter och annan relevant information i realtid.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Teknisk support -->
+        <div class="row mb-5 bg-light-section mx-0">
+          <div class="col-12 py-4">
+            <h2 class="section-title mb-4">Teknisk Support</h2>
+            <p>
+              Har du tekniska frågor eller problem med integrationen? Skicka en detaljerad beskrivning till vår tekniska support på 
+              <a href="mailto:info@kunskapslitteratur.se">info@kunskapslitteratur.se</a>, så återkommer vi inom 24 timmar under vardagar.
+            </p>
+            
+            <div class="card simple-card mt-4">
+              <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-tools me-2"></i>Vad vi kan hjälpa dig med</h5>
+                <ul class="mt-3">
+                  <li>Filformat och konvertering av innehåll</li>
+                  <li>DRM-skydd och säkerhetsfrågor</li>
+                  <li>API-integration för automatiserade processer</li>
+                  <li>Felsökning och teknisk rådgivning</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Kontakta oss -->
+        <div class="row">
+          <div class="col-12">
+            <h2 class="section-title mb-4">Kontakta Oss</h2>
+            <p class="mb-4">
+              För ytterligare frågor eller specifika ärenden, vänligen kontakta vår kundtjänst via någon av kanalerna nedan. Vi ser fram emot att hjälpa er och utveckla ett framgångsrikt partnerskap.
+            </p>
+            
+            <div class="row">
+              <div class="col-md-6 mb-4">
+                <div class="card simple-card h-100">
+                  <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-envelope me-2"></i>E-post</h5>
+                    <p class="card-text">
+                      <a href="mailto:info@kunskapslitteratur.se">info@kunskapslitteratur.se</a>
+                    </p>
+                    <p class="card-text text-muted small">Vi svarar vanligtvis inom 24 timmar</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6 mb-4">
+                <div class="card simple-card h-100">
+                  <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-telephone me-2"></i>Telefon</h5>
+                    <p class="card-text">
+                      <a href="#">Kommer snart</a>
+                    </p>
+                    <p class="card-text text-muted small">Vardagar 08:00-17:00</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer py-5">
+      <div class="container">
+        <div class="row align-items-start text-center text-lg-start">
+          <!-- Left: Logo och Subheader -->
+          <div class="col-lg-5 text-center mb-4 mb-lg-0">
+            <a href="{{ url_for('home') }}">
+              <img src="{{ url_for('static', filename='bilder/logo.png') }}" alt="Kunskapslitteratur Logo" class="img-fluid mb-3" style="height: 123px;">
+            </a>
+            <p class="text-muted mb-0">Din partner för prisvärd, digital och hållbar kurslitteratur.</p>
+          </div>
+          <!-- Right: Länkar -->
+          <div class="col-lg-7">
+            <div class="row justify-content-center justify-content-lg-start">
+              <!-- Column 1 -->
+              <div class="col-12 col-sm-4 px-4 mb-4 mb-sm-0">
+                <h5 class="mb-3">Länkar</h5>
+                <ul class="list-unstyled">
+                  <li><a href="{{ url_for('home') }}" class="footer-link">Hem</a></li>
+                  <li><a href="{{ url_for('omoss') }}" class="footer-link">Om oss</a></li>
+                  <li><a href="{{ url_for('hallbarhet') }}" class="footer-link">Hållbarhet</a></li>
+                  <li><a href="{{ url_for('kontaktaoss') }}" class="footer-link">Kontakta oss</a></li>
+                </ul>
+              </div>
+              <!-- Column 2 -->
+              <div class="col-12 col-sm-4 px-4 mb-4 mb-sm-0">
+                <h5 class="mb-3">Förlag</h5>
+                <ul class="list-unstyled">
+                  <li><a href="{{ url_for('kontakt') }}" class="footer-link">Kontakt</a></li>
+                  <li><a href="{{ url_for('support') }}" class="footer-link">Support</a></li>
+                  <li><a href="{{ url_for('blipartner') }}" class="footer-link">Bli Partner</a></li>
+                  <li><a href="{{ url_for('forlagsvilkor') }}" class="footer-link">Förlagsvilkor</a></li>
+                </ul>
+              </div>
+              <!-- Column 3 -->
+              <div class="col-12 col-sm-4 px-4">
+                <h5 class="mb-3">Hjälp & Info</h5>
+                <ul class="list-unstyled">
+                  <li><a href="{{ url_for('faq') }}" class="footer-link">Vanliga frågor</a></li>
+                  <li><a href="{{ url_for('anvandarvilkor') }}" class="footer-link">Användarvillkor</a></li>
+                  <li><a href="{{ url_for('Integritetspolicy') }}" class="footer-link">Integritetspolicy</a></li>
+                  <li><a href="{{ url_for('karriar') }}" class="footer-link">Karriär</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Line och Copyright -->
+        <hr class="footer-line">
+        <div class="text-center mt-3">
+          <p class="text-muted mb-0">© 2025 Kunskapslitteratur. Alla rättigheter förbehållna.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{{ url_for('static', filename='cookie-consent.js') }}" defer></script>
+</body>
+</html>

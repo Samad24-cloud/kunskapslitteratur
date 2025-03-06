@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="sv">
+    <head>
+        <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Karriär - Kunskapslitteratur</title>
+    
+        <!-- Favicon -->
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    </head>
+<body>
+    <nav class="navbar navbar-expand-lg bg-white fixed-top shadow">
+        <div class="container">
+          <a class="navbar-brand" href="{{ url_for('home') }}">
+            <img src="{{ url_for('static', filename='bilder/logo.png') }}" alt="Kunskapslitteratur Logo" style="height: 60px;" />
+          </a>
+          <button 
+            class="navbar-toggler" 
+            type="button" 
+            data-bs-toggle="collapse" 
+            data-bs-target="#mainNavbar" 
+            aria-controls="mainNavbar" 
+            aria-expanded="false" 
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav mx-auto gap-lg-5">
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('home') }}">Hem</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('omoss') }}">Om oss</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('hallbarhet') }}">Hållbarhet</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('kontaktaoss') }}">Kontakta oss</a>
+              </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-primary" href="{{ url_for('loggain') }}">
+                      <i class="bi bi-person me-2"></i>
+                      Logga in
+                    </a>
+                  </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+    <section class="career-section py-5 mt-5">
+        <div class="container mt-5">
+            <style>
+                /* Färgvariabler */
+                :root {
+                    --primary-color: #29231d;
+                    --primary-light: rgba(41, 35, 29, 0.05);
+                    --primary-border: rgba(41, 35, 29, 0.2);
+                    --light-bg: #f8f9fa;
+                }
+                
+                /* Huvudinnehåll */
+                .career-section {
+                    padding-top: 60px;
+                    padding-bottom: 60px;
+                }
+                
+                /* Rubriker */
+                .career-header {
+                    text-align: center;
+                    margin-bottom: 3rem;
+                    position: relative;
+                }
+                
+                .career-header:after {
+                    content: '';
+                    position: absolute;
+                    width: 80px;
+                    height: 3px;
+                    background-color: var(--primary-color);
+                    bottom: -15px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                }
+                
+                /* Sektioner */
+                .career-card {
+                    background-color: white;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+                    padding: 2rem;
+                    margin-bottom: 2rem;
+                    border-left: 4px solid var(--primary-color);
+                }
+                
+                .career-card h3 {
+                    color: var(--primary-color);
+                    margin-bottom: 1rem;
+                    font-weight: 600;
+                    position: relative;
+                    display: inline-block;
+                }
+                
+                .career-card ul {
+                    padding-left: 1.5rem;
+                }
+                
+                .career-card ul li {
+                    margin-bottom: 0.5rem;
+                }
+                
+                /* Länkar */
+                .career-link {
+                    color: var(--primary-color);
+                    font-weight: 600;
+                    text-decoration: none;
+                    transition: color 0.3s ease;
+                }
+                
+                .career-link:hover {
+                    text-decoration: underline;
+                }
+                
+                /* CTA-knapp */
+                .career-cta {
+                    background-color: var(--primary-color);
+                    color: white;
+                    border: none;
+                    padding: 0.75rem 1.5rem;
+                    border-radius: 30px;
+                    font-weight: 600;
+                    transition: all 0.3s ease;
+                    text-decoration: none;
+                    display: inline-block;
+                    margin-top: 1rem;
+                }
+                
+                .career-cta:hover {
+                    background-color: #1a1612;
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    color: white;
+                }
+                
+                /* Värderingar */
+                .values-container {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 1.5rem;
+                    margin-top: 2rem;
+                }
+                
+                .value-item {
+                    flex: 1 1 300px;
+                    text-align: center;
+                    padding: 1.5rem;
+                    background-color: var(--primary-light);
+                    border-radius: 8px;
+                }
+                
+                .value-icon {
+                    font-size: 2rem;
+                    color: var(--primary-color);
+                    margin-bottom: 1rem;
+                }
+                
+                .value-title {
+                    font-weight: 600;
+                    margin-bottom: 0.5rem;
+                    color: var(--primary-color);
+                }
+            </style>
+            
+            <div class="career-header">
+                <h1>Karriär hos Kunskapslitteratur</h1>
+                <p class="lead">Bli en del av vår resa mot framtidens utbildning</p>
+            </div>
+
+            <div class="career-card">
+                <h3><i class="bi bi-people me-2"></i>Vårt team</h3>
+                <p>På Kunskapslitteratur arbetar vi tillsammans för att revolutionera hur studenter får tillgång till kurslitteratur. Vi är ett team av passionerade individer som drivs av innovation, hållbarhet och tillgänglighet inom utbildning.</p>
+                <p>Vi tror på att skapa en arbetsmiljö där kreativitet frodas, där varje röst blir hörd och där vi tillsammans kan göra verklig skillnad för studenter över hela Sverige.</p>
+            </div>
+
+            <div class="career-card">
+                <h3><i class="bi bi-stars me-2"></i>Våra värderingar</h3>
+                <p>Våra värderingar genomsyrar allt vi gör och formar vår företagskultur:</p>
+                
+                <div class="values-container">
+                    <div class="value-item">
+                        <div class="value-icon">
+                            <i class="bi bi-lightbulb"></i>
+                        </div>
+                        <h4 class="value-title">Innovation</h4>
+                        <p>Vi utmanar ständigt status quo och söker nya lösningar för att förbättra utbildningslandskapet.</p>
+                    </div>
+                    
+                    <div class="value-item">
+                        <div class="value-icon">
+                            <i class="bi bi-globe"></i>
+                        </div>
+                        <h4 class="value-title">Hållbarhet</h4>
+                        <p>Vi är engagerade i att minska miljöpåverkan genom digitala lösningar och hållbara affärsmodeller.</p>
+                    </div>
+                    
+                    <div class="value-item">
+                        <div class="value-icon">
+                            <i class="bi bi-hand-thumbs-up"></i>
+                        </div>
+                        <h4 class="value-title">Tillgänglighet</h4>
+                        <p>Vi arbetar för att göra kvalitetsutbildning tillgänglig för alla, oavsett ekonomiska förutsättningar.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="career-card">
+                <h3><i class="bi bi-briefcase me-2"></i>Lediga tjänster</h3>
+                <p>För närvarande har vi inga öppna positioner, men vi är alltid på utkik efter talangfulla individer som delar vår passion för att förändra utbildningslandskapet.</p>
+                <p>Håll utkik på denna sida för framtida möjligheter, eller skicka in en spontanansökan om du känner att du skulle passa in i vårt team.</p>
+            </div>
+
+            <div class="career-card">
+                <h3><i class="bi bi-envelope-paper me-2"></i>Spontanansökan</h3>
+                <p>Känner du att du skulle kunna bidra till vår vision? Vi uppmuntrar dig att skicka in en spontanansökan!</p>
+                <p>Skicka ditt CV och ett personligt brev där du berättar om dig själv, dina erfarenheter och varför du vill arbeta med oss till: <a href="mailto:Info@kunskapslitteratur.se" class="career-link">Info@kunskapslitteratur.se</a></p>
+                <p>Vi ser fram emot att höra från dig!</p>
+                <a href="mailto:Info@kunskapslitteratur.se" class="career-cta">
+                    <i class="bi bi-send me-2"></i>Skicka din ansökan
+                </a>
+            </div>
+
+            <div class="career-card">
+                <h3><i class="bi bi-building-check me-2"></i>Fördelar med att arbeta hos oss</h3>
+                <ul>
+                    <li><strong>Flexibla arbetstider</strong> - Vi fokuserar på resultat, inte när du arbetar.</li>
+                    <li><strong>Personlig utveckling</strong> - Vi investerar i din tillväxt genom utbildning och mentorskap.</li>
+                    <li><strong>Meningsfullt arbete</strong> - Bidra till att göra utbildning mer tillgänglig och hållbar.</li>
+                    <li><strong>Innovativ miljö</strong> - Var med och forma framtidens utbildningslösningar.</li>
+                    <li><strong>Teamkänsla</strong> - Bli en del av ett passionerat team som arbetar mot gemensamma mål.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+<!-- Footer -->
+<footer class="footer py-5">
+    <div class="container">
+        <div class="row align-items-start text-center text-lg-start">
+            <!-- Left: Logo och Subheader -->
+            <div class="col-lg-5 text-center mb-4 mb-lg-0">
+                <a href="{{ url_for('home') }}">
+                    <img src="{{ url_for('static', filename='bilder/logo.png') }}" alt="Kunskapslitteratur Logo" class="img-fluid mb-3" style="height: 123px;">
+                </a>
+                <p class="text-muted mb-0">Din partner för prisvärd, digital och hållbar kurslitteratur.</p>
+            </div>
+
+            <!-- Right: Länkar -->
+            <div class="col-lg-7">
+                <div class="row justify-content-center justify-content-lg-start">
+                    <!-- Column 1 -->
+                    <div class="col-12 col-sm-4 px-4 mb-4 mb-sm-0">
+                        <h5 class="mb-3">Länkar</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="{{ url_for('home') }}" class="footer-link">Hem</a></li>
+                            <li><a href="{{ url_for('omoss') }}" class="footer-link">Om oss</a></li>
+                            <li><a href="{{ url_for('hallbarhet') }}" class="footer-link">Hållbarhet</a></li>
+                            <li><a href="{{ url_for('kontaktaoss') }}" class="footer-link">Kontakta oss</a></li>
+                        </ul>
+                    </div>
+                    <!-- Column 2 -->
+                    <div class="col-12 col-sm-4 px-4 mb-4 mb-sm-0">
+                        <h5 class="mb-3">Förlag</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="{{ url_for('kontakt') }}" class="footer-link">Kontakt</a></li>
+                            <li><a href="{{ url_for('support') }}" class="footer-link">Support</a></li>
+                            <li><a href="{{ url_for('blipartner') }}" class="footer-link">Bli Partner</a></li>
+                            <li><a href="{{ url_for('forlagsvilkor') }}" class="footer-link">Förlagsvilkor</a></li>
+                        </ul>
+                    </div>
+                    <!-- Column 3 -->
+                    <div class="col-12 col-sm-4 px-4">
+                        <h5 class="mb-3">Hjälp & Info</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="{{ url_for('faq') }}" class="footer-link">Vanliga frågor</a></li>
+                            <li><a href="{{ url_for('anvandarvilkor') }}" class="footer-link">Användarvillkor</a></li>
+                            <li><a href="{{ url_for('Integritetspolicy') }}" class="footer-link">Integritetspolicy</a></li>
+                            <li><a href="{{ url_for('karriar') }}" class="footer-link">Karriär</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Line och Copyright -->
+        <hr class="footer-line">
+        <div class="text-center mt-3">
+            <p class="text-muted mb-0">© 2025 Kunskapslitteratur. Alla rättigheter förbehållna.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='cookie-consent.js') }}" defer></script>
+</body>
+</html>

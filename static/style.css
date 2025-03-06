@@ -1,0 +1,367 @@
+:root {
+    --primary: #29231d;
+    --secondary: #948b7d;
+    --hover-bg: rgba(99, 102, 241, 0.1);
+    --glass: rgba(255, 255, 255, 0.95);
+    --primary-hover: #948b7d;
+    --surface: #FFFFFF;
+    --background: #F8FAFF;
+    --text-primary: #1A1D24;
+    --text-secondary: #5A6474;
+    --border: #E3E8EF;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+html {
+    scroll-behavior: smooth;
+}
+body {
+    min-height: 100vh;
+    font-family: 'Roboto', sans-serif !important;
+    font-weight: 300;
+}
+
+/* Typsnittsinställningar */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 400;
+}
+.fw-medium {
+    font-weight: 400 !important;
+}
+.fw-semibold {
+    font-weight: 500 !important;
+}
+.fw-bold {
+    font-weight: 500 !important;
+}
+.lead {
+    font-weight: 300;
+}
+
+.nav-link.text-primary {
+    color: #29231d !important; 
+}
+
+/* Moderna hover-effekter för navbar */
+.navbar .nav-link {
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.navbar .nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: #948b7d;
+    transition: width 0.3s ease;
+    opacity: 0;
+}
+
+.navbar .nav-link:hover::after {
+    width: 100%;
+    opacity: 1;
+}
+
+.navbar .nav-link:hover {
+    transform: translateY(-2px);
+    color: #948b7d !important;
+}
+
+@media (min-width: 992px) {
+    /* Gamla hover-effekten ersätts av den nya ovan */
+}
+/*index.html*/
+.hero {
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("bilder/header-img.png");
+    background-size: cover;
+    background-position: center;
+    height: 80vh;
+    margin-top: 28px;
+}
+
+.btn-custom {
+    background-color: #fff !important;
+    color: #29231d !important;             
+    border: 1px solid #29231d !important;  
+    transition: background-color 0.2s ease, color 0.2s ease !important;
+}
+  
+.btn-custom:hover {
+    background-color: #29231d !important;
+    color: #fff !important;
+    border: 1px solid white !important
+}
+  
+.btn-custom:active {
+    border: 1px solid white !important;
+}
+.dark-image {
+    filter: brightness(70%);
+    transition: transform 0.15s ease;
+} 
+.dark-image:hover {
+    transform: scale(1.02);
+}
+
+.hero-section {
+    height: 50vh;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("bilder/call.png") center center / cover no-repeat;
+}
+
+.custom-icon {
+    color: #29231d !important;
+}
+
+.btn-custom-end {
+    background-color: #29231d !important;
+    color: #fff !important;             
+    border: 1px solid #29231d !important;  
+    transition: background-color 0.2s ease, color 0.2s ease !important;
+} 
+
+.btn-custom-end:hover {
+    background-color: #fff !important;
+    color: #29231d !important;
+}
+  
+.btn-custom-end:active {
+    border: 1px solid white !important;
+}
+
+/* Hover-effekt för kort */
+.hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+/* Footer */
+.footer {
+    margin-top: 60px; 
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.3);
+    position: relative;
+    padding-top: 40px; /* Behåller padding för innehållet */
+    padding-bottom: 20px; /* Justerar spacing inuti footern */
+}
+
+.footer h5 {
+    margin-bottom: 15px; /* Mellanrum mellan rubriker och listor */
+    text-align: center; /* Centrera rubriken */
+}
+
+/* Moderna hover-effekter för footer */
+.footer-link {
+    position: relative;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: #6c757d;
+    display: inline-block;
+    padding: 2px 0;
+}
+
+.footer-link::before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 1px;
+    bottom: 0;
+    left: 0;
+    background-color: #948b7d;
+    transition: width 0.3s ease;
+}
+
+.footer-link:hover {
+    color: #948b7d;
+    padding-left: 5px;
+}
+
+.footer-link:hover::before {
+    width: 100%;
+}
+
+.footer .row {
+    justify-content: center; /* Centrera alla kolumner */
+    text-align: center; /* Gör texten centrerad */
+}
+
+.footer ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centrera länkar i sina kolumner */
+    gap: 10px;
+}
+
+/* Footer bottom line */
+.footer .footer-line {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 30px 0;
+}
+
+/* Copyright text */
+.footer .footer-copyright {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #777;
+    margin-top: 10px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .footer .row {
+        justify-content: center;
+    }
+    .footer ul {
+        align-items: center;
+    }
+    .footer .footer-copyright {
+        margin-top: 20px;
+    }
+}
+
+.footer .footer-line {
+    border: none; 
+    border-top: 2px solid #29231d; 
+    margin: 30px 60px 30px 60px;
+}
+/*loggain.html*/
+form label{
+    color: #29231d !important;
+}
+/* För login-formuläret */
+.login-form {
+    background-color: #f8f9fa; /* Ljus bakgrundsfärg */
+    border: 1px solid #dcdcdc; /* Tunn grå kant */
+    border-radius: 10px; /* Rundade hörn */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Mjuk skugga */
+}
+
+/* Anpassa knappen */
+.btn-custom-end {
+    background-color: #29231d; /* Primär färg */
+    border: none;
+}
+
+.btn-custom-end:hover {
+    background-color: #948b7d; /* Hover-färg */
+    transition: background-color 0.3s ease; /* Mjuk övergång */
+}
+
+/* För länkar */
+.login-form a {
+    color: #948b7d; /* Primär länkfärg */
+    text-decoration: none; /* Ingen understrykning */
+}
+
+.login-form a:hover {
+    color: #29231d; /* Hover-färg för länkar */
+    text-decoration: underline; /* Understrykning vid hover */
+    transition: color 0.3s ease, text-decoration 0.3s ease; /* Mjuk övergång */
+}
+/*hero section for omoss.html and kontaktaoss.html and kontaktaoss.html*/
+.heroo {
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("bilder/omoss.jpg");
+    background-size: cover;
+    background-position: center;
+    height: 50vh;
+    margin-top: 28px;
+}
+.herooo {
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("bilder/hallbarhet.jpg");
+    background-size: cover;
+    background-position: center;
+    height: 50vh;
+    margin-top: 28px;
+}
+.heroooo {
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("bilder/kontaktaoss.jpg");
+    background-size: cover;
+    background-position: center;
+    height: 50vh;
+    margin-top: 28px;
+}
+/*hero section for omoss.html and kontaktaoss.html and kontaktaoss.html*/
+
+.custom-icon-color {
+    color: #29231d;
+}
+/*decoration för knapparna*/
+.deco a{
+    color: #948b7d !important; /* Primär länkfärg */
+    text-decoration: none; /* Ingen understrykning */
+}
+
+.deco a:hover {
+    color: #29231d; /* Hover-färg för länkar */
+    text-decoration: underline; /* Understrykning vid hover */
+    transition: color 0.3s ease, text-decoration 0.3s ease; /* Mjuk övergång */
+}
+
+.sidebar {
+    width: 280px;
+    background: var(--glass);
+    backdrop-filter: blur(16px);
+    border-right: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    padding: 1.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar .logo {
+    transition: transform 0.2s ease;
+}
+
+.sidebar .logo img {
+    max-width: 180px;
+    height: auto;
+}
+
+.sidebar .nav-links a {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    color: black;
+    text-decoration: none;
+    border-radius: 12px;
+    margin-bottom: 0.5rem;
+    transition: all 0.2s ease;
+    gap: 0.75rem;
+}
+
+.sidebar .nav-links a:hover {
+    background: var(--hover-bg);
+    color: var(--primary);
+    transform: translateX(8px);
+}
+
+.sidebar .nav-links a.active {
+    background: var(--hover-bg);
+    color: var(--primary);
+    font-weight: normal;
+    transform: translateX(4px);
+}
+
+.modal-content {
+    border-radius: 16px;
+    border: none;
+    backdrop-filter: blur(16px);
+    background: var(--glass);
+}
+
+
+

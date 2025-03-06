@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="sv">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="description" content="Kontakta Kunskapslitteratur för samarbete kring digital kurslitteratur. Vi erbjuder attraktiva avtal, säker distribution och ökad räckvidd för bokförlag.">
+    <meta name="keywords" content="bokförlag, kurslitteratur, förlagssamarbete, digital litteratur, studentlitteratur, förlagsavtal">
+    <meta name="author" content="Kunskapslitteratur">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ request.url }}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:title" content="Kontakt - Bokförlag | Kunskapslitteratur">
+    <meta property="og:description" content="Kontakta Kunskapslitteratur för samarbete kring digital kurslitteratur. Vi erbjuder attraktiva avtal, säker distribution och ökad räckvidd för bokförlag.">
+    <meta property="og:image" content="{{ url_for('static', filename='bilder/kontaktforlag.png', _external=True) }}">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ request.url }}">
+    <meta property="twitter:title" content="Kontakt - Bokförlag | Kunskapslitteratur">
+    <meta property="twitter:description" content="Kontakta Kunskapslitteratur för samarbete kring digital kurslitteratur. Vi erbjuder attraktiva avtal, säker distribution och ökad räckvidd för bokförlag.">
+    <meta property="twitter:image" content="{{ url_for('static', filename='bilder/kontaktforlag.png', _external=True) }}">
+    
+    <title>Kontakt - Bokförlag | Kunskapslitteratur</title>
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <!-- Schema.org strukturerad data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Kunskapslitteratur",
+      "url": "{{ request.url_root }}",
+      "logo": "{{ url_for('static', filename='bilder/logo.png', _external=True) }}",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "",
+        "contactType": "customer service",
+        "email": "info@kunskapslitteratur.se",
+        "availableLanguage": ["Swedish", "English"]
+      },
+      "description": "Kunskapslitteratur erbjuder samarbete med bokförlag för digital kurslitteratur med attraktiva avtal och säker distribution."
+    }
+    </script>
+    <style>
+      :root {
+        --primary-dark: #29231d;
+        --primary-light: #948b7d;
+        --accent-color: #e67e22;
+      }
+      
+      /* Hero-sektion med parallax-effekt */
+      .hero {
+        background: url("{{ url_for('static', filename='bilder/kontaktforlag.png') }}") no-repeat center center fixed;
+        background-size: cover;
+        color: #fff;
+        padding: 150px 0;
+        position: relative;
+        margin-top: 60px;
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5));
+        z-index: 1;
+      }
+      
+      .hero .container {
+        position: relative;
+        z-index: 2;
+      }
+      
+      /* Animerad knapp */
+      .btn-custom {
+        background-color: var(--primary-dark);
+        border-color: var(--primary-dark);
+        padding: 12px 30px;
+        border-radius: 50px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+      
+      .btn-custom:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        background-color: #352c24;
+      }
+      
+      /* Innehållssektioner */
+      .section {
+        padding: 80px 0;
+      }
+      
+      .section-light {
+        background-color: #f8f9fa;
+      }
+      
+      .section-dark {
+        background-color: #f0f2f5;
+      }
+      
+      /* Kort med hover-effekt */
+      .feature-card {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        height: 100%;
+        border: none;
+      }
+      
+      .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      }
+      
+      .feature-icon {
+        font-size: 2.5rem;
+        color: var(--primary-dark);
+        margin-bottom: 1rem;
+      }
+      
+      /* CTA-sektion */
+      .cta-section {
+        background: linear-gradient(135deg, var(--primary-dark), #3c3228);
+        color: white;
+        border-radius: 12px;
+        padding: 60px 40px;
+        margin: 80px 0;
+      }
+      
+      /* Animerad underrubrik */
+      .animated-border {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 30px;
+      }
+      
+      .animated-border:after {
+        content: '';
+        position: absolute;
+        width: 60px;
+        height: 3px;
+        background-color: var(--accent-color);
+        bottom: -10px;
+        left: 0;
+        transition: width 0.3s ease;
+      }
+      
+      .animated-border:hover:after {
+        width: 100%;
+      }
+      
+      /* Responsiv text */
+      @media (max-width: 768px) {
+        .hero {
+          padding: 100px 0;
+        }
+        
+        .display-4 {
+          font-size: 2.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-white fixed-top shadow">
+      <div class="container">
+        <a class="navbar-brand" href="{{ url_for('home') }}" aria-label="Kunskapslitteratur hemsida">
+          <img src="{{ url_for('static', filename='bilder/logo.png') }}" alt="Kunskapslitteratur Logo" style="height: 60px;" width="auto" height="60" />
+        </a>
+        <button 
+          class="navbar-toggler" 
+          type="button" 
+          data-bs-toggle="collapse" 
+          data-bs-target="#mainNavbar" 
+          aria-controls="mainNavbar" 
+          aria-expanded="false" 
+          aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNavbar">
+          <ul class="navbar-nav mx-auto gap-lg-5">
+            <li class="nav-item">
+              <a class="nav-link text-primary" href="{{ url_for('home') }}">Hem</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-primary" href="{{ url_for('omoss') }}">Om oss</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-primary" href="{{ url_for('hallbarhet') }}">Hållbarhet</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-primary" href="{{ url_for('kontaktaoss') }}">Kontakta oss</a>
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link text-primary" href="{{ url_for('loggain') }}">
+                <i class="bi bi-person me-2"></i>
+                Logga in
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero-sektion -->
+    <section class="hero">
+      <div class="container text-center">
+        <span class="badge bg-light text-dark px-3 py-2 mb-3 rounded-pill">För bokförlag</span>
+        <h1 class="display-4 fw-bold mb-4">Samarbeta med Kunskapslitteratur</h1>
+        <p class="lead fs-4 mb-5">Vi skapar framtidens digitala kurslitteratur tillsammans med innovativa förlag</p>
+        <div class="d-flex justify-content-center gap-3">
+          <a href="{{ url_for('kontaktaoss') }}" class="btn btn-lg btn-primary btn-custom">
+            <i class="bi bi-envelope-fill me-2"></i>Kontakta oss
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Fördelar-sektion -->
+    <section id="fordelar" class="section section-light">
+      <div class="container">
+        <div class="row justify-content-center mb-5">
+          <div class="col-lg-8 text-center">
+            <h2 class="display-5 mb-3">Fördelar för bokförlag</h2>
+            <div class="animated-border"></div>
+            <p class="lead text-muted">Upptäck hur ett samarbete med oss kan stärka ert varumärke och öka er räckvidd</p>
+          </div>
+        </div>
+        
+        <div class="row g-4">
+          <div class="col-md-4">
+            <div class="card feature-card">
+              <div class="card-body text-center p-4">
+                <div class="feature-icon">
+                  <i class="bi bi-graph-up-arrow"></i>
+                </div>
+                <h4>Ökad räckvidd</h4>
+                <p class="text-muted">Nå ut till tusentals studenter över hela Sverige genom vår digitala plattform.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-4">
+            <div class="card feature-card">
+              <div class="card-body text-center p-4">
+                <div class="feature-icon">
+                  <i class="bi bi-shield-check"></i>
+                </div>
+                <h4>Säker distribution</h4>
+                <p class="text-muted">Vi skyddar ert innehåll med avancerad DRM-teknik och säker distribution.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-4">
+            <div class="card feature-card">
+              <div class="card-body text-center p-4">
+                <div class="feature-icon">
+                  <i class="bi bi-currency-exchange"></i>
+                </div>
+                <h4>Attraktiva avtal</h4>
+                <p class="text-muted">Våra avtal garanterar minst 90 % av försäljningspriset till våra partners.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Process-sektion -->
+    <section class="section section-dark">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-6 mb-4 mb-lg-0">
+            <h2 class="display-6 mb-4">Så här fungerar samarbetet</h2>
+            <div class="animated-border"></div>
+            <p class="mb-4">Vi gör processen enkel och transparent för att skapa ett framgångsrikt partnerskap:</p>
+            
+            <div class="d-flex align-items-start mb-4">
+              <div class="bg-white rounded-circle p-3 me-3 shadow-sm">
+                <span class="fw-bold">1</span>
+              </div>
+              <div>
+                <h5>Initial kontakt</h5>
+                <p class="text-muted">Fyll i vårt kontaktformulär nedan för att diskutera era behov och möjligheter.</p>
+              </div>
+            </div>
+            
+            <div class="d-flex align-items-start mb-4">
+              <div class="bg-white rounded-circle p-3 me-3 shadow-sm">
+                <span class="fw-bold">2</span>
+              </div>
+              <div>
+                <h5>Avtalsdiskussion</h5>
+                <p class="text-muted">Vi utarbetar tillsammans ett avtal som passar båda parter med tydliga villkor.</p>
+              </div>
+            </div>
+            
+            <div class="d-flex align-items-start">
+              <div class="bg-white rounded-circle p-3 me-3 shadow-sm">
+                <span class="fw-bold">3</span>
+              </div>
+              <div>
+                <h5>Implementering</h5>
+                <p class="text-muted">Ni får privata inloggningsuppgifter för att integrera era böcker, och vi sköter marknadsföringen till våra användare.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-lg-6">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+              <div class="card-body p-5">
+                <h4 class="mb-4">Vanliga frågor från förlag</h4>
+                
+                <div class="accordion" id="accordionFAQ">
+                  <div class="accordion-item border-0 mb-3 shadow-sm">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq1" aria-expanded="true">
+                        Hur skyddas vårt innehåll?
+                      </button>
+                    </h2>
+                    <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#accordionFAQ">
+                      <div class="accordion-body">
+                        Vi använder branschledande DRM-teknik för att skydda ert innehåll från piratkopiering och obehörig åtkomst.
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="accordion-item border-0 mb-3 shadow-sm">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                        Hur ser ersättningsmodellen ut?
+                      </button>
+                    </h2>
+                    <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#accordionFAQ">
+                      <div class="accordion-body">
+                        Vi erbjuder attraktiva avtal där våra ersättningsmodeller följer en 90/10-fördelning, där ni får minst 90% av försäljningspriset.                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="accordion-item border-0 shadow-sm">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                        Hur lång tid tar implementeringen?
+                      </button>
+                    </h2>
+                    <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#accordionFAQ">
+                      <div class="accordion-body">
+                        Från avtal till lansering tar det vanligtvis 2–4 veckor, beroende på förlagets villkor, frågor och eventuella justeringar..
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA-sektion -->
+    <section class="section" id="kontaktformular">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+              <div class="card-header text-white p-4" style="background-color: #29231d;">
+                <h3 class="mb-0">Kontakta oss som förlag</h3>
+                <p class="mb-0 mt-2 opacity-75">Fyll i formuläret nedan så återkommer vi inom 24 timmar</p>
+              </div>
+              <div class="card-body p-4 p-lg-5">
+                <form id="publisher-contact-form" action="{{ url_for('send_email') }}" method="post">
+                  <input type="hidden" name="form_type" value="publisher">
+                  
+                  <div class="row g-4">
+                    <div class="col-md-6">
+                      <div class="form-floating">
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Ditt namn" required>
+                        <label for="name">Ditt namn *</label>
+                      </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <div class="form-floating">
+                        <input type="text" class="form-control" id="company" name="company" placeholder="Företagsnamn" required>
+                        <label for="company">Förlagsnamn *</label>
+                      </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <div class="form-floating">
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Din e-post" required>
+                        <label for="email">E-post *</label>
+                      </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <div class="form-floating">
+                        <input type="tel" class="form-control" id="phone" name="phone" placeholder="Telefonnummer">
+                        <label for="phone">Telefonnummer</label>
+                      </div>
+                    </div>
+                    
+                    <div class="col-12">
+                      <div class="form-floating">
+                        <select class="form-select" id="subject" name="subject" required>
+                          <option value="" disabled selected>Välj ämne</option>
+                          <option value="Kontakt">Kontakt</option>
+                          <option value="Samarbetsförfråga">Samarbetsförfråga</option>
+                        </select>
+                        <label for="subject">Ämne *</label>
+                      </div>
+                    </div>
+                    
+                    <div class="col-12">
+                      <div class="form-floating">
+                        <textarea class="form-control" id="message" name="message" placeholder="Ditt meddelande" style="height: 160px" required></textarea>
+                        <label for="message">Meddelande *</label>
+                      </div>
+                    </div>
+                    
+                    <div class="col-12">
+                      <div class="form-check mb-4">
+                        <input class="form-check-input" type="checkbox" id="gdpr" name="gdpr" required>
+                        <label class="form-check-label" for="gdpr">
+                          Jag godkänner att Kunskapslitteratur lagrar mina uppgifter enligt <a href="{{ url_for('Integritetspolicy') }}" class="text-decoration-none">integritetspolicyn</a> *
+                        </label>
+                      </div>
+                    </div>
+                    
+                    <div class="col-12">
+                      <button type="submit" class="btn btn-lg px-5 py-3 d-inline-flex align-items-center gap-2 text-white" style="background-color: #29231d;">
+                        <i class="bi bi-send"></i> Skicka meddelande
+                      </button>
+                      <div id="form-status" class="mt-3"></div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer py-5 bg-light">
+      <div class="container">
+        <div class="row align-items-start text-center text-lg-start">
+          <!-- Vänster: Logo och underrubrik -->
+          <div class="col-lg-5 text-center mb-4 mb-lg-0">
+            <a href="{{ url_for('home') }}">
+              <img src="{{ url_for('static', filename='bilder/logo.png') }}" alt="Kunskapslitteratur Logo" class="img-fluid mb-3" style="height: 123px;">
+            </a>
+            <p class="text-muted mb-0">Din partner för prisvärd, digital och hållbar kurslitteratur.</p>
+          </div>
+          <!-- Höger: Länkar -->
+          <div class="col-lg-7">
+            <div class="row justify-content-center justify-content-lg-start">
+              <!-- Kolumn 1 -->
+              <div class="col-12 col-sm-4 px-4 mb-4 mb-sm-0">
+                <h5 class="mb-3">Länkar</h5>
+                <ul class="list-unstyled">
+                  <li><a href="{{ url_for('home') }}" class="footer-link">Hem</a></li>
+                  <li><a href="{{ url_for('omoss') }}" class="footer-link">Om oss</a></li>
+                  <li><a href="{{ url_for('hallbarhet') }}" class="footer-link">Hållbarhet</a></li>
+                  <li><a href="{{ url_for('kontaktaoss') }}" class="footer-link">Kontakta oss</a></li>
+                </ul>
+              </div>
+              <!-- Kolumn 2 -->
+              <div class="col-12 col-sm-4 px-4 mb-4 mb-sm-0">
+                <h5 class="mb-3">Förlag</h5>
+                <ul class="list-unstyled">
+                  <li><a href="{{ url_for('kontakt') }}" class="footer-link">Kontakt</a></li>
+                  <li><a href="{{ url_for('support') }}" class="footer-link">Support</a></li>
+                  <li><a href="{{ url_for('blipartner') }}" class="footer-link">Bli Partner</a></li>
+                  <li><a href="{{ url_for('forlagsvilkor') }}" class="footer-link">Förlagsvilkor</a></li>
+                </ul>
+              </div>
+              <!-- Kolumn 3 -->
+              <div class="col-12 col-sm-4 px-4">
+                <h5 class="mb-3">Hjälp & Info</h5>
+                <ul class="list-unstyled">
+                  <li><a href="{{ url_for('faq') }}" class="footer-link">Vanliga frågor</a></li>
+                  <li><a href="{{ url_for('anvandarvilkor') }}" class="footer-link">Användarvillkor</a></li>
+                  <li><a href="{{ url_for('Integritetspolicy') }}" class="footer-link">Integritetspolicy</a></li>
+                  <li><a href="{{ url_for('karriar') }}" class="footer-link">Karriär</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Linje och Copyright -->
+        <hr class="footer-line">
+        <div class="text-center mt-3">
+          <p class="text-muted mb-0">© 2025 Kunskapslitteratur. Alla rättigheter förbehållna.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Preload viktiga resurser -->
+    <link rel="preload" href="{{ url_for('static', filename='bilder/logo.png') }}" as="image">
+    <link rel="preload" href="{{ url_for('static', filename='bilder/kontaktforlag.png') }}" as="image">
+    
+    <!-- Strukturerad data för breadcrumbs -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Hem",
+        "item": "{{ request.url_root }}"
+      },{
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Kontakt för bokförlag",
+        "item": "{{ request.url }}"
+      }]
+    }
+    </script>
+    
+    <!-- Inline kritisk CSS för snabbare rendering -->
+    <style>
+      /* Kritisk CSS för att förhindra layout shifts */
+      .navbar-brand img {
+        height: 60px;
+        width: auto;
+      }
+      .hero {
+        min-height: 400px;
+      }
+    </style>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script>
+      // Funktion för att hämta CSRF-token från meta-taggen
+      function getCSRFToken() {
+        return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+      }
+
+      document.addEventListener('DOMContentLoaded', function() {
+        const publisherForm = document.getElementById('publisher-contact-form');
+        const formStatus = document.getElementById('form-status');
+        
+        if (publisherForm) {
+          publisherForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Visa laddningsindikator
+            formStatus.innerHTML = '<div class="alert alert-info">Skickar meddelande...</div>';
+            
+            // Samla in formulärdata som JSON istället för FormData
+            const formData = new FormData(publisherForm);
+            
+            // Skapa ett objekt som matchar det format servern förväntar sig
+            const data = {
+              userType: "forlag", // Fast värde för förlag
+              email: formData.get("email"),
+              subject: formData.get("subject"),
+              message: `
+Namn: ${formData.get("name")}
+Förlag: ${formData.get("company")}
+E-post: ${formData.get("email")}
+Telefon: ${formData.get("phone") || "Ej angivet"}
+
+Ämne: ${formData.get("subject")}
+
+Meddelande:
+${formData.get("message")}
+              `
+            };
+            
+            console.log("Data som skickas:", data); // Debugging
+            
+            // Hämta CSRF-token
+            const csrfToken = getCSRFToken();
+            console.log("CSRF-token:", csrfToken); // Debugging
+            
+            // Gör en AJAX-förfrågan med JSON
+            fetch(publisherForm.action, {
+              method: 'POST',
+              headers: { 
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
+              },
+              body: JSON.stringify(data),
+              credentials: 'same-origin' // Inkludera cookies i förfrågan
+            })
+            .then(response => {
+              console.log("Status:", response.status); // Debugging
+              if (response.status >= 200 && response.status < 300) {
+                // Behandla alla 2xx-statuskoder som framgång
+                formStatus.innerHTML = '<div class="alert alert-success">Tack för ditt meddelande! Vi återkommer så snart som möjligt.</div>';
+                publisherForm.reset();
+                return;
+              }
+              
+              // Försök tolka svaret som JSON om möjligt
+              return response.json().catch(e => {
+                console.log("Kunde inte tolka JSON:", e);
+                throw new Error("Servern returnerade ett oväntat svar");
+              });
+            })
+            .then(data => {
+              if (data) {
+                if (data.success) {
+                  formStatus.innerHTML = '<div class="alert alert-success">Tack för ditt meddelande! Vi återkommer så snart som möjligt.</div>';
+                  publisherForm.reset();
+                } else {
+                  formStatus.innerHTML = '<div class="alert alert-danger">Det uppstod ett fel när meddelandet skulle skickas. Vänligen försök igen.</div>';
+                }
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              formStatus.innerHTML = '<div class="alert alert-danger">Ett tekniskt fel uppstod. Vänligen försök igen eller kontakta oss direkt via e-post.</div>';
+            });
+          });
+        }
+      });
+    </script>
+  <script src="{{ url_for('static', filename='cookie-consent.js') }}" defer></script>
+</body>
+</html>

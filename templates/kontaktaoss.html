@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+            <!-- Favicon -->
+            <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+            <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+            <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kontakta oss - Kunskapslitteratur</title>
+    <style>
+        :root {
+            --primary-dark: #29231d;
+            --primary-light: #948b7d;
+        }
+        
+        .contact-form {
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            background-color: #fff;
+            transition: transform 0.3s ease;
+        }
+        .contact-form:hover {
+            transform: translateY(-5px);
+        }
+        .contact-method {
+            display: flex;
+            align-items: center;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+            border-left: 4px solid var(--primary-dark);
+        }
+        .contact-method:hover {
+            transform: translateY(-5px);
+        }
+        .contact-method i {
+            font-size: 28px;
+            color: var(--primary-dark);
+        }
+        #statusMessage {
+            margin-left: 15px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: opacity 0.3s ease;
+        }
+        .form-control, .form-select {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus, .form-select:focus {
+            box-shadow: 0 0 0 3px rgba(41, 35, 29, 0.15);
+            border-color: var(--primary-dark);
+        }
+        .btn-custom-end {
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+        .btn-custom-end:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(41, 35, 29, 0.3);
+            background-color: #352c24;
+            border-color: #352c24;
+        }
+        .contact-icon-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(148, 139, 125, 0.2);
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+        .badge.bg-primary {
+            background-color: var(--primary-dark) !important;
+        }
+        .badge.bg-primary.bg-opacity-10 {
+            background-color: rgba(148, 139, 125, 0.2) !important;
+            color: var(--primary-dark) !important;
+        }
+        .text-primary {
+            color: var(--primary-dark) !important;
+        }
+        .accordion-button:not(.collapsed) {
+            background-color: rgba(148, 139, 125, 0.1);
+            color: var(--primary-dark);
+        }
+        .accordion-button:focus {
+            box-shadow: 0 0 0 0.25rem rgba(148, 139, 125, 0.25);
+            border-color: var(--primary-dark);
+        }
+        .social-icon {
+            color: var(--primary-dark);
+            transition: all 0.3s ease;
+        }
+        .social-icon:hover {
+            color: var(--primary-light);
+            transform: translateY(-3px);
+        }
+    </style>
+    <script>
+        // Duplicera getCookie-funktionen
+        function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+      // Använd CSRF-token från meta-tag (säkrare än cookies)
+      function getCSRFToken() {
+        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        console.log("CSRF token hämtat:", token); // Debugging
+        return token;
+      }
+
+const csrfToken = getCookie("csrf_token"); // Hämta från kakor istället!
+
+      </script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-white fixed-top shadow">
+        <div class="container">
+          <a class="navbar-brand" href="{{ url_for('home') }}">
+            <img src="{{ url_for('static', filename='bilder/logo.png') }}" alt="Kunskapslitteratur Logo" style="height: 60px;" />
+          </a>
+          <button 
+            class="navbar-toggler" 
+            type="button" 
+            data-bs-toggle="collapse" 
+            data-bs-target="#mainNavbar" 
+            aria-controls="mainNavbar" 
+            aria-expanded="false" 
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav mx-auto gap-lg-5">
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('home') }}">Hem</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('omoss') }}">Om oss</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('hallbarhet') }}">Hållbarhet</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-primary active" href="{{ url_for('kontaktaoss') }}">Kontakta oss</a>
+              </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-primary" href="{{ url_for('loggain') }}">
+                      <i class="bi bi-person me-2"></i>
+                      Logga in
+                    </a>
+                </li>
+            </ul>
+          </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="heroooo d-flex align-items-center mt-5">
+        <div class="container mt-5">
+          <h1 class="display-2 text-white text-start">Kunskapslitteratur | Kontakta oss</h1>
+          <p class="lead text-white-50 mb-4 text-start">
+            Har du frågor eller funderingar? Kontakta oss här!
+          </p>
+        </div>
+    </section>
+
+    <!-- Intro Section -->
+    <section class="py-5 my-4">
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-8 text-center">
+                    <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 mb-3 rounded-pill">Kontakta oss</span>
+                    <h2 class="display-5 mb-4" style="color: #29231d;">Vi finns här för dig</h2>
+                    <p class="lead" style="color: #948b7d;">
+                        Oavsett om du har frågor om våra tjänster, behöver support eller vill diskutera ett samarbete, är vi redo att hjälpa dig.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="py-5 bg-light my-4 rounded-4 mx-3">
+        <div class="container py-3">
+            <div class="row g-5">
+                <!-- Left Side: Contact Form -->
+                <div class="col-lg-6">
+                    <div class="contact-form">
+                        <h3 class="mb-4" style="color: #29231d;">Skicka ett meddelande</h3>
+                        <form id="contactForm">
+                            <div class="mb-4">
+                                <label for="userType" class="form-label" style="color: #29231d;">Jag är en</label>
+                                <select class="form-select" id="userType" name="userType" required>
+                                    <option value="">Välj...</option>
+                                    <option value="student">Student</option>
+                                    <option value="forlag">Förlag</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="email" class="form-label" style="color: #29231d;">E-postadress</label>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Din e-postadress" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="subject" class="form-label" style="color: #29231d;">Ämne</label>
+                                <input type="text" class="form-control" id="subject" name="subject" placeholder="Ämne" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="message" class="form-label" style="color: #29231d;">Beskrivning</label>
+                                <textarea class="form-control" id="message" name="message" rows="5" placeholder="Beskriv ditt ärende" required></textarea>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <button type="submit" class="btn btn-primary btn-custom-end">
+                                    <i class="bi bi-send me-2"></i>Skicka meddelande
+                                </button>
+                                <span id="statusMessage" style="display: none;"></span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Right Side: Contact Methods -->
+                <div class="col-lg-6">
+                    <div class="mb-5">
+                        <h3 class="mb-4" style="color: #29231d;">Andra sätt att nå oss</h3>
+                        <p class="lead mb-4" style="color: #948b7d;">
+                            Välj det kontaktsätt som passar dig bäst. Vi strävar efter att svara så snabbt som möjligt.
+                        </p>
+                    </div>
+                    
+                    <div class="contact-method">
+                        <div class="contact-icon-circle">
+                            <i class="bi bi-envelope"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-1" style="color: #29231d;">E-post</h5>
+                            <p class="mb-0" style="color: #29231d;">info@kunskapslitteratur.se</p>
+                            <small class="text-muted">Vi svarar vanligtvis inom 24 timmar</small>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-method">
+                        <div class="contact-icon-circle">
+                            <i class="bi bi-telephone"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-1" style="color: #29231d;">Telefon</h5>
+                            <p class="mb-0" style="color: #29231d;">Kommer snart</p>
+                            <small class="text-muted">Vardagar 09:00-17:00</small>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-method">
+                        <div class="contact-icon-circle">
+                            <i class="bi bi-chat-dots"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-1" style="color: #29231d;">Livechatt</h5>
+                            <p class="mb-0" style="color: #29231d;">Kommer snart</p>
+                            <small class="text-muted">För snabbare support</small>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-5">
+                        <h5 class="mb-3" style="color: #29231d;">Följ oss</h5>
+                        <div class="d-flex gap-3">
+                            <a href="#" class="text-decoration-none">
+                                <i class="bi bi-facebook fs-4 social-icon"></i>
+                            </a>
+                            <a href="#" class="text-decoration-none">
+                                <i class="bi bi-twitter fs-4 social-icon"></i>
+                            </a>
+                            <a href="#" class="text-decoration-none">
+                                <i class="bi bi-instagram fs-4 social-icon"></i>
+                            </a>
+                            <a href="#" class="text-decoration-none">
+                                <i class="bi bi-linkedin fs-4 social-icon"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-5 my-4">
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-8 text-center">
+                    <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 mb-3 rounded-pill">Vanliga frågor</span>
+                    <h2 class="display-5 mb-4" style="color: #29231d;">Snabba svar på vanliga frågor</h2>
+                    <p class="lead" style="color: #948b7d;">
+                        Här hittar du svar på några av de vanligaste frågorna vi får. Hittar du inte svaret på din fråga? Kontakta oss!
+                    </p>
+                </div>
+            </div>
+            
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item border-0 mb-3 shadow-sm rounded-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq1" aria-expanded="true" aria-controls="faq1">
+                                    Hur snabbt kan jag få tillgång till kurslitteraturen?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body" style="color: #948b7d;">
+                                    Du får omedelbar tillgång till all digital kurslitteratur direkt efter köp. Inga väntetider, inga leveranser att vänta på.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item border-0 mb-3 shadow-sm rounded-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq2" aria-expanded="false" aria-controls="faq2">
+                                    Kan jag läsa böckerna offline?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body" style="color: #948b7d;">
+                                    Nej, för tillfället behöver du en internetanslutning för att läsa böckerna. Offline-läsning är något vi planerar att erbjuda i framtiden.                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item border-0 mb-3 shadow-sm rounded-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq3" aria-expanded="false" aria-controls="faq3">
+                                    Hur fungerar betalningen?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body" style="color: #948b7d;">
+                                    Vi erbjuder flera trygga och smidiga betalningsalternativ, inklusive debitkort, kreditkort och Klarna. Alla transaktioner skyddas med säker kryptering för att garantera en trygg betalningsupplevelse.                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<!-- Footer -->
+<footer class="footer py-5">
+    <div class="container">
+        <div class="row align-items-start text-center text-lg-start">
+            <!-- Left: Logo och Subheader -->
+            <div class="col-lg-5 text-center mb-4 mb-lg-0">
+                <a href="{{ url_for('home') }}">
+                    <img src="{{ url_for('static', filename='bilder/logo.png') }}" alt="Kunskapslitteratur Logo" class="img-fluid mb-3" style="height: 123px;">
+                </a>
+                <p class="text-muted mb-0">Din partner för prisvärd, digital och hållbar kurslitteratur.</p>
+            </div>
+
+            <!-- Right: Länkar -->
+            <div class="col-lg-7">
+                <div class="row justify-content-center justify-content-lg-start">
+                    <!-- Column 1 -->
+                    <div class="col-12 col-sm-4 px-4 mb-4 mb-sm-0">
+                        <h5 class="mb-3">Länkar</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="{{ url_for('home') }}" class="footer-link">Hem</a></li>
+                            <li><a href="{{ url_for('omoss') }}" class="footer-link">Om oss</a></li>
+                            <li><a href="{{ url_for('hallbarhet') }}" class="footer-link">Hållbarhet</a></li>
+                            <li><a href="{{ url_for('kontaktaoss') }}" class="footer-link">Kontakta oss</a></li>
+                        </ul>
+                    </div>
+                    <!-- Column 2 -->
+                    <div class="col-12 col-sm-4 px-4 mb-4 mb-sm-0">
+                        <h5 class="mb-3">Förlag</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="{{ url_for('kontakt') }}" class="footer-link">Kontakt</a></li>
+                            <li><a href="{{ url_for('support') }}" class="footer-link">Support</a></li>
+                            <li><a href="{{ url_for('blipartner') }}" class="footer-link">Bli Partner</a></li>
+                            <li><a href="{{ url_for('forlagsvilkor') }}" class="footer-link">Förlagsvilkor</a></li>
+                        </ul>
+                    </div>
+                    <!-- Column 3 -->
+                    <div class="col-12 col-sm-4 px-4">
+                        <h5 class="mb-3">Hjälp & Info</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="{{ url_for('faq') }}" class="footer-link">Vanliga frågor</a></li>
+                            <li><a href="{{ url_for('anvandarvilkor') }}" class="footer-link">Användarvillkor</a></li>
+                            <li><a href="{{ url_for('Integritetspolicy') }}" class="footer-link">Integritetspolicy</a></li>
+                            <li><a href="{{ url_for('karriar') }}" class="footer-link">Karriär</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Line och Copyright -->
+        <hr class="footer-line">
+        <div class="text-center mt-3">
+            <p class="text-muted mb-0">© 2025 Kunskapslitteratur. Alla rättigheter förbehållna.</p>
+        </div>
+    </div>
+</footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+document.getElementById('contactForm').addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    const userType = document.getElementById('userType').value;
+    const email = document.getElementById('email').value;
+    const subject = document.getElementById('subject').value;
+    const message = document.getElementById('message').value;
+
+    const statusMessage = document.getElementById('statusMessage');
+    
+    // Visa laddningsindikator
+    statusMessage.textContent = 'Skickar...';
+    statusMessage.style.color = '#666';
+    statusMessage.style.display = 'block';
+
+    const data = { userType, email, subject, message };
+
+    // Debugging: log the data being sent
+    console.log("Data being sent:", data);
+
+    try {
+        // Hämta CSRF-token från meta-taggen med den nya funktionen
+        const csrfToken = getCSRFToken();
+        console.log("Använder CSRF token:", csrfToken);
+        
+        const response = await fetch('/send-email', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken 
+            },
+            body: JSON.stringify(data),
+            credentials: 'same-origin' // Inkludera cookies i förfrågan
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            statusMessage.textContent = 'Meddelandet har skickats';
+            statusMessage.style.color = 'green';
+            statusMessage.style.display = 'block';
+            
+            // Återställ formuläret
+            document.getElementById('contactForm').reset();
+            
+            // Dölj statusmeddelandet efter 5 sekunder
+            setTimeout(() => {
+                statusMessage.style.opacity = '0';
+                setTimeout(() => {
+                    statusMessage.style.display = 'none';
+                    statusMessage.style.opacity = '1';
+                }, 300);
+            }, 5000);
+        } else {
+            statusMessage.textContent = 'Ett fel uppstod: ' + (response.status === 403 ? 'Åtkomst nekad' : 'Servern kunde inte hantera förfrågan');
+            statusMessage.style.color = 'red';
+            statusMessage.style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Fel vid skickande av formulär:', error);
+        statusMessage.textContent = 'Ett oväntat fel uppstod';
+        statusMessage.style.color = 'red';
+        statusMessage.style.display = 'block';
+    }
+});
+
+    </script>
+<script src="{{ url_for('static', filename='cookie-consent.js') }}" defer></script>
+</body>
+</html>

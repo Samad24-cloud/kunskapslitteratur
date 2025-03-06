@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="sv">
+    <head>
+        <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Användarvilkor - Kunskapslitteratur</title>
+    
+        <!-- Favicon -->
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='bilder/favicon.ico') }}">
+    </head>
+<body>
+    <nav class="navbar navbar-expand-lg bg-white fixed-top shadow">
+        <div class="container">
+          <a class="navbar-brand" href="{{ url_for('home') }}">
+            <img src="{{ url_for('static', filename='bilder/logo.png') }}" alt="Kunskapslitteratur Logo" style="height: 60px;" />
+          </a>
+          <button 
+            class="navbar-toggler" 
+            type="button" 
+            data-bs-toggle="collapse" 
+            data-bs-target="#mainNavbar" 
+            aria-controls="mainNavbar" 
+            aria-expanded="false" 
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav mx-auto gap-lg-5">
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('home') }}">Hem</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('omoss') }}">Om oss</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('hallbarhet') }}">Hållbarhet</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-primary" href="{{ url_for('kontaktaoss') }}">Kontakta oss</a>
+              </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-primary" href="{{ url_for('loggain') }}">
+                      <i class="bi bi-person me-2"></i>
+                      Logga in
+                    </a>
+                  </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+    <section class="terms-section py-5 mt-5">
+        <div class="container mt-5">
+            <style>
+                /* Färgvariabler */
+                :root {
+                    --primary-color: #29231d;
+                    --primary-light: rgba(41, 35, 29, 0.05);
+                    --primary-border: rgba(41, 35, 29, 0.2);
+                    --light-bg: #f8f9fa;
+                }
+                
+                /* Huvudinnehåll */
+                .terms-section {
+                    padding-top: 60px;
+                    padding-bottom: 60px;
+                }
+                
+                /* Rubriker */
+                .terms-header {
+                    text-align: center;
+                    margin-bottom: 3rem;
+                    position: relative;
+                }
+                
+                .terms-header:after {
+                    content: '';
+                    position: absolute;
+                    width: 80px;
+                    height: 3px;
+                    background-color: var(--primary-color);
+                    bottom: -15px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                }
+                
+                /* Sektioner */
+                .terms-card {
+                    background-color: white;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+                    padding: 2rem;
+                    margin-bottom: 2rem;
+                    border-left: 4px solid var(--primary-color);
+                }
+                
+                .terms-card h3 {
+                    color: var(--primary-color);
+                    margin-bottom: 1rem;
+                    font-weight: 600;
+                    position: relative;
+                    display: inline-block;
+                }
+                
+                .terms-card ul {
+                    padding-left: 1.5rem;
+                }
+                
+                .terms-card ul li {
+                    margin-bottom: 0.5rem;
+                }
+                
+                /* Länkar */
+                .terms-link {
+                    color: var(--primary-color);
+                    font-weight: 600;
+                    text-decoration: none;
+                    transition: color 0.3s ease;
+                }
+                
+                .terms-link:hover {
+                    text-decoration: underline;
+                }
+                
+                /* Uppdateringsdatum */
+                .update-date {
+                    display: inline-block;
+                    background-color: var(--primary-light);
+                    color: var(--primary-color);
+                    padding: 0.5rem 1rem;
+                    border-radius: 30px;
+                    font-size: 0.9rem;
+                    margin-bottom: 2rem;
+                }
+            </style>
+            
+            <div class="terms-header">
+                <h1>Användarvillkor</h1>
+                <p class="lead">Villkor för användning av Kunskapslitteraturs tjänster</p>
+                <span class="update-date">
+                    <i class="bi bi-calendar-check me-2"></i>Uppdaterad: Januari 2025
+                </span>
+            </div>
+
+            <div class="terms-card">
+                <h3><i class="bi bi-book me-2"></i>Vår tjänst</h3>
+                <p>
+                    Kärnan i vår verksamhet är att erbjuda digital kurslitteratur på ett smidigt och lättillgängligt sätt. Detta inkluderar:                </p>
+                <ul>
+                    <li>Tillgång till ett ständigt växande digitalt bibliotek av kurslitteratur från ledande förlag, anpassat för olika utbildningsprogram.</li>
+                    <li>För närvarande erbjuder vi endast kortbetalning eller Klarna. Vi arbetar på att lägga till möjligheten till delbetalning mellan 3 och 6 månader.</li>
+                    <li>Omedelbar digital leverans av kurslitteraturen direkt efter bekräftad betalning.</li>
+                    <li>Automatiskt genererade kvitton skickas via e-post vid varje köp.</li>
+                    <li>Endast auktoriserade användare med ett aktivt medlemskap får tillgång till kurslitteraturen.</li>
+                    <li>En användarvänlig PDF-läsare som möjliggör enkel navigering och läsupplevelse.</li>
+                    <li>Eftersom vi levererar digitalt innehåll avstår du från ångerrätten enligt lag om distansavtal.</li>
+                </ul>
+            </div>
+            
+            <div class="terms-card">
+                <h3><i class="bi bi-person-badge me-2"></i>Användarkonto</h3>
+                <ul>
+                    <li>Du ansvarar för att hålla ditt lösenord säkert och för all aktivitet som sker på ditt konto.</li>
+                    <li>Flera personer kan dela ett konto, men endast en användare kan vara inloggad åt gången. Vi förbehåller oss rätten att begränsa antal samtidiga inloggningar om vi upptäcker missbruk.</li>
+                    <li>Du förbinder dig att ge korrekta och aktuella uppgifter vid registrering.</li>
+                    <li>Vi kan komma att begära verifiering av användarens identitet i enlighet med gällande bestämmelser mot penningtvätt och bedrägerier.</li>
+                    <li>Vi förbehåller oss rätten att stänga av konton som visar tecken på missbruk, olaglig aktivitet eller brott mot dessa villkor.</li>
+                </ul>
+            </div>
+
+            <div class="terms-card">
+                <h3><i class="bi bi-credit-card me-2"></i>Abonnemang och betalning</h3>
+                <ul>
+                    <li>Abonnemanget kostar 35 kr/månad och ger obegränsad tillgång till kurslitteraturen som du har tillgång till.</li>
+                    <li>Det finns ingen bindningstid. Du kan när som helst avsluta din prenumeration via "Mitt konto".</li>
+                    <li>Tillgång till tjänsterna fortsätter fram till slutet av din betalda period.</li>
+                    <li>För att få tillgång till kurslitteraturen i PDF-läsaren krävs ett aktivt medlemskap.</li>
+                    <li>Betalning sker automatiskt varje månad via ditt registrerade betalningsmedel.</li>
+                    <li>Vid misslyckad betalning kommer vi att försöka genomföra transaktionen igen. Om betalningen fortsätter att misslyckas, kan ditt konto pausas tills betalningen genomförs.</li>
+                    <li>Ingen ångerrätt eller återbetalning gäller efter genomfört köp eller abonnemangsbetalning.</li>
+                </ul>
+            </div>
+
+            <div class="terms-card">
+                <h3><i class="bi bi-shield-lock me-2"></i>Immateriella rättigheter</h3>
+                <p>Allt innehåll på plattformen, inklusive kurslitteratur och vår PDF-läsare, tillhör Kunskapslitteratur eller dess licensgivare. Det är förbjudet att kopiera, sprida eller modifiera innehållet utan tillstånd.</p>
+                <ul>
+                    <li>Du får enbart använda innehållet för personligt, icke-kommersiellt bruk.</li>
+                    <li>Anteckningar och markeringar som du gör i böckerna är dina, men ger dig inte några rättigheter till det underliggande materialet.</li>
+                    <li>Det är förbjudet att systematiskt ladda ned, skanna eller på annat sätt extrahera innehåll från plattformen.</li>
+                    <li>Obehörig spridning av innehåll kan leda till rättsliga påföljder och avstängning från tjänsten.</li>
+                </ul>
+            </div>
+
+            <div class="terms-card">
+                <h3><i class="bi bi-laptop me-2"></i>Tillgänglighet och tekniska krav</h3>
+                <ul>
+                    <li>Böcker kan endast läsas online, ingen nedladdning är möjlig.</li>
+                    <li>Endast internetuppkoppling krävs för att använda tjänsten.</li>
+                    <li>Vi rekommenderar en stabil internetanslutning med minst 5 Mbit/s för optimal läsupplevelse.</li>
+                    <li>Tjänsten är kompatibel med de senaste versionerna av Chrome, Firefox, Safari och Edge.</li>
+                    <li>Planerat underhåll av plattformen meddelas minst 24 timmar i förväg via e-post eller meddelande på plattformen.</li>
+                    <li>Vi strävar efter en upptid på 99,5%, men kan inte garantera oavbruten tillgänglighet.</li>
+                    <li>Vid oplanerade driftstörningar arbetar vi för att återställa tjänsten så snabbt som möjligt och informerar via vår webbplats eller sociala medier.</li>
+                </ul>
+            </div>
+
+            <div class="terms-card">
+                <h3><i class="bi bi-exclamation-triangle me-2"></i>Otillåten användning</h3>
+                <ul>
+                    <li>Det är förbjudet att använda vår plattform för olagliga aktiviteter eller spridning av olagligt innehåll.</li>
+                    <li>All kopiering eller distribution av innehåll utan tillstånd är förbjuden.</li>
+                    <li>Försök att kringgå de tekniska begränsningarna i vår PDF-läsare är förbjudna.</li>
+                    <li>Det är förbjudet att använda automatiserade skript eller program för att interagera med plattformen.</li>
+                    <li>Användare får inte försöka skada, överbelasta eller sabotera plattformen eller dess servrar.</li>
+                    <li>Det är inte tillåtet att skapa flera konton för att kringgå begränsningar eller få förlängd provperiod.</li>
+                </ul>
+            </div>
+
+            <div class="terms-card">
+                <h3><i class="bi bi-file-earmark-text me-2"></i>Ansvarsbegränsning</h3>
+                <p>Vi ansvarar inte för indirekta skador, förluster eller fel som uppstår vid användning av våra tjänster. Vårt ansvar är begränsat till det belopp du har betalat för tjänsten.</p>
+                <ul>
+                    <li>Vi garanterar inte att innehållet är fritt från fel, sakfel eller brister.</li>
+                    <li>Vi ansvarar inte för tillfälliga avbrott eller förseningar i tjänsten.</li>
+                    <li>Kunskapslitteratur tar inget ansvar för tredjepartslänkar eller tjänster som kan finnas på plattformen.</li>
+                    <li>Force majeure: Vi är inte ansvariga för förseningar eller brister i uppfyllandet av våra åtaganden om dessa orsakas av omständigheter utanför vår kontroll.</li>
+                </ul>
+            </div>
+
+            <div class="terms-card">
+                <h3><i class="bi bi-box-arrow-right me-2"></i>Uppsägning av tjänsten</h3>
+                <p>Du kan när som helst avsluta din tjänst via "Mitt konto" eller "Inställningar" på plattformen. Vid avslutning av tjänsten fortsätter din tillgång till tjänsterna fram till slutet av din betalda period.</p>
+                <ul>
+                    <li>Uppsägning kan ske när som helst, men redan genomförda betalningar återbetalas inte.</li>
+                    <li>Om du avslutar ditt abonnemang kommer dina personliga inställningar inte att sparas efter att abonnemanget upphört.</li>
+                    <li>Vi förbehåller oss rätten att avsluta din tjänst med omedelbar verkan om du bryter mot dessa villkor.</li>
+                </ul>
+            </div>
+
+            <div class="terms-card">
+                <h3><i class="bi bi-person-x me-2"></i>Uppsägning av konto</h3>
+                <p>Om du vill avsluta ditt konto helt och hållet kan du kontakta oss via <a href="{{ url_for('kontaktaoss') }}" class="terms-link">Kontakta oss</a>. Vid uppsägning av kontot raderas dina personuppgifter enligt vår <a href="{{ url_for('Integritetspolicy') }}" class="terms-link">Integritetspolicy</a>, förutsatt att lagliga krav inte förhindrar detta.</p>
+            </div>
+
+            <div class="terms-card">
+                <h3><i class="bi bi-chat-square-text me-2"></i>Tvistlösning</h3>
+                <p>Eventuella tvister som uppstår i samband med användningen av våra tjänster ska lösas i enlighet med svensk lag. Vid behov kan parterna söka medling eller skiljedom.</p>
+            </div>
+
+            <div class="terms-card">
+                <h3><i class="bi bi-pencil-square me-2"></i>Ändringar av användarvillkor</h3>
+                <p>Vi förbehåller oss rätten att uppdatera dessa användarvillkor vid behov. Alla ändringar publiceras på denna sida och träder i kraft omedelbart.</p>
+            </div>
+
+            <div class="terms-card">
+                <h3><i class="bi bi-envelope me-2"></i>Kontakt</h3>
+                <p>Vid frågor eller funderingar kring våra användarvillkor, vänligen kontakta oss via <a href="{{ url_for('kontaktaoss') }}" class="terms-link">Kontakta oss</a>.</p>
+            </div>
+        </div>
+    </section>
+
+<!-- Footer -->
+<footer class="footer py-5">
+    <div class="container">
+        <div class="row align-items-start text-center text-lg-start">
+            <!-- Left: Logo och Subheader -->
+            <div class="col-lg-5 text-center mb-4 mb-lg-0">
+                <a href="{{ url_for('home') }}">
+                    <img src="{{ url_for('static', filename='bilder/logo.png') }}" alt="Kunskapslitteratur Logo" class="img-fluid mb-3" style="height: 123px;">
+                </a>
+                <p class="text-muted mb-0">Din partner för prisvärd, digital och hållbar kurslitteratur.</p>
+            </div>
+
+            <!-- Right: Länkar -->
+            <div class="col-lg-7">
+                <div class="row justify-content-center justify-content-lg-start">
+                    <!-- Column 1 -->
+                    <div class="col-12 col-sm-4 px-4 mb-4 mb-sm-0">
+                        <h5 class="mb-3">Länkar</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="{{ url_for('home') }}" class="footer-link">Hem</a></li>
+                            <li><a href="{{ url_for('omoss') }}" class="footer-link">Om oss</a></li>
+                            <li><a href="{{ url_for('hallbarhet') }}" class="footer-link">Hållbarhet</a></li>
+                            <li><a href="{{ url_for('kontaktaoss') }}" class="footer-link">Kontakta oss</a></li>
+                        </ul>
+                    </div>
+                    <!-- Column 2 -->
+                    <div class="col-12 col-sm-4 px-4 mb-4 mb-sm-0">
+                        <h5 class="mb-3">Förlag</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="{{ url_for('kontakt') }}" class="footer-link">Kontakt</a></li>
+                            <li><a href="{{ url_for('support') }}" class="footer-link">Support</a></li>
+                            <li><a href="{{ url_for('blipartner') }}" class="footer-link">Bli Partner</a></li>
+                            <li><a href="{{ url_for('forlagsvilkor') }}" class="footer-link">Förlagsvilkor</a></li>
+                        </ul>
+                    </div>
+                    <!-- Column 3 -->
+                    <div class="col-12 col-sm-4 px-4">
+                        <h5 class="mb-3">Hjälp & Info</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="{{ url_for('faq') }}" class="footer-link">Vanliga frågor</a></li>
+                            <li><a href="{{ url_for('anvandarvilkor') }}" class="footer-link">Användarvillkor</a></li>
+                            <li><a href="{{ url_for('Integritetspolicy') }}" class="footer-link">Integritetspolicy</a></li>
+                            <li><a href="{{ url_for('karriar') }}" class="footer-link">Karriär</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Line och Copyright -->
+        <hr class="footer-line">
+        <div class="text-center mt-3">
+            <p class="text-muted mb-0">© 2025 Kunskapslitteratur. Alla rättigheter förbehållna.</p>
+        </div>
+    </div>
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='cookie-consent.js') }}" defer></script>
+</body>
+</html>
